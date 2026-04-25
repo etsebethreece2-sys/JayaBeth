@@ -9,7 +9,7 @@
     <style>
         :root {
             --bg-color: #fff0f3;
-            --box-bg: #ffd6e0;
+            --box-bg: rgba(255, 255, 255, 0.85); /* Slightly transparent white for a nicer look over the image */
             --accent: #e83e8c;
             --text: #5d4037;
         }
@@ -17,20 +17,26 @@
         body { 
             font-family: 'Fredoka', sans-serif; 
             margin: 0; padding: 20px; min-height: 100vh; 
-            background: #fff5f7; 
+            /* Background restored */
+            background: #fff9fa url('avo2.jpg'); 
+            background-size: 650px; 
+            animation: moveBackground 100s linear infinite; 
             display: flex; justify-content: center; align-items: center; 
         }
+
+        @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
         .main-app-container { display: flex; gap: 30px; align-items: flex-start; }
 
         /* The Box Styling */
         .box-style { 
             background: var(--box-bg); 
+            backdrop-filter: blur(10px);
             border-radius: 40px; 
-            box-shadow: 0 10px 40px rgba(232, 62, 140, 0.15); 
+            box-shadow: 0 10px 40px rgba(232, 62, 140, 0.2); 
             padding: 25px; 
             box-sizing: border-box; 
-            border: 4px solid #fff;
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
 
         /* Gallery */
@@ -43,12 +49,14 @@
 
         /* Chat */
         .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
-        .btn-reset { position: absolute; top: 25px; left: 25px; background: none; border: none; color: #d689b0; font-size: 12px; cursor: pointer; text-decoration: underline; }
+        
+        /* Reset Button Fix: added z-index to ensure it is clickable */
+        .btn-reset { position: absolute; top: 25px; left: 25px; background: none; border: none; color: #a17c8e; font-size: 12px; cursor: pointer; text-decoration: underline; z-index: 10; }
         
         .chat-header { font-weight: 700; color: #5d4037; margin-bottom: 15px; text-align: center; font-size: 1.5em; position: relative; }
         .sparkle { color: #e83e8c; font-size: 0.8em; vertical-align: middle; margin: 0 5px; }
 
-        .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.5); border-radius: 50px; padding: 5px; width: 200px; margin: 15px auto; position: relative; }
+        .user-selector { display: flex; justify-content: center; background: rgba(0,0,0,0.05); border-radius: 50px; padding: 5px; width: 200px; margin: 15px auto; position: relative; }
         .user-selector input { display: none; }
         .user-selector label { padding: 8px 20px; cursor: pointer; font-size: 14px; border-radius: 50px; color: #555; flex: 1; text-align: center; transition: 0.3s; }
         .user-selector input:checked + label { background: var(--accent); color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(232, 62, 140, 0.3); }
@@ -66,7 +74,7 @@
         .bubble img { max-width: 200px; display: block; border-radius: 15px; cursor: pointer; }
         
         /* Input Area */
-        .reply-bar { background: rgba(255,255,255,0.5); padding: 10px; border-radius: 15px; font-size: 12px; margin-bottom: 10px; display: none; border: 1px solid white; }
+        .reply-bar { background: rgba(255,255,255,0.7); padding: 10px; border-radius: 15px; font-size: 12px; margin-bottom: 10px; display: none; border: 1px solid #eee; }
         .chat-inputs { display: flex; flex-direction: row; gap: 10px; margin-top: 10px; background: white; padding: 5px; border-radius: 50px; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; background: transparent; }
         .chat-inputs button { border: none; background: var(--accent); color: white; font-weight: bold; cursor: pointer; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; }
@@ -174,7 +182,7 @@
                     push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now(), replyTo: replyingTo });
                     cancelReply();
                 };
-                img.src = event.target.result;
+                img.src = event.result;
             };
             reader.readAsDataURL(file);
             e.target.value = '';
@@ -190,7 +198,14 @@
 
         window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
         window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
-        window.resetChat = () => { if (confirm("Clear Chat?")) remove(messagesRef); };
+        
+        // Explicitly exposing resetChat to window
+        window.resetChat = () => { 
+            if (confirm("Are you sure you want to clear the entire chat?")) {
+                remove(messagesRef);
+            }
+        };
+        
         window.deleteGalleryItem = (key) => { remove(child(galleryRef, key)); };
 
         onValue(messagesRef, (snapshot) => {

@@ -244,6 +244,24 @@
             transform: scale(1.1);
         }
 
+        /* Heart Feature Styles */
+        .heart-box { width: 140px; display: flex; justify-content: center; align-items: center; padding: 10px; cursor: pointer; transition: 0.2s; }
+        .heart-box:hover { background: rgba(255, 255, 255, 0.3); }
+        .heart-btn { font-size: 30px; background: none; border: none; cursor: pointer; transition: transform 0.2s; }
+        .heart-btn:hover { transform: scale(1.2); }
+        .floating-heart {
+            position: fixed;
+            font-size: 30px;
+            pointer-events: none;
+            z-index: 99999;
+            animation: floatAway 1s ease-out forwards;
+        }
+        @keyframes floatAway {
+            0% { opacity: 0; transform: translateY(0) scale(0); }
+            20% { opacity: 1; transform: translateY(-20px) scale(1); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
+        }
+
         /* Side Containers (Gallery & Bucket List) */
         .side-container { width: 260px; height: 600px; display: flex; flex-direction: column; }
         .header-style { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; border-bottom: 2px solid rgba(255, 255, 255, 0.5); padding-bottom: 10px; font-size: 1.1em; }
@@ -384,7 +402,7 @@
                     </div>
                 </div>
 
-                <!-- Calendar UI added here -->
+                <!-- Calendar UI -->
                 <div class="calendar-box box-style">
                     <div class="calendar-header">
                         <button id="prevMonth" onclick="changeMonth(-1)">&#9664;</button>
@@ -395,6 +413,11 @@
                         <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
                     </div>
                     <div class="calendar-dates" id="calendarDates"></div>
+                </div>
+
+                <!-- Heart UI -->
+                <div class="heart-box box-style" onclick="spawnHeart()">
+                    <button class="heart-btn">❤️</button>
                 </div>
             </div>
 
@@ -466,6 +489,19 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // --- Heart Spawn Logic ---
+        window.spawnHeart = () => {
+            const heart = document.createElement('div');
+            heart.innerText = '❤️';
+            heart.className = 'floating-heart';
+            const x = Math.random() * (window.innerWidth - 100) + 50;
+            const y = Math.random() * (window.innerHeight - 100) + 50;
+            heart.style.left = `${x}px`;
+            heart.style.top = `${y}px`;
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 1000);
+        };
 
         // --- Music Player Logic ---
         const audio = document.getElementById('audioPlayer');

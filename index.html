@@ -12,8 +12,17 @@
 
         .main-app-container { display: flex; gap: 30px; align-items: flex-start; }
 
-        /* Shared Box Style */
-        .box-style { background: rgba(255, 182, 193, 0.85); backdrop-filter: blur(5px); border-radius: 25px; box-shadow: 0 15px 35px rgba(232, 62, 140, 0.15), 0 0 80px rgba(138, 43, 226, 0.6); padding: 15px; box-sizing: border-box; }
+        /* Shared Box Style (Updated for Lilac + Texture) */
+        .box-style { 
+            background-color: rgba(190, 160, 230, 0.85);
+            background-image: radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+            background-size: 20px 20px;
+            backdrop-filter: blur(5px); 
+            border-radius: 25px; 
+            box-shadow: 0 15px 35px rgba(100, 50, 150, 0.2), 0 0 80px rgba(138, 43, 226, 0.3); 
+            padding: 15px; 
+            box-sizing: border-box; 
+        }
 
         /* Gallery */
         .gallery-container { width: 300px; height: 600px; display: flex; flex-direction: column; }
@@ -30,12 +39,12 @@
 
         /* Chat */
         .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
-        .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #888; font-size: 11px; cursor: pointer; text-decoration: underline; }
+        .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #eee; font-size: 11px; cursor: pointer; text-decoration: underline; }
         .chat-header { font-weight: bold; color: #333; margin-bottom: 15px; text-align: center; padding-bottom: 10px; font-size: 1.3em; border-bottom: 2px solid rgba(255, 255, 255, 0.5); }
         .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.6); border-radius: 20px; padding: 4px; width: 180px; margin: 8px auto 0 auto; }
         .user-selector input { display: none; }
         .user-selector label { padding: 5px 15px; cursor: pointer; font-size: 13px; border-radius: 16px; color: #555; flex: 1; text-align: center; transition: 0.2s; }
-        .user-selector input:checked + label { background: #e83e8c; color: white; font-weight: bold; }
+        .user-selector input:checked + label { background: #8a2be2; color: white; font-weight: bold; }
         
         .messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; }
         .message-row { display: flex; width: 100%; cursor: pointer; }
@@ -43,7 +52,7 @@
         .message-row.theirs { justify-content: flex-start; }
         
         .bubble { padding: 10px 14px; border-radius: 20px; font-size: 15px; max-width: 75%; position: relative; word-wrap: break-word; }
-        .bubble-mine { background-color: #e83e8c; color: white; border-bottom-right-radius: 4px; }
+        .bubble-mine { background-color: #8a2be2; color: white; border-bottom-right-radius: 4px; }
         .bubble-theirs { background-color: #ffffff; color: #333; border-bottom-left-radius: 4px; }
         
         .quote-box { font-size: 0.75em; background: rgba(0,0,0,0.1); padding: 5px; border-radius: 8px; margin-bottom: 5px; border-left: 3px solid #888; opacity: 0.8; }
@@ -56,8 +65,8 @@
         .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; }
         
         .chat-inputs button { 
-            padding: 0 15px; border: none; border-radius: 25px; background: linear-gradient(135deg, #ff8da1, #e83e8c); 
-            color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(232, 62, 140, 0.4);
+            padding: 0 15px; border: none; border-radius: 25px; background: linear-gradient(135deg, #b19cd9, #8a2be2); 
+            color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4);
             transition: all 0.2s ease;
         }
     </style>
@@ -159,7 +168,7 @@
                     setTimeout(() => overlay.remove(), 1000);
                 };
                 target.parentElement.appendChild(overlay);
-                setTimeout(() => { if(overlay) overlay.remove(); }, 3000);
+                setTimeout(() => { if(overlay) overlay.remove(), 3000 });
             }, 1000); 
         };
 
@@ -198,7 +207,7 @@
         window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
         window.resetChat = () => { if (confirm("Clear Chat?")) remove(messagesRef); };
         window.deleteGalleryItem = (event, key) => { 
-            event.stopPropagation(); // Prevents lightbox from opening when clicking delete
+            event.stopPropagation(); 
             remove(child(galleryRef, key)); 
         };
 
@@ -251,7 +260,6 @@
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
                 
-                // Create image element for lightbox
                 const img = document.createElement('img');
                 img.src = data.image;
                 img.onclick = () => openLightbox(data.image);

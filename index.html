@@ -17,14 +17,13 @@
             margin: 0; 
             padding: 20px; 
             min-height: 100vh; 
-            /* Dark tint background */
             background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), #fff9fa url('lilacavo.jpg'); 
             background-size: 650px; 
             animation: moveBackground 144s linear infinite; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            perspective: 1000px; /* Required for 3D effect */
+            perspective: 1000px; 
             overflow: hidden;
         }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
@@ -34,7 +33,6 @@
             transition: transform 0.1s ease-out, box-shadow 0.3s ease;
             transform-style: preserve-3d;
             border-radius: 25px;
-            /* Heavy shadow to make it pop */
             box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
 
@@ -53,7 +51,10 @@
             box-sizing: border-box; 
         }
 
-        /* Far Left Date Counter */
+        /* Left Side Container (Date & Music) */
+        .left-column { display: flex; flex-direction: column; gap: 20px; }
+
+        /* Date Counter */
         .date-box {
             width: 140px;
             text-align: center;
@@ -66,6 +67,24 @@
         }
         .date-number { font-size: 2.8em; font-weight: 700; color: #8a2be2; line-height: 1; text-shadow: 1px 1px 0px rgba(255,255,255,0.7); }
         .date-text { font-size: 0.9em; font-weight: 600; color: #333; line-height: 1.2; }
+
+        /* Music Player */
+        .music-box {
+            width: 140px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .song-title { font-size: 0.85em; font-weight: bold; color: #333; }
+        #playPauseBtn { 
+            background: #8a2be2; color: white; border: none; border-radius: 50%; 
+            width: 40px; height: 40px; cursor: pointer; font-size: 16px; 
+            transition: transform 0.2s, background 0.2s;
+        }
+        #playPauseBtn:hover { transform: scale(1.1); filter: brightness(1.1); }
+        #musicSlider { width: 100%; cursor: pointer; accent-color: #8a2be2; }
 
         /* Side Containers (Gallery & Bucket List) */
         .side-container { width: 260px; height: 600px; display: flex; flex-direction: column; }
@@ -81,17 +100,7 @@
 
         /* Bucket List */
         .bucket-list { flex-grow: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-        .bucket-item { 
-            background: rgba(255, 255, 255, 0.4); 
-            padding: 10px 12px; 
-            border-radius: 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            font-size: 14px; 
-            word-break: break-word;
-            animation: fadeIn 0.3s ease;
-        }
+        .bucket-item { background: rgba(255, 255, 255, 0.4); padding: 10px 12px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; word-break: break-word; animation: fadeIn 0.3s ease; }
         .bucket-item.deleting { animation: fadeOut 0.3s forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOut { to { opacity: 0; transform: scale(0.9); } }
@@ -134,13 +143,11 @@
         .msg-wrapper.mine { align-items: flex-end; }
         .msg-wrapper.theirs { align-items: flex-start; }
         
-        /* Bubble & Dropdown styling */
         .bubble { padding: 10px 24px 10px 14px; border-radius: 20px; font-size: 15px; position: relative; word-wrap: break-word; cursor: pointer; white-space: pre-wrap; transition: background-color 0.2s; }
         .bubble-mine { background-color: #8a2be2; color: white; border-bottom-right-radius: 4px; }
         .bubble-theirs { background-color: #ffffff; color: #333; border-bottom-left-radius: 4px; }
         .bubble a { color: inherit; text-decoration: underline; font-weight: bold; }
         
-        /* Message Dropdown */
         .msg-dropdown-container { position: absolute; top: 6px; right: 6px; z-index: 5; }
         .msg-dropdown-btn { background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; line-height: 1; cursor: pointer; display: none; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.3); align-items: center; justify-content: center; transition: background 0.2s; }
         .msg-dropdown-btn:hover { background: #e0e0e0; }
@@ -162,7 +169,6 @@
 
         .reply-bar { background: rgba(255,255,255,0.4); padding: 8px; border-radius: 15px; font-size: 12px; margin-bottom: 5px; display: none; position: relative; }
         
-        /* Chat Inputs & Button Animations */
         .chat-inputs { display: flex; flex-direction: row; gap: 8px; margin-top: 10px; align-items: center; }
         .input-wrapper { display: flex; flex-grow: 1; position: relative; align-items: center; }
         .input-wrapper input { width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 25px; outline: none; font-family: 'Fredoka', sans-serif; box-sizing: border-box; }
@@ -180,13 +186,8 @@
             box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4); 
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease; 
         }
-        .chat-inputs button:hover {
-            transform: scale(1.1);
-            filter: brightness(1.15);
-        }
-        .chat-inputs button:active {
-            transform: scale(0.95);
-        }
+        .chat-inputs button:hover { transform: scale(1.1); filter: brightness(1.15); }
+        .chat-inputs button:active { transform: scale(0.95); }
     </style>
 </head>
 
@@ -196,14 +197,23 @@
         <img id="lightbox-img" class="lightbox-img" style="max-width:90%; max-height:90%; border-radius:15px;" src="">
     </div>
 
-    <!-- Wrapper for 3D Tilt Effect -->
     <div id="app-wrapper">
         <div class="main-app-container">
-            <!-- Left: Date Counter Box -->
-            <div class="date-box box-style">
-                <div class="date-text">It was official</div>
-                <div class="date-number" id="days-count">0</div>
-                <div class="date-text">days ago</div>
+            
+            <!-- LEFT COLUMN: Date + Music -->
+            <div class="left-column">
+                <div class="date-box box-style">
+                    <div class="date-text">It was official</div>
+                    <div class="date-number" id="days-count">0</div>
+                    <div class="date-text">days ago</div>
+                </div>
+
+                <div class="music-box box-style">
+                    <audio id="audioPlayer" src="song.mp3"></audio> <!-- REPLACE song.mp3 with your actual file -->
+                    <div class="song-title">Our Song</div>
+                    <button id="playPauseBtn" onclick="togglePlay()">▶</button>
+                    <input type="range" id="musicSlider" value="0" min="0" max="100" oninput="seekAudio()">
+                </div>
             </div>
 
             <!-- Left Center: Gallery -->
@@ -275,14 +285,40 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
+        // --- Music Player Logic ---
+        const audio = document.getElementById('audioPlayer');
+        const playBtn = document.getElementById('playPauseBtn');
+        const slider = document.getElementById('musicSlider');
+
+        window.togglePlay = () => {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerText = '⏸';
+            } else {
+                audio.pause();
+                playBtn.innerText = '▶';
+            }
+        };
+
+        audio.ontimeupdate = () => {
+            if (audio.duration) {
+                const percentage = (audio.currentTime / audio.duration) * 100;
+                slider.value = percentage;
+            }
+        };
+
+        window.seekAudio = () => {
+            const time = (slider.value / 100) * audio.duration;
+            audio.currentTime = time;
+        };
+
         // --- 3D Tilt Script ---
         const wrapper = document.getElementById('app-wrapper');
         window.addEventListener('mousemove', (e) => {
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
-            const x = (e.clientX - centerX) / 80; // X axis sensitivity
-            const y = (e.clientY - centerY) / 80; // Y axis sensitivity
-            
+            const x = (e.clientX - centerX) / 80;
+            const y = (e.clientY - centerY) / 80;
             wrapper.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
             wrapper.style.boxShadow = `${-x}px ${y+20}px 50px rgba(0,0,0,0.3)`;
         });
@@ -387,16 +423,12 @@
             input.value = "";
         };
 
-        window.handleBucketKeyPress = (e) => {
-            if (e.key === 'Enter') addBucketItem();
-        };
+        window.handleBucketKeyPress = (e) => { if (e.key === 'Enter') addBucketItem(); };
 
         window.deleteBucketItem = (key, btn) => {
             const li = btn.closest('.bucket-item');
             li.classList.add('deleting');
-            setTimeout(() => {
-                remove(child(bucketListRef, key));
-            }, 300);
+            setTimeout(() => { remove(child(bucketListRef, key)); }, 300);
         };
 
         onValue(bucketListRef, (snapshot) => {
@@ -408,10 +440,7 @@
                 const key = child.key;
                 const li = document.createElement('li');
                 li.className = 'bucket-item';
-                li.innerHTML = `
-                    <span>${data.text}</span>
-                    <button class="delete-item-btn" onclick="deleteBucketItem('${key}', this)">✕</button>
-                `;
+                li.innerHTML = `<span>${data.text}</span><button class="delete-item-btn" onclick="deleteBucketItem('${key}', this)">✕</button>`;
                 listDiv.appendChild(li);
             });
             listDiv.scrollTop = listDiv.scrollHeight;
@@ -435,8 +464,7 @@
 
         const formatTime = (ts) => {
             const date = new Date(ts);
-            return date.getHours().toString().padStart(2, '0') + ':' + 
-                   date.getMinutes().toString().padStart(2, '0');
+            return date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
         };
 
         const formatMessageLinks = (text) => {
@@ -453,9 +481,7 @@
             lightbox.style.display = 'flex';
         };
 
-        window.closeLightbox = () => {
-            document.getElementById('lightbox').style.display = 'none';
-        };
+        window.closeLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
 
         window.startReply = (text, user) => {
             replyingTo = { text: text || "[Image]", user: user };
@@ -464,24 +490,13 @@
             bar.innerHTML = `<strong>Replying to ${user}:</strong> ${text || "[Image]"} <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>`;
         };
 
-        window.cancelReply = () => {
-            replyingTo = null;
-            document.getElementById('replyBar').style.display = 'none';
-        };
+        window.cancelReply = () => { replyingTo = null; document.getElementById('replyBar').style.display = 'none'; };
 
-        window.pinMessage = (msgData) => {
-            set(pinnedRef, msgData);
-        };
+        window.pinMessage = (msgData) => { set(pinnedRef, msgData); };
         
-        window.unpinMessage = () => {
-            remove(pinnedRef);
-        };
+        window.unpinMessage = () => { remove(pinnedRef); };
 
-        window.deleteMessage = (key) => {
-            if(confirm("Delete this message?")) {
-                remove(child(messagesRef, key));
-            }
-        };
+        window.deleteMessage = (key) => { if(confirm("Delete this message?")) remove(child(messagesRef, key)); };
 
         onValue(pinnedRef, (snapshot) => {
             const bar = document.getElementById('pinnedBar');
@@ -491,9 +506,7 @@
                 let displayTxt = data.text ? data.text : '[Image]';
                 content.innerHTML = `<strong>📌 Pinned</strong> - ${data.name}: ${displayTxt}`;
                 bar.style.display = 'flex';
-            } else {
-                bar.style.display = 'none';
-            }
+            } else { bar.style.display = 'none'; }
         });
 
         window.startHold = (event, imgData) => {
@@ -553,10 +566,7 @@
         window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
         window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
         window.resetChat = () => { if (confirm("Clear Chat?")) remove(messagesRef); };
-        window.deleteGalleryItem = (event, key) => { 
-            event.stopPropagation(); 
-            remove(child(galleryRef, key)); 
-        };
+        window.deleteGalleryItem = (event, key) => { event.stopPropagation(); remove(child(galleryRef, key)); };
 
         onValue(messagesRef, (snapshot) => {
             const messagesDiv = document.getElementById("messages");

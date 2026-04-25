@@ -15,7 +15,7 @@
         body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background: #fff9fa url('avo2.jpg'); background-size: 650px; animation: moveBackground 120s linear infinite; display: flex; justify-content: center; align-items: center; }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
-        .main-app-container { display: flex; gap: 30px; align-items: flex-start; }
+        .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1200px; }
 
         /* Shared Box Style */
         .box-style { 
@@ -30,13 +30,32 @@
             box-sizing: border-box; 
         }
 
+        /* Side Containers (Gallery & Bucket List) */
+        .side-container { width: 260px; height: 600px; display: flex; flex-direction: column; }
+        .header-style { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; border-bottom: 2px solid rgba(255, 255, 255, 0.5); padding-bottom: 10px; font-size: 1.1em; }
+
         /* Gallery */
-        .gallery-container { width: 300px; height: 600px; display: flex; flex-direction: column; }
-        .gallery-header { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; border-bottom: 2px solid rgba(255, 255, 255, 0.5); padding-bottom: 10px; }
-        #gallery { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; align-content: flex-start; }
+        #gallery { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; align-content: flex-start; padding-right: 5px; }
         .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
-        .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; z-index: 2;}
+        .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; z-index: 2; font-size: 10px; }
+
+        /* Bucket List */
+        .bucket-list { flex-grow: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .bucket-item { 
+            background: rgba(255, 255, 255, 0.4); 
+            padding: 10px 12px; 
+            border-radius: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            font-size: 14px; 
+            word-break: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .delete-item-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
+        .delete-item-btn:hover { opacity: 1; transform: scale(1.2); }
 
         /* Chat */
         .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
@@ -79,7 +98,7 @@
 
         .reply-bar { background: rgba(255,255,255,0.4); padding: 8px; border-radius: 15px; font-size: 12px; margin-bottom: 5px; display: none; position: relative; }
         .chat-inputs { display: flex; flex-direction: row; gap: 8px; margin-top: 10px; }
-        .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; }
+        .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; font-family: 'Fredoka', sans-serif; }
         .chat-inputs button { padding: 0 15px; border: none; border-radius: 25px; background: linear-gradient(135deg, #b19cd9, #8a2be2); color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4); transition: all 0.2s ease; }
     </style>
 </head>
@@ -91,11 +110,13 @@
     </div>
 
     <div class="main-app-container">
-        <div class="gallery-container box-style">
-            <div class="gallery-header">Image Gallery</div>
+        <!-- Left: Gallery -->
+        <div class="side-container box-style">
+            <div class="header-style">Image Gallery</div>
             <div id="gallery"></div>
         </div>
 
+        <!-- Center: Chat -->
         <div class="chat-container box-style">
             <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
             <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
@@ -133,6 +154,16 @@
                 <button onclick="sendMessage()">Send</button>
             </div>
         </div>
+
+        <!-- Right: Bucket List -->
+        <div class="side-container box-style">
+            <div class="header-style">Bucket List</div>
+            <ul id="bucketList" class="bucket-list"></ul>
+            <div class="chat-inputs">
+                <input type="text" id="bucketInput" placeholder="New adventure..." onkeypress="handleBucketKeyPress(event)">
+                <button onclick="addBucketItem()">Add</button>
+            </div>
+        </div>
     </div>
 
     <script type="module">
@@ -152,6 +183,7 @@
         const db = getDatabase(app);
         const messagesRef = ref(db, "chatroom");
         const galleryRef = ref(db, "gallery");
+        const bucketListRef = ref(db, "bucketlist");
         
         // Theme Load
         const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230';
@@ -160,7 +192,45 @@
         document.documentElement.style.setProperty('--box-alpha', savedAlpha);
         document.getElementById('opacitySlider').value = savedAlpha;
 
-        // Helpers
+        // --- Bucket List Logic ---
+        window.addBucketItem = () => {
+            const input = document.getElementById("bucketInput");
+            if (input.value.trim() === "") return;
+            push(bucketListRef, { 
+                text: input.value, 
+                timestamp: Date.now(),
+                creator: currentUser 
+            });
+            input.value = "";
+        };
+
+        window.handleBucketKeyPress = (e) => {
+            if (e.key === 'Enter') addBucketItem();
+        };
+
+        window.deleteBucketItem = (key) => {
+            remove(child(bucketListRef, key));
+        };
+
+        onValue(bucketListRef, (snapshot) => {
+            const listDiv = document.getElementById("bucketList");
+            listDiv.innerHTML = "";
+            if (!snapshot.exists()) return;
+            snapshot.forEach((child) => {
+                const data = child.val();
+                const key = child.key;
+                const li = document.createElement('li');
+                li.className = 'bucket-item';
+                li.innerHTML = `
+                    <span>${data.text}</span>
+                    <button class="delete-item-btn" onclick="deleteBucketItem('${key}')">✕</button>
+                `;
+                listDiv.appendChild(li);
+            });
+            listDiv.scrollTop = listDiv.scrollHeight;
+        });
+
+        // --- Helpers & UI ---
         window.toggleColorMenu = () => {
             const menu = document.getElementById('colorMenu');
             menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
@@ -182,13 +252,12 @@
                    date.getMinutes().toString().padStart(2, '0');
         };
 
-        // Convert URLs in text to HTML links
         const formatMessageLinks = (text) => {
             const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
             return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
         };
 
-        // App Logic
+        // --- Chat & Gallery Logic ---
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let holdTimer = null;
         let replyingTo = null; 
@@ -278,24 +347,19 @@
             snapshot.forEach((child) => {
                 const data = child.val();
                 const isMine = data.name === currentUser;
-                
                 const row = document.createElement('div');
                 row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
-                
                 const wrapper = document.createElement('div');
                 wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
-                
                 const bubble = document.createElement('div');
                 bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
                 bubble.onclick = () => startReply(data.text || "[Image]", data.name);
-
                 if (data.replyTo) {
                     const quote = document.createElement('div');
                     quote.className = 'quote-box';
                     quote.innerText = `${data.replyTo.user}: ${data.replyTo.text.length > 20 ? data.replyTo.text.substring(0,20) + '...' : data.replyTo.text}`;
                     bubble.appendChild(quote);
                 }
-
                 if (data.image) {
                     const img = document.createElement('img');
                     img.src = data.image;
@@ -306,14 +370,11 @@
                     img.ontouchend = endHold;
                     bubble.appendChild(img);
                 } else {
-                    // Inject formatted links
                     bubble.innerHTML = formatMessageLinks(data.text);
                 }
-                
                 const time = document.createElement('div');
                 time.className = 'timestamp';
                 time.innerText = formatTime(data.timestamp);
-
                 wrapper.appendChild(bubble);
                 wrapper.appendChild(time);
                 row.appendChild(wrapper);
@@ -331,16 +392,13 @@
                 const key = child.key;
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
-                
                 const img = document.createElement('img');
                 img.src = data.image;
                 img.onclick = () => openLightbox(data.image);
-                
                 const delBtn = document.createElement('button');
                 delBtn.className = 'delete-btn';
                 delBtn.innerText = '✕';
                 delBtn.onclick = (e) => deleteGalleryItem(e, key);
-                
                 item.appendChild(img);
                 item.appendChild(delBtn);
                 galleryDiv.appendChild(item);

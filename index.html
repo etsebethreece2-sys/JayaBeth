@@ -28,17 +28,17 @@
         }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
-        /* 3D Wrapper - Shadows increased by 30% */
+        /* 3D Wrapper - Shadows explicitly increased by 30% */
         #app-wrapper {
             transition: transform 0.1s ease-out, box-shadow 0.3s ease;
             transform-style: preserve-3d;
             border-radius: 25px;
-            box-shadow: 0 32px 90px rgba(0,0,0,0.52); 
+            box-shadow: 0 32px 91px rgba(0,0,0,0.52); 
         }
 
         .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1300px; }
 
-        /* Shared Box Style - Shadows increased by 30% */
+        /* Shared Box Style - Shadows explicitly increased by 30% */
         .box-style { 
             background-color: rgba(var(--box-base-rgb), var(--box-alpha));
             background-image: radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
@@ -46,13 +46,13 @@
             backdrop-filter: blur(5px); 
             border-radius: 25px; 
             border: 1px solid #000; 
-            box-shadow: 0 25px 60px rgba(0,0,0,0.20), 0 0 115px rgba(0,0,0,0.11); 
+            box-shadow: 0 26px 58px rgba(0,0,0,0.195), 0 0 117px rgba(0,0,0,0.104); 
             padding: 15px; 
             box-sizing: border-box; 
         }
 
         /* Left Side Container */
-        .left-column { display: flex; flex-direction: column; gap: 20px; width: 145px; }
+        .left-column { display: flex; flex-direction: column; gap: 20px; width: 150px; }
 
         /* Date Counter */
         .date-box { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; padding: 20px 15px; }
@@ -105,6 +105,13 @@
         .color-option { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 1px solid #ccc; transition: transform 0.2s; }
         .color-option:hover { transform: scale(1.15); }
         .chat-header { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; padding-bottom: 10px; font-size: 1.3em; border-bottom: 2px solid rgba(255, 255, 255, 0.5); }
+        
+        .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.4); border-radius: 20px; padding: 4px; width: 180px; margin: 8px auto 10px auto; }
+        .user-selector input { display: none; }
+        .user-selector label { padding: 5px 15px; cursor: pointer; font-size: 13px; border-radius: 16px; color: #555; flex: 1; text-align: center; transition: 0.2s; }
+        .user-selector input:checked + label { background: #8a2be2; color: white; font-weight: bold; }
+        
+        .pinned-bar { background: rgba(255, 255, 255, 0.6); border-left: 4px solid #8a2be2; padding: 8px 10px; margin: 0 10px 10px 10px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 3px 8px rgba(0,0,0,0.13); }
         .messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; }
         .message-row { display: flex; width: 100%; position: relative; }
         .message-row.mine { justify-content: flex-end; }
@@ -184,19 +191,29 @@
                 <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
                 <div id="colorMenu" class="color-menu">
                     <div class="color-grid">
-                        <div class="color-option" style="background: #bea0e6;" onclick="changeBaseColor('190, 160, 230')"></div>
-                        <div class="color-option" style="background: #ffb6c1;" onclick="changeBaseColor('255, 182, 193')"></div>
-                        <div class="color-option" style="background: #a0c4ff;" onclick="changeBaseColor('160, 196, 255')"></div>
-                        <div class="color-option" style="background: #9bf6ff;" onclick="changeBaseColor('155, 246, 255')"></div>
-                        <div class="color-option" style="background: #caffbf;" onclick="changeBaseColor('202, 255, 191')"></div>
-                        <div class="color-option" style="background: #fdffb6;" onclick="changeBaseColor('253, 255, 182')"></div>
-                        <div class="color-option" style="background: #ffd6a5;" onclick="changeBaseColor('255, 214, 165')"></div>
-                        <div class="color-option" style="background: #ffadad;" onclick="changeBaseColor('255, 173, 173')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #d8c6f2, #b49cd9);" onclick="changeBaseColor('190, 160, 230')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffcce0, #ffb6c1);" onclick="changeBaseColor('255, 182, 193')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #a0c4ff, #8bb4f6);" onclick="changeBaseColor('160, 196, 255')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #9bf6ff, #8ae5f0);" onclick="changeBaseColor('155, 246, 255')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #caffbf, #b9f0b0);" onclick="changeBaseColor('202, 255, 191')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #fdffb6, #ecf0a5);" onclick="changeBaseColor('253, 255, 182')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffd6a5, #f0c594);" onclick="changeBaseColor('255, 214, 165')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffadad, #f09c9c);" onclick="changeBaseColor('255, 173, 173')"></div>
                     </div>
                     <input type="range" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)" style="width: 100%;">
                 </div>
 
                 <div class="chat-header">The Yap Box</div>
+                
+                <!-- RESTORED: User Selector -->
+                <div class="user-selector">
+                    <input type="radio" id="userMe" name="chatUser" value="me" checked onchange="updateChatUser()">
+                    <label for="userMe">Me</label>
+                    <input type="radio" id="userThem" name="chatUser" value="them" onchange="updateChatUser()">
+                    <label for="userThem">Them</label>
+                </div>
+
+                <div id="pinnedBar" class="pinned-bar" style="display: none;"></div>
                 <div class="messages" id="messages"></div>
                 
                 <div class="chat-inputs">
@@ -223,7 +240,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         // Firebase Config 
         const firebaseConfig = { 
@@ -238,17 +255,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         
-        // References
+        // Database References
         const eventsRef = ref(db, "events");
         const messagesRef = ref(db, "messages");
         const bucketRef = ref(db, "bucket");
         const galleryRef = ref(db, "gallery");
 
         // --- Date Counter ---
-        const startDate = new Date("2024-01-01"); // Replace with your actual official date!
+        const startDate = new Date("2024-01-01"); // <-- Change this to your real official date
         const today = new Date();
-        const diffTime = Math.abs(today - startDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffDays = Math.max(0, Math.floor((today - startDate) / (1000 * 60 * 60 * 24)));
         document.getElementById("days-count").innerText = diffDays;
 
         // --- Theme / Color Options ---
@@ -340,11 +356,15 @@
         renderCalendar();
 
         // --- Chat Logic ---
+        let currentUser = "me";
+        window.updateChatUser = () => {
+            currentUser = document.querySelector('input[name="chatUser"]:checked').value;
+        };
+
         window.sendMessage = () => {
             const input = document.getElementById("messageInput");
             if (input.value.trim() === "") return;
-            // Assuming default sender is "me" since there's no user selector in the UI
-            push(messagesRef, { text: input.value, sender: "me", timestamp: Date.now() });
+            push(messagesRef, { text: input.value, sender: currentUser, timestamp: Date.now() });
             input.value = "";
         };
 

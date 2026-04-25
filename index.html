@@ -12,7 +12,7 @@
             --box-alpha: 0.85;
         }
 
-        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background: #fff9fa url('lilacavo.jpg'); background-size: 650px; animation: moveBackground 120s linear infinite; display: flex; justify-content: center; align-items: center; }
+        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background: #fff9fa url('avo2.jpg'); background-size: 650px; animation: moveBackground 144s linear infinite; display: flex; justify-content: center; align-items: center; }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
         .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1300px; }
@@ -69,7 +69,10 @@
             word-break: break-word;
             animation: fadeIn 0.3s ease;
         }
+        .bucket-item.deleting { animation: fadeOut 0.3s forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: scale(0.9); } }
+        
         .delete-item-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
         .delete-item-btn:hover { opacity: 1; transform: scale(1.2); }
 
@@ -191,13 +194,13 @@
             <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
             <div id="colorMenu" class="color-menu">
                 <div class="color-grid">
-                    <div class="color-option" style="background: rgb(190, 160, 230);" onclick="changeBaseColor('190, 160, 230')"></div>
-                    <div class="color-option" style="background: rgb(255, 182, 193);" onclick="changeBaseColor('255, 182, 193')"></div>
-                    <div class="color-option" style="background: rgb(173, 216, 230);" onclick="changeBaseColor('173, 216, 230')"></div>
-                    <div class="color-option" style="background: rgb(144, 238, 144);" onclick="changeBaseColor('144, 238, 144')"></div>
-                    <div class="color-option" style="background: rgb(255, 165, 0);" onclick="changeBaseColor('255, 165, 0')"></div>
-                    <div class="color-option" style="background: rgb(255, 99, 71);" onclick="changeBaseColor('255, 99, 71')"></div>
-                    <div class="color-option" style="background: rgb(255, 255, 0);" onclick="changeBaseColor('255, 255, 0')"></div>
+                    <div class="color-option" style="background: linear-gradient(135deg, #d8c6f2, #b49cd9);" onclick="changeBaseColor('190, 160, 230')"></div>
+                    <div class="color-option" style="background: linear-gradient(135deg, #ffcce0, #ffb6c1);" onclick="changeBaseColor('255, 182, 193')"></div>
+                    <div class="color-option" style="background: linear-gradient(135deg, #e0f7fa, #add8e6);" onclick="changeBaseColor('173, 216, 230')"></div>
+                    <div class="color-option" style="background: linear-gradient(135deg, #ccffcc, #90ee90);" onclick="changeBaseColor('144, 238, 144')"></div>
+                    <div class="color-option" style="background: linear-gradient(135deg, #ffdb99, #ffa500);" onclick="changeBaseColor('255, 165, 0')"></div>
+                    <div class="color-option" style="background: linear-gradient(135deg, #ffb3a7, #ff6347);" onclick="changeBaseColor('255, 99, 71')"></div>
+                    <div class="color-option" style="background: linear-gradient(135deg, #ffff99, #ffff00);" onclick="changeBaseColor('255, 255, 0')"></div>
                 </div>
                 <div class="slider-label">Transparency/Darkness</div>
                 <input type="range" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
@@ -344,8 +347,12 @@
             if (e.key === 'Enter') addBucketItem();
         };
 
-        window.deleteBucketItem = (key) => {
-            remove(child(bucketListRef, key));
+        window.deleteBucketItem = (key, btn) => {
+            const li = btn.closest('.bucket-item');
+            li.classList.add('deleting');
+            setTimeout(() => {
+                remove(child(bucketListRef, key));
+            }, 300);
         };
 
         onValue(bucketListRef, (snapshot) => {
@@ -359,7 +366,7 @@
                 li.className = 'bucket-item';
                 li.innerHTML = `
                     <span>${data.text}</span>
-                    <button class="delete-item-btn" onclick="deleteBucketItem('${key}')">✕</button>
+                    <button class="delete-item-btn" onclick="deleteBucketItem('${key}', this)">✕</button>
                 `;
                 listDiv.appendChild(li);
             });
@@ -526,21 +533,18 @@
                 const bubble = document.createElement('div');
                 bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
                 
-                // Reply triggered by clicking the bubble body
                 bubble.onclick = (e) => {
-                    // Prevent triggering if clicked directly on image or dropdown
                     if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) {
                         startReply(data.text || "[Image]", data.name);
                     }
                 };
                 
-                // --- Dropdown Menu Elements ---
                 const dropdownContainer = document.createElement('div');
                 dropdownContainer.className = 'msg-dropdown-container';
                 
                 const dropBtn = document.createElement('button');
                 dropBtn.className = 'msg-dropdown-btn';
-                dropBtn.innerHTML = '&#8964;'; // Unicode chevron down (⌄)
+                dropBtn.innerHTML = '&#8964;'; 
                 
                 const dropMenu = document.createElement('div');
                 dropMenu.className = 'msg-dropdown-menu';
@@ -560,7 +564,6 @@
                 dropBtn.onclick = (e) => {
                     e.stopPropagation();
                     const isOpen = dropMenu.style.display === 'flex';
-                    // close all others
                     document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none');
                     dropMenu.style.display = isOpen ? 'none' : 'flex';
                 };
@@ -568,7 +571,6 @@
                 dropdownContainer.appendChild(dropBtn);
                 dropdownContainer.appendChild(dropMenu);
                 bubble.appendChild(dropdownContainer);
-                // -----------------------------
 
                 if (data.replyTo) {
                     const quote = document.createElement('div');
@@ -585,11 +587,9 @@
                     img.onmouseleave = endHold;
                     img.ontouchstart = (e) => startHold(e, data.image);
                     img.ontouchend = endHold;
-                    // Clicking image opens lightbox
                     img.onclick = (e) => { e.stopPropagation(); openLightbox(data.image); };
                     bubble.appendChild(img);
                 } else {
-                    // Wrap text in a span so it formats correctly alongside dropdown
                     const textSpan = document.createElement('span');
                     textSpan.innerHTML = formatMessageLinks(data.text);
                     bubble.appendChild(textSpan);
@@ -599,7 +599,6 @@
                 time.className = 'timestamp';
                 time.innerText = formatTime(data.timestamp);
                 
-                // Add read receipts for sent messages
                 if(isMine) {
                     const tickSpan = document.createElement('span');
                     tickSpan.className = 'tick ' + (data.timestamp <= otherUserLastSeen ? 'read' : 'unread');

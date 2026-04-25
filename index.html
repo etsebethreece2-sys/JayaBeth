@@ -12,12 +12,25 @@
             --box-alpha: 0.85;
         }
 
-        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background: #fff9fa url('avo2.jpg'); background-size: 650px; animation: moveBackground 120s linear infinite; display: flex; justify-content: center; align-items: center; }
+        body { 
+            font-family: 'Fredoka', sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh; 
+            background: #fff9fa url('avo2.jpg'); 
+            background-size: 650px; 
+            animation: moveBackground 120s linear infinite; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            perspective: 1200px; /* Needed for 3D effects */
+        }
+        
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
         .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1200px; }
 
-        /* Shared Box Style */
+        /* Shared Box Style with 3D transition */
         .box-style { 
             background-color: rgba(var(--box-base-rgb), var(--box-alpha));
             background-image: radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
@@ -28,20 +41,22 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 0 80px rgba(0,0,0,0.05); 
             padding: 15px; 
             box-sizing: border-box; 
+            transition: transform 0.1s ease-out; /* Smooth tilt movement */
+            transform-style: preserve-3d;
+            will-change: transform;
         }
 
-        /* Side Containers (Gallery & Bucket List) */
+        /* Side Containers */
         .side-container { width: 260px; height: 600px; display: flex; flex-direction: column; }
         .header-style { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; border-bottom: 2px solid rgba(255, 255, 255, 0.5); padding-bottom: 10px; font-size: 1.1em; }
 
         /* Gallery */
         #gallery { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; align-content: flex-start; padding-right: 5px; }
-        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
-        .gallery-item:hover { transform: scale(1.05); }
+        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; z-index: 2; font-size: 10px; }
 
-        /* Bucket List */
+        /* Bucket List - Hover highlight removed as requested */
         .bucket-list { flex-grow: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
         .bucket-item { 
             background: rgba(255, 255, 255, 0.4); 
@@ -52,18 +67,7 @@
             align-items: center; 
             font-size: 14px; 
             word-break: break-word;
-            animation: fadeIn 0.3s ease;
-            transition: all 0.2s ease;
-            cursor: default;
         }
-        /* Hover animation for bucketlist entries */
-        .bucket-item:hover {
-            transform: translateX(5px) scale(1.02);
-            background: rgba(255, 255, 255, 0.65);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .delete-item-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
         .delete-item-btn:hover { opacity: 1; transform: scale(1.2); }
 
@@ -71,18 +75,13 @@
         .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
         .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #333; font-size: 11px; cursor: pointer; text-decoration: underline; }
         
-        /* Color Menu */
         .color-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; z-index: 10; transition: transform 0.3s ease; }
-        /* Hover animation for color palette button */
-        .color-toggle:hover {
-            transform: scale(1.3) rotate(20deg);
-        }
+        .color-toggle:hover { transform: scale(1.3) rotate(20deg); }
 
         .color-menu { display: none; position: absolute; top: 45px; right: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 20; width: 180px; }
         .color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
         .color-option { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 1px solid #ccc; transition: transform 0.1s; }
         .color-option:hover { transform: scale(1.1); }
-        .slider-label { font-size: 12px; color: #333; margin-bottom: 5px; font-weight: bold; }
         input[type=range] { width: 100%; }
 
         .chat-header { font-weight: bold; color: #333; margin-bottom: 15px; text-align: center; padding-bottom: 10px; font-size: 1.3em; border-bottom: 2px solid rgba(255, 255, 255, 0.5); }
@@ -97,20 +96,13 @@
         .message-row.theirs { justify-content: flex-start; }
         
         .msg-wrapper { display: flex; flex-direction: column; max-width: 75%; }
-        .msg-wrapper.mine { align-items: flex-end; }
-        .msg-wrapper.theirs { align-items: flex-start; }
-        
         .bubble { padding: 10px 14px; border-radius: 20px; font-size: 15px; position: relative; word-wrap: break-word; cursor: pointer; white-space: pre-wrap; }
         .bubble-mine { background-color: #8a2be2; color: white; border-bottom-right-radius: 4px; }
         .bubble-theirs { background-color: #ffffff; color: #333; border-bottom-left-radius: 4px; }
+        .bubble img { max-width: 200px; display: block; border-radius: 10px; }
         
-        .timestamp { font-size: 10px; color: #444; margin: 2px 5px 0 5px; opacity: 0.7; }
-        .quote-box { font-size: 0.75em; background: rgba(0,0,0,0.1); padding: 5px; border-radius: 8px; margin-bottom: 5px; border-left: 3px solid #888; opacity: 0.8; }
-        .bubble img { max-width: 200px; display: block; border-radius: 10px; cursor: pointer; }
+        .reply-bar { background: rgba(255,255,255,0.4); padding: 8px; border-radius: 15px; font-size: 12px; margin-bottom: 5px; display: none; }
 
-        .reply-bar { background: rgba(255,255,255,0.4); padding: 8px; border-radius: 15px; font-size: 12px; margin-bottom: 5px; display: none; position: relative; }
-        
-        /* Chat Input Buttons Animations */
         .chat-inputs { display: flex; flex-direction: row; gap: 8px; margin-top: 10px; }
         .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; font-family: 'Fredoka', sans-serif; }
         .chat-inputs button { 
@@ -124,33 +116,28 @@
             box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4); 
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
-        /* Hover animation for Send and Image buttons */
         .chat-inputs button:hover {
-            transform: translateY(-3px);
+            transform: translateY(-3px) translateZ(10px); /* Lift button on hover */
             box-shadow: 0 8px 18px rgba(138, 43, 226, 0.5);
             filter: brightness(1.1);
-        }
-        .chat-inputs button:active {
-            transform: translateY(0);
         }
     </style>
 </head>
 
 <body>
-    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center;">
-        <span class="close-lightbox" onclick="closeLightbox()" style="position:absolute; top:30px; right:40px; font-size:40px; color:white; cursor:pointer; font-weight:bold;">&times;</span>
-        <img id="lightbox-img" class="lightbox-img" style="max-width:90%; max-height:90%; border-radius:15px;" src="">
+    <div id="lightbox" onclick="closeLightbox()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center;">
+        <img id="lightbox-img" style="max-width:90%; max-height:90%; border-radius:15px;" src="">
     </div>
 
     <div class="main-app-container">
-        <!-- Left: Gallery -->
-        <div class="side-container box-style">
-            <div class="header-style">⭐ Image Gallery ⭐</div>
+        <!-- Gallery -->
+        <div class="side-container box-style tilt-box">
+            <div class="header-style">Image Gallery</div>
             <div id="gallery"></div>
         </div>
 
-        <!-- Center: Chat -->
-        <div class="chat-container box-style">
+        <!-- Chat -->
+        <div class="chat-container box-style tilt-box">
             <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
             <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
             <div id="colorMenu" class="color-menu">
@@ -163,7 +150,6 @@
                     <div class="color-option" style="background: rgb(255, 99, 71);" onclick="changeBaseColor('255, 99, 71')"></div>
                     <div class="color-option" style="background: rgb(255, 255, 0);" onclick="changeBaseColor('255, 255, 0')"></div>
                 </div>
-                <div class="slider-label">Transparency/Darkness</div>
                 <input type="range" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
             </div>
 
@@ -188,12 +174,12 @@
             </div>
         </div>
 
-        <!-- Right: Bucket List -->
-        <div class="side-container box-style">
-            <div class="header-style">Bucket List 🪣</div>
+        <!-- Bucket List -->
+        <div class="side-container box-style tilt-box">
+            <div class="header-style">Bucket List</div>
             <ul id="bucketList" class="bucket-list"></ul>
             <div class="chat-inputs">
-                <input type="text" id="bucketInput" placeholder="New adventure..." onkeypress="handleBucketKeyPress(event)">
+                <input type="text" id="bucketInput" placeholder="Add..." onkeypress="handleBucketKeyPress(event)">
                 <button onclick="addBucketItem()">Add</button>
             </div>
         </div>
@@ -219,6 +205,28 @@
         const bucketListRef = ref(db, "bucketlist");
         
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
+
+        // --- 3D TILT EFFECT LOGIC ---
+        document.querySelectorAll('.tilt-box').forEach(box => {
+            box.addEventListener('mousemove', (e) => {
+                const rect = box.getBoundingClientRect();
+                const x = e.clientX - rect.left; // x position within element
+                const y = e.clientY - rect.top;  // y position within element
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Calculate rotation (max 10 degrees)
+                const rotateX = ((y - centerY) / centerY) * -10;
+                const rotateY = ((x - centerX) / centerX) * 10;
+                
+                box.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            
+            box.addEventListener('mouseleave', () => {
+                box.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+            });
+        });
 
         // --- Theme Management ---
         const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230';
@@ -249,7 +257,6 @@
             push(bucketListRef, { text: input.value, timestamp: Date.now() });
             input.value = "";
         };
-
         window.handleBucketKeyPress = (e) => { if (e.key === 'Enter') addBucketItem(); };
         window.deleteBucketItem = (key) => { remove(child(bucketListRef, key)); };
 
@@ -267,55 +274,31 @@
         });
 
         // --- Chat & Gallery Logic ---
-        let holdTimer = null;
-        let replyingTo = null; 
-
-        window.openLightbox = (src) => {
-            document.getElementById('lightbox-img').src = src;
-            document.getElementById('lightbox').style.display = 'flex';
-        };
-
+        window.openLightbox = (src) => { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').style.display = 'flex'; };
         window.closeLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
-
-        window.startReply = (text, user) => {
-            replyingTo = { text: text || "[Image]", user: user };
-            const bar = document.getElementById('replyBar');
-            bar.style.display = 'block';
-            bar.innerHTML = `<strong>Replying to ${user}:</strong> ${text || "[Image]"} <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>`;
-        };
-
-        window.cancelReply = () => {
-            replyingTo = null;
-            document.getElementById('replyBar').style.display = 'none';
-        };
 
         window.handleImageUpload = (e) => {
             const file = e.target.files[0];
-            if (!file) return;
             const reader = new FileReader();
             reader.onload = (event) => {
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
                     const scale = 400 / img.width;
-                    canvas.width = 400;
-                    canvas.height = img.height * scale;
+                    canvas.width = 400; canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                    push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now(), replyTo: replyingTo });
-                    cancelReply();
+                    push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now() });
                 };
                 img.src = event.target.result;
             };
             reader.readAsDataURL(file);
-            e.target.value = '';
         };
 
         window.sendMessage = () => {
             const input = document.getElementById("messageInput");
             if (input.value.trim() === "") return;
-            push(messagesRef, { name: currentUser, text: input.value, timestamp: Date.now(), replyTo: replyingTo });
+            push(messagesRef, { name: currentUser, text: input.value, timestamp: Date.now() });
             input.value = "";
-            cancelReply();
         };
 
         window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
@@ -330,27 +313,15 @@
                 const isMine = data.name === currentUser;
                 const row = document.createElement('div');
                 row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
-                const wrapper = document.createElement('div');
-                wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
                 const bubble = document.createElement('div');
                 bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
-                bubble.onclick = () => startReply(data.text || "[Image]", data.name);
-                
-                if (data.replyTo) {
-                    const quote = document.createElement('div');
-                    quote.className = 'quote-box';
-                    quote.innerText = `${data.replyTo.user}: ${data.replyTo.text.substring(0,20)}...`;
-                    bubble.appendChild(quote);
-                }
                 if (data.image) {
-                    const img = document.createElement('img');
-                    img.src = data.image;
+                    const img = document.createElement('img'); img.src = data.image;
                     bubble.appendChild(img);
                 } else {
                     bubble.innerText = data.text;
                 }
-                wrapper.appendChild(bubble);
-                row.appendChild(wrapper);
+                row.appendChild(bubble);
                 messagesDiv.appendChild(row);
             });
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -364,8 +335,7 @@
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
                 const img = document.createElement('img');
-                img.src = data.image;
-                img.onclick = () => openLightbox(data.image);
+                img.src = data.image; img.onclick = () => openLightbox(data.image);
                 item.appendChild(img);
                 galleryDiv.appendChild(item);
             });

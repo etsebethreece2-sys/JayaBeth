@@ -4,36 +4,54 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            /* Lighter pink background */
             background-color: #e3c3cd; 
             margin: 0;
             padding: 0;
             height: 100vh;
-            /* Needed to make the 3D effect look correct */
             perspective: 1000px; 
+            display: flex; /* Centering for better demo */
+            justify-content: center;
+            align-items: center;
         }
 
         .container {
-            position: absolute;
-            top: 20px;
-            left: 20px;
             text-align: center;
-            /* Pink with transparency */
             background: rgba(255, 182, 193, 0.7); 
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            
-            /* Smooths out the tilting movement */
             transition: transform 0.1s ease-out;
             cursor: pointer;
-            
-            /* Prevents text from being highlighted while moving */
             user-select: none;
+            /* Keeps the content strictly inside the box */
+            transform-style: preserve-3d;
         }
 
         h1 { color: #333; margin-top: 0; }
-        p { color: #666; margin-bottom: 0; }
+
+        /* The Glow Effect Styling */
+        .glow-text {
+            /* Fallback color */
+            color: #666; 
+            font-weight: bold;
+            
+            /* Gradient that moves: Dark Grey -> White -> Dark Grey */
+            background: linear-gradient(90deg, #666, #fff, #666);
+            background-size: 200% 100%;
+            
+            /* Clips background to the text and makes text transparent to show background */
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            /* The animation: 3 seconds duration, runs infinitely */
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
     </style>
 </head>
 
@@ -41,28 +59,24 @@
 
     <div class="container" id="tilt-box">
         <h1>JayaBeth</h1>
-        <p>Shanky and Reece est. 2024</p>
+        <!-- Added the class here -->
+        <p class="glow-text">Shanky and Reece est. 2024</p>
     </div>
 
     <script>
         const container = document.getElementById('tilt-box');
 
         container.addEventListener('mousemove', (e) => {
-            // Get the size and position of the container
             const rect = container.getBoundingClientRect();
-            
-            // Calculate how far the mouse is from the center of the box
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
 
-            // Rotate based on mouse position (change the '10' to adjust sensitivity)
             const rotateX = -y / 10;
             const rotateY = x / 10;
 
             container.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         });
 
-        // Reset the tilt when the mouse leaves the container
         container.addEventListener('mouseleave', () => {
             container.style.transform = 'rotateX(0deg) rotateY(0deg)';
         });

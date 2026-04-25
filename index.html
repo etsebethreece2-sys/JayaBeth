@@ -130,95 +130,86 @@
         </div>
     </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    const firebaseConfig = { 
-        apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
-        authDomain: "jayabeth-fdaad.firebaseapp.com", 
-        projectId: "jayabeth-fdaad", 
-        storageBucket: "jayabeth-fdaad.firebasestorage.app", 
-        messagingSenderId: "716510918759", 
-        appId: "1:716510918759:web:35340b83ad2a134cecbcc2" 
-    };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
+            authDomain: "jayabeth-fdaad.firebaseapp.com", 
+            projectId: "jayabeth-fdaad", 
+            storageBucket: "jayabeth-fdaad.firebasestorage.app", 
+            messagingSenderId: "716510918759", 
+            appId: "1:716510918759:web:35340b83ad2a134cecbcc2" 
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const messagesRef = ref(db, "chatroom");
-    
-    let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
-    let replyingTo = null;
-
-    // --- Image Handling (Base64 approach) ---
-    document.getElementById('fileInput').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const messagesRef = ref(db, "chatroom");
         
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            // This 'result' is a string containing the image data
-            push(messagesRef, { 
-                name: currentUser, 
-                image: event.target.result, 
-                replyTo: replyingTo, 
-                timestamp: Date.now() 
-            });
+        let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
+        let replyingTo = null;
+
+        // --- UI Logic ---
+        const box = document.getElementById('chat-tilt-box');
+        box.addEventListener('mousemove', (e) => {
+            const rect = box.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            box.style.transform = `rotateX(${-y / 50}deg) rotateY(${x / 50}deg)`;
+        });
+        box.addEventListener('mouseleave', () => box.style.transform = `rotateX(0deg) rotateY(0deg)`);
+
+        window.cancelReply = () => { replyingTo = null; document.getElementById('replyBanner').style.display = 'none'; };
+        
+        window.startReply = (text, sender) => {
+            replyingTo = { text, sender };
+            document.getElementById('replyBanner').style.display = 'flex';
+            document.getElementById('replyText').innerText = `Replying to ${sender}: "${text.substring(0, 15)}..."`;
+            document.getElementById('messageInput').focus();
+        };
+
+        window.sendMessage = () => {
+            const input = document.getElementById("messageInput");
+            if (input.value.trim() === "") return;
+            push(messagesRef, { name: currentUser, text: input.value, replyTo: replyingTo, timestamp: Date.now() });
+            input.value = "";
             cancelReply();
         };
-        reader.readAsDataURL(file); // Converts image to Base64 string
-    });
 
-    // --- Standard Logic ---
-    window.cancelReply = () => { replyingTo = null; document.getElementById('replyBanner').style.display = 'none'; };
-    window.startReply = (text, sender) => {
-        replyingTo = { text, sender };
-        document.getElementById('replyBanner').style.display = 'flex';
-        document.getElementById('replyText').innerText = `Replying to ${sender}: "${text.substring(0, 15)}..."`;
-        document.getElementById('messageInput').focus();
-    };
+        window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
+        window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
+        window.resetChat = () => { if (confirm("Are you sure?")) remove(messagesRef); };
 
-    window.sendMessage = () => {
-        const input = document.getElementById("messageInput");
-        if (input.value.trim() === "") return;
-        push(messagesRef, { name: currentUser, text: input.value, replyTo: replyingTo, timestamp: Date.now() });
-        input.value = "";
-        cancelReply();
-    };
+        // Full Sync Listener
+        onValue(messagesRef, (snapshot) => {
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML = ""; 
 
-    window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
-    window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
-    window.resetChat = () => { if (confirm("Are you sure?")) remove(messagesRef); };
+            if (!snapshot.exists()) return;
 
-    onValue(messagesRef, (snapshot) => {
-        const messagesDiv = document.getElementById("messages");
-        messagesDiv.innerHTML = "";
-        if (!snapshot.exists()) return;
-        snapshot.forEach((childSnapshot) => {
-            const data = childSnapshot.val();
-            const isMine = data.name === currentUser;
-            const quoteHtml = data.replyTo ? `<div class="quote">${data.replyTo.sender}: ${data.replyTo.text}</div>` : '';
-            // If it's an image, use the Base64 string, otherwise use text
-            const content = data.image ? `<img src="${data.image}" style="max-width:200px; border-radius:10px;">` : data.text;
+            snapshot.forEach((childSnapshot) => {
+                const data = childSnapshot.val();
+                const isMine = data.name === currentUser;
+                const quoteHtml = data.replyTo ? `<div class="quote">${data.replyTo.sender}: ${data.replyTo.text}</div>` : '';
 
-            const row = document.createElement('div');
-            row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
-            row.innerHTML = `
-                <div class="message-wrapper">
-                    ${!isMine ? `<div class="sender-name">${data.name}</div>` : ''}
-                    <div class="bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}" onclick="startReply('${data.text ? data.text.replace(/'/g, "\\'") : 'Image'}', '${data.name}')">
-                        ${quoteHtml}${content}
+                const row = document.createElement('div');
+                row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
+                row.innerHTML = `
+                    <div class="message-wrapper">
+                        ${!isMine ? `<div class="sender-name">${data.name}</div>` : ''}
+                        <div class="bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}" onclick="startReply('${data.text.replace(/'/g, "\\'")}', '${data.name}')">
+                            ${quoteHtml}${data.text}
+                        </div>
                     </div>
-                </div>
-            `;
-            messagesDiv.appendChild(row);
+                `;
+                messagesDiv.appendChild(row);
+            });
+            messagesDiv.scrollTo({ top: messagesDiv.scrollHeight, behavior: 'smooth' });
         });
-        messagesDiv.scrollTo({ top: messagesDiv.scrollHeight, behavior: 'smooth' });
-    });
 
-    if(currentUser === 'Reece') document.getElementById('userReece').checked = true; 
-    else document.getElementById('userShanky').checked = true;
-</script>
+        if(currentUser === 'Reece') document.getElementById('userReece').checked = true; 
+        else document.getElementById('userShanky').checked = true;
+    </script>
 </body>
 </html>
-

@@ -51,7 +51,27 @@
         .reply-bar { background: #eee; padding: 8px; border-radius: 15px; font-size: 12px; margin-bottom: 5px; display: none; position: relative; }
         .chat-inputs { display: flex; flex-direction: row; gap: 8px; margin-top: 10px; }
         .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; }
-        .chat-inputs button { padding: 0 15px; border: none; border-radius: 25px; background-color: #e83e8c; color: white; font-weight: bold; cursor: pointer; }
+        
+        /* Updated Buttons with Gradient and Shadow */
+        .chat-inputs button { 
+            padding: 0 15px; 
+            border: none; 
+            border-radius: 25px; 
+            background: linear-gradient(135deg, #ff8da1, #e83e8c); 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(232, 62, 140, 0.4);
+            transition: all 0.2s ease;
+        }
+        .chat-inputs button:hover {
+            box-shadow: 0 6px 15px rgba(232, 62, 140, 0.5);
+            filter: brightness(1.1);
+        }
+        .chat-inputs button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(232, 62, 140, 0.4);
+        }
     </style>
 </head>
 

@@ -53,10 +53,9 @@
         /* --- UPDATED CHATROOM UI --- */
         .chat-container {
             position: absolute;
-            /* Centering the chatroom */
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%); /* Base transform */
+            transform: translate(-50%, -50%); 
             
             width: 450px;
             height: 600px;
@@ -70,7 +69,6 @@
             padding: 15px;
             box-sizing: border-box;
             
-            /* Added animation properties */
             transition: transform 0.1s ease-out;
             transform-style: preserve-3d;
         }
@@ -83,6 +81,7 @@
             border-bottom: 2px solid rgba(0,0,0,0.1);
             padding-bottom: 5px;
             font-size: 1.2em; 
+            position: relative;
         }
 
         .messages {
@@ -137,6 +136,16 @@
         .chat-inputs button:hover {
             background-color: #d82b78;
         }
+
+        /* Styling for the new Reset Button */
+        .btn-reset {
+            background-color: #ff4d4d !important; /* Red for danger */
+            margin-top: 5px;
+        }
+
+        .btn-reset:hover {
+            background-color: #cc0000 !important;
+        }
     </style>
 </head>
 
@@ -149,58 +158,55 @@
     </div>
 
     <!-- The Chatroom UI -->
-    <!-- Added ID "chat-tilt-box" for the new script -->
     <div class="chat-container" id="chat-tilt-box">
         <div class="chat-header">Live Chatroom</div>
+        
         <div class="messages" id="messages">
             <!-- Messages will load here -->
         </div>
+        
         <div class="chat-inputs">
             <input type="text" id="usernameInput" placeholder="Your Name" maxlength="15">
             <input type="text" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
             <button onclick="sendMessage()">Send</button>
+            <!-- New Reset Button -->
+            <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
         </div>
     </div>
 
     <!-- Your Tilt Scripts -->
     <script>
-        // 1. Tilt Script for Title Box (Aggressive)
+        // 1. Tilt Script for Title Box
         const container = document.getElementById('tilt-box');
         container.addEventListener('mousemove', (e) => {
             const rect = container.getBoundingClientRect();
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
-            // Divided by 10 for a sharp tilt
             container.style.transform = `rotateX(${-y / 10}deg) rotateY(${x / 10}deg)`;
         });
         container.addEventListener('mouseleave', () => {
             container.style.transform = 'rotateX(0deg) rotateY(0deg)';
         });
 
-        // 2. Tilt Script for Chatroom (Less Aggressive & Keeps Centering)
+        // 2. Tilt Script for Chatroom
         const chatContainer = document.getElementById('chat-tilt-box');
         chatContainer.addEventListener('mousemove', (e) => {
             const rect = chatContainer.getBoundingClientRect();
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
-            
-            // We MUST include translate(-50%, -50%) to keep it centered!
-            // Divided by 50 to make the tilt much softer and less aggressive
             chatContainer.style.transform = `translate(-50%, -50%) rotateX(${-y / 50}deg) rotateY(${x / 50}deg)`;
         });
         chatContainer.addEventListener('mouseleave', () => {
-            // Return to perfectly flat, but stay centered
             chatContainer.style.transform = 'translate(-50%, -50%) rotateX(0deg) rotateY(0deg)';
         });
     </script>
 
     <!-- Firebase Script (Module setup) -->
     <script type="module">
-        // Import Firebase functions
+        // Import Firebase functions (Added remove and onValue for resetting)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, onChildAdded, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // Fixed syntax formatting here so JS doesn't break
         const firebaseConfig = { 
             apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
             authDomain: "jayabeth-fdaad.firebaseapp.com", 
@@ -244,7 +250,21 @@
             }
         };
 
-        // Listen for new messages from the database and display them
+        // NEW: Function to reset the chat
+        window.resetChat = function() {
+            // Trigger browser confirmation popup
+            const isConfirmed = confirm("Are you sure you want to clear the entire chat? This cannot be undone.");
+            
+            if (isConfirmed) {
+                // Delete the chatroom node from Firebase database
+                remove(messagesRef).catch((error) => {
+                    console.error("Error clearing chat: ", error);
+                    alert("Failed to reset the chatroom.");
+                });
+            }
+        };
+
+        // Listen for new messages
         onChildAdded(messagesRef, (snapshot) => {
             const data = snapshot.val();
             const messagesDiv = document.getElementById("messages");
@@ -257,6 +277,15 @@
             
             // Auto-scroll to bottom
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+
+        // NEW: Listen for when the chat is completely deleted by someone
+        onValue(messagesRef, (snapshot) => {
+            // If the "chatroom" data doesn't exist (meaning it was removed)
+            if (!snapshot.exists()) {
+                // Clear the HTML inside the chat window for everyone looking at the page
+                document.getElementById("messages").innerHTML = "";
+            }
         });
     </script>
 

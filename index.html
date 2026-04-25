@@ -4,73 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JayaBeth - The Yap Box</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background-color: #fff9fa; background-image: url('avobackground.jpeg'); background-repeat: repeat; background-size: 650px; animation: moveBackground 100s linear infinite; display: flex; justify-content: center; }
+        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background: #fff9fa url('avobackground.jpeg'); background-size: 650px; animation: moveBackground 100s linear infinite; display: flex; justify-content: center; align-items: center; }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
-        /* Shared Styles */
+        .main-app-container { display: flex; gap: 30px; align-items: flex-start; }
+
+        /* Shared Box Style */
         .box-style { background: rgba(255, 182, 193, 0.85); backdrop-filter: blur(5px); border-radius: 25px; box-shadow: 0 15px 35px rgba(232, 62, 140, 0.15), 0 0 80px rgba(138, 43, 226, 0.6); padding: 15px; box-sizing: border-box; }
 
-        /* Gallery - Absolute Positioned to Left */
-        .gallery-container { position: absolute; left: 20px; top: 20px; width: 300px; height: 600px; display: flex; flex-direction: column; }
+        /* Gallery */
+        .gallery-container { width: 300px; height: 600px; display: flex; flex-direction: column; }
         .gallery-header { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; border-bottom: 2px solid rgba(255, 255, 255, 0.5); padding-bottom: 10px; }
         #gallery { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; align-content: flex-start; }
         .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 10px; overflow: hidden; }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
-        .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; }
+        .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; }
 
-        /* Chat - Centered */
-        .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; margin-top: 20px; }
-        .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #888; font-size: 11px; cursor: pointer; text-decoration: underline; z-index: 10; }
+        /* Chat */
+        .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
+        .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #888; font-size: 11px; cursor: pointer; text-decoration: underline; }
         .chat-header { font-weight: bold; color: #333; margin-bottom: 15px; text-align: center; padding-bottom: 10px; font-size: 1.3em; border-bottom: 2px solid rgba(255, 255, 255, 0.5); }
         .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.6); border-radius: 20px; padding: 4px; width: 180px; margin: 8px auto 0 auto; }
-        .user-selector input[type="radio"] { display: none; }
-        .user-selector label { padding: 5px 15px; cursor: pointer; font-size: 13px; border-radius: 16px; color: #555; transition: all 0.2s ease; flex: 1; text-align: center; }
-        .user-selector input[type="radio"]:checked + label { background: #e83e8c; color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .messages { flex-grow: 1; overflow-y: auto; margin-bottom: 10px; display: flex; flex-direction: column; gap: 12px; padding: 10px 5px; }
+        .user-selector input { display: none; }
+        .user-selector label { padding: 5px 15px; cursor: pointer; font-size: 13px; border-radius: 16px; color: #555; flex: 1; text-align: center; transition: 0.2s; }
+        .user-selector input:checked + label { background: #e83e8c; color: white; font-weight: bold; }
+        
+        .messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; }
         .message-row { display: flex; width: 100%; }
         .message-row.mine { justify-content: flex-end; }
         .message-row.theirs { justify-content: flex-start; }
-        .bubble { padding: 10px 14px; border-radius: 20px; font-size: 15px; cursor: pointer; position: relative; }
-        .bubble img { max-width: 100%; border-radius: 10px; display: block; }
-        .save-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); color: white; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        
+        /* Fixed Bubble Styles */
+        .bubble { padding: 10px 14px; border-radius: 20px; font-size: 15px; max-width: 75%; position: relative; word-wrap: break-word; }
+        .bubble-mine { background-color: #e83e8c; color: white; border-bottom-right-radius: 4px; }
+        .bubble-theirs { background-color: #ffffff; color: #333; border-bottom-left-radius: 4px; }
+        
+        /* Fixed Image Styles */
+        .bubble img { max-width: 200px; display: block; border-radius: 10px; cursor: pointer; }
+        .save-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); color: white; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 12px; font-weight: bold; cursor: pointer; z-index: 10; }
 
-        .chat-inputs { display: flex; flex-direction: row; gap: 8px; }
-        .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .chat-inputs { display: flex; flex-direction: row; gap: 8px; margin-top: 10px; }
+        .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; }
         .chat-inputs button { padding: 0 15px; border: none; border-radius: 25px; background-color: #e83e8c; color: white; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 
 <body>
-
-    <div class="gallery-container box-style">
-        <div class="gallery-header">Image Gallery</div>
-        <div id="gallery"></div>
-    </div>
-
-    <div class="chat-container box-style" id="chat-tilt-box">
-        <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
-        <div class="chat-header">
-            The Yap Box
-            <div class="user-selector">
-                <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
-                <label for="userShanky">Shanky</label>
-                <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
-                <label for="userReece">Reece</label>
-            </div>
+    <div class="main-app-container">
+        <div class="gallery-container box-style">
+            <div class="gallery-header">Image Gallery</div>
+            <div id="gallery"></div>
         </div>
-        
-        <div class="messages" id="messages"></div>
-        
-        <div class="chat-inputs">
-            <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-            <button onclick="document.getElementById('fileInput').click()">📷</button>
-            <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)">
-            <button id="sendBtn" onclick="sendMessage()">Send</button>
+
+        <div class="chat-container box-style">
+            <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
+            <div class="chat-header">
+                The Yap Box
+                <div class="user-selector">
+                    <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
+                    <label for="userShanky">Shanky</label>
+                    <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
+                    <label for="userReece">Reece</label>
+                </div>
+            </div>
+            
+            <div class="messages" id="messages"></div>
+            
+            <div class="chat-inputs">
+                <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                <button onclick="document.getElementById('fileInput').click()">📷</button>
+                <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Send</button>
+            </div>
         </div>
     </div>
 
@@ -95,37 +103,26 @@
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let holdTimer = null;
 
-        // --- Interaction Logic (Hold to Save) ---
+        // Interaction Logic (Hold to Save)
         window.startHold = (event, imgData) => {
             holdTimer = setTimeout(() => {
-                showSaveButton(event.target, imgData);
-            }, 2000); // 2 Seconds
+                const target = event.target;
+                if(target.parentElement.querySelector('.save-overlay')) return;
+                const overlay = document.createElement('div');
+                overlay.className = 'save-overlay';
+                overlay.innerText = 'Save to Gallery';
+                overlay.onclick = () => {
+                    push(galleryRef, { image: imgData, timestamp: Date.now() });
+                    overlay.innerText = 'Saved!';
+                    setTimeout(() => overlay.remove(), 1000);
+                };
+                target.parentElement.appendChild(overlay);
+                setTimeout(() => { if(overlay) overlay.remove(); }, 3000);
+            }, 2000);
         };
 
-        window.endHold = () => { clearTimeout(holdTimer); };
+        window.endHold = () => clearTimeout(holdTimer);
 
-        function showSaveButton(targetImg, imgData) {
-            // Check if already has save button
-            if(targetImg.parentElement.querySelector('.save-overlay')) return;
-            
-            const overlay = document.createElement('div');
-            overlay.className = 'save-overlay';
-            overlay.innerText = 'Save to Gallery';
-            overlay.onclick = () => {
-                push(galleryRef, { image: imgData, timestamp: Date.now() });
-                overlay.innerText = 'Saved!';
-                setTimeout(() => overlay.remove(), 1000);
-            };
-            targetImg.parentElement.appendChild(overlay);
-            
-            // Remove after 3 seconds if not clicked
-            setTimeout(() => { if(overlay) overlay.remove(); }, 3000);
-        }
-
-        // --- Gallery Logic ---
-        window.deleteGalleryItem = (key) => { remove(child(galleryRef, key)); };
-
-        // --- Chat Logic ---
         window.handleImageUpload = (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -134,8 +131,8 @@
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const scale = 600 / img.width;
-                    canvas.width = 600;
+                    const scale = 400 / img.width; // Cap width at 400px
+                    canvas.width = 400;
                     canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                     push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now() });
@@ -156,8 +153,8 @@
         window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
         window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
         window.resetChat = () => { if (confirm("Clear Chat?")) remove(messagesRef); };
+        window.deleteGalleryItem = (key) => { remove(child(galleryRef, key)); };
 
-        // Listeners
         onValue(messagesRef, (snapshot) => {
             const messagesDiv = document.getElementById("messages");
             messagesDiv.innerHTML = "";
@@ -165,31 +162,28 @@
             snapshot.forEach((child) => {
                 const data = child.val();
                 const isMine = data.name === currentUser;
-                
                 const row = document.createElement('div');
                 row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
                 
+                const bubble = document.createElement('div');
+                bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
+                
                 if (data.image) {
-                    const bubble = document.createElement('div');
-                    bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
-                    bubble.style.padding = "0"; // images don't need padding
                     const img = document.createElement('img');
                     img.src = data.image;
-                    // Add listeners
                     img.onmousedown = (e) => startHold(e, data.image);
                     img.onmouseup = endHold;
                     img.onmouseleave = endHold;
                     img.ontouchstart = (e) => startHold(e, data.image);
                     img.ontouchend = endHold;
-                    
                     bubble.appendChild(img);
-                    row.appendChild(bubble);
                 } else {
-                    row.innerHTML = `<div class="bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}">${data.text}</div>`;
+                    bubble.innerText = data.text;
                 }
+                row.appendChild(bubble);
                 messagesDiv.appendChild(row);
             });
-            messagesDiv.scrollTo({ top: messagesDiv.scrollHeight, behavior: 'smooth' });
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
 
         onValue(galleryRef, (snapshot) => {
@@ -201,10 +195,7 @@
                 const key = child.key;
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
-                item.innerHTML = `
-                    <img src="${data.image}">
-                    <button class="delete-btn" onclick="deleteGalleryItem('${key}')">✕</button>
-                `;
+                item.innerHTML = `<img src="${data.image}"><button class="delete-btn" onclick="deleteGalleryItem('${key}')">✕</button>`;
                 galleryDiv.appendChild(item);
             });
         });

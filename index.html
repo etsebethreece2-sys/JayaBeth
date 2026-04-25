@@ -70,9 +70,6 @@
             animation: fadeIn 0.3s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.8); } }
-        .bucket-item.removing { animation: fadeOut 0.3s ease forwards; }
-        
         .delete-item-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
         .delete-item-btn:hover { opacity: 1; transform: scale(1.2); }
 
@@ -97,14 +94,13 @@
         .user-selector input:checked + label { background: #8a2be2; color: white; font-weight: bold; }
         
         /* Pinned Message Bar */
-        .pinned-bar { background: rgba(255, 255, 255, 0.6); border-left: 4px solid #8a2be2; padding: 8px 10px; margin: 0 10px 10px 10px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: background 0.2s; }
-        .pinned-bar:hover { background: rgba(255, 255, 255, 0.8); }
-        .pinned-content { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; color: #333; cursor: pointer; }
-        .unpin-btn { background: none; border: none; cursor: pointer; color: #666; font-weight: bold; font-size: 14px; transition: color 0.2s; padding: 0 5px; }
+        .pinned-bar { background: rgba(255, 255, 255, 0.6); border-left: 4px solid #8a2be2; padding: 8px 10px; margin: 0 10px 10px 10px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .pinned-content { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; color: #333; }
+        .unpin-btn { background: none; border: none; cursor: pointer; color: #666; font-weight: bold; font-size: 14px; transition: color 0.2s; }
         .unpin-btn:hover { color: #ff4d4d; }
 
-        .messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; scroll-behavior: smooth; }
-        .message-row { display: flex; width: 100%; position: relative; transition: transform 0.3s; }
+        .messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; }
+        .message-row { display: flex; width: 100%; position: relative; }
         .message-row.mine { justify-content: flex-end; }
         .message-row.theirs { justify-content: flex-start; }
         
@@ -113,20 +109,20 @@
         .msg-wrapper.theirs { align-items: flex-start; }
         
         /* Bubble & Dropdown styling */
-        .bubble { padding: 10px 24px 10px 14px; border-radius: 20px; font-size: 15px; position: relative; word-wrap: break-word; white-space: pre-wrap; transition: background-color 0.2s, filter 0.3s; }
+        .bubble { padding: 10px 24px 10px 14px; border-radius: 20px; font-size: 15px; position: relative; word-wrap: break-word; cursor: pointer; white-space: pre-wrap; transition: background-color 0.2s; }
         .bubble-mine { background-color: #8a2be2; color: white; border-bottom-right-radius: 4px; }
         .bubble-theirs { background-color: #ffffff; color: #333; border-bottom-left-radius: 4px; }
         .bubble a { color: inherit; text-decoration: underline; font-weight: bold; }
         
         /* Message Dropdown */
         .msg-dropdown-container { position: absolute; top: 6px; right: 6px; z-index: 5; }
-        .msg-dropdown-btn { background: rgba(255, 255, 255, 0.8); border: none; border-radius: 50%; width: 13px; height: 13px; font-size: 8px; line-height: 1; cursor: pointer; display: none; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.3); align-items: center; justify-content: center; transition: background 0.2s; padding: 0; opacity: 0.8; }
-        .msg-dropdown-btn:hover { background: rgba(220, 220, 220, 0.9); }
+        .msg-dropdown-btn { background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; line-height: 1; cursor: pointer; display: none; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.3); align-items: center; justify-content: center; transition: background 0.2s; }
+        .msg-dropdown-btn:hover { background: #e0e0e0; }
         .bubble:hover .msg-dropdown-btn { display: flex; }
         
-        .msg-dropdown-menu { display: none; position: absolute; top: 20px; right: 0; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(5px); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; flex-direction: column; width: 110px; z-index: 100; border: 1px solid rgba(255,255,255,0.8); }
+        .msg-dropdown-menu { display: none; position: absolute; top: 22px; right: 0; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); overflow: hidden; flex-direction: column; width: 110px; z-index: 100; border: 1px solid #eee; }
         .msg-dropdown-menu button { padding: 10px 12px; border: none; background: none; text-align: left; cursor: pointer; font-family: 'Fredoka', sans-serif; font-size: 13px; color: #333; transition: background 0.2s; }
-        .msg-dropdown-menu button:hover { background: rgba(255,255,255,0.8); }
+        .msg-dropdown-menu button:hover { background: #f5f5f5; }
         .msg-dropdown-menu button.delete-msg-btn:hover { color: #ff4d4d; }
 
         .timestamp { font-size: 10px; color: #444; margin: 2px 5px 0 5px; opacity: 0.7; display: flex; align-items: center; }
@@ -140,18 +136,31 @@
 
         .reply-bar { background: rgba(255,255,255,0.4); padding: 8px; border-radius: 15px; font-size: 12px; margin-bottom: 5px; display: none; position: relative; }
         
+        /* Chat Inputs & Button Animations */
         .chat-inputs { display: flex; flex-direction: row; gap: 8px; margin-top: 10px; align-items: center; }
         .input-wrapper { display: flex; flex-grow: 1; position: relative; align-items: center; }
         .input-wrapper input { width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 25px; outline: none; font-family: 'Fredoka', sans-serif; box-sizing: border-box; }
         .clear-btn { position: absolute; right: 10px; background: rgba(0,0,0,0.15); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 10px; cursor: pointer; display: none; align-items: center; justify-content: center; font-weight: bold; transition: 0.2s; }
         .clear-btn:hover { background: #ff4d4d; }
         
-        .chat-inputs button { padding: 10px 15px; border: none; border-radius: 25px; background: linear-gradient(135deg, #b19cd9, #8a2be2); color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease; }
-        .chat-inputs button:hover { transform: scale(1.1); filter: brightness(1.15); }
-        .chat-inputs button:active { transform: scale(0.95); }
-
-        @keyframes highlightFlash { 0% { filter: brightness(1); transform: scale(1); } 50% { filter: brightness(0.85); transform: scale(1.02); } 100% { filter: brightness(1); transform: scale(1); } }
-        .highlight-msg { animation: highlightFlash 1.2s ease-out; }
+        .chat-inputs button { 
+            padding: 10px 15px; 
+            border: none; 
+            border-radius: 25px; 
+            background: linear-gradient(135deg, #b19cd9, #8a2be2); 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4); 
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease; 
+        }
+        .chat-inputs button:hover {
+            transform: scale(1.1);
+            filter: brightness(1.15);
+        }
+        .chat-inputs button:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 
@@ -162,43 +171,51 @@
     </div>
 
     <div class="main-app-container">
+        
+        <!-- Left: Date Counter Box -->
         <div class="date-box box-style">
             <div class="date-text">It was official</div>
             <div class="date-number" id="days-count">0</div>
             <div class="date-text">days ago</div>
         </div>
 
+        <!-- Left Center: Gallery -->
         <div class="side-container box-style">
             <div class="header-style">Image Gallery</div>
             <div id="gallery"></div>
         </div>
 
+        <!-- Center: Chat -->
         <div class="chat-container box-style">
             <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
             <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
             <div id="colorMenu" class="color-menu">
                 <div class="color-grid">
-                    <div class="color-option" style="background: linear-gradient(135deg, #bea0e6, #d9c5f0);" onclick="changeBaseColor('190, 160, 230')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #ffb6c1, #ffcee0);" onclick="changeBaseColor('255, 182, 193')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #add8e6, #c8eef8);" onclick="changeBaseColor('173, 216, 230')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #90ee90, #bbf7bb);" onclick="changeBaseColor('144, 238, 144')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #ffa500, #ffc866);" onclick="changeBaseColor('255, 165, 0')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #ff6347, #ff9480);" onclick="changeBaseColor('255, 99, 71')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #ffff00, #ffff99);" onclick="changeBaseColor('255, 255, 0')"></div>
+                    <div class="color-option" style="background: rgb(190, 160, 230);" onclick="changeBaseColor('190, 160, 230')"></div>
+                    <div class="color-option" style="background: rgb(255, 182, 193);" onclick="changeBaseColor('255, 182, 193')"></div>
+                    <div class="color-option" style="background: rgb(173, 216, 230);" onclick="changeBaseColor('173, 216, 230')"></div>
+                    <div class="color-option" style="background: rgb(144, 238, 144);" onclick="changeBaseColor('144, 238, 144')"></div>
+                    <div class="color-option" style="background: rgb(255, 165, 0);" onclick="changeBaseColor('255, 165, 0')"></div>
+                    <div class="color-option" style="background: rgb(255, 99, 71);" onclick="changeBaseColor('255, 99, 71')"></div>
+                    <div class="color-option" style="background: rgb(255, 255, 0);" onclick="changeBaseColor('255, 255, 0')"></div>
                 </div>
-                <div class="slider-label">Transparency</div>
+                <div class="slider-label">Transparency/Darkness</div>
                 <input type="range" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
             </div>
 
-            <div class="chat-header">The Yap Box
+            <div class="chat-header">
+                The Yap Box
                 <div class="user-selector">
-                    <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)"><label for="userShanky">Shanky</label>
-                    <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)"><label for="userReece">Reece</label>
+                    <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
+                    <label for="userShanky">Shanky</label>
+                    <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
+                    <label for="userReece">Reece</label>
                 </div>
             </div>
 
+            <!-- Pinned Message Bar -->
             <div id="pinnedBar" class="pinned-bar" style="display: none;">
-                <div class="pinned-content" id="pinnedContent" title="Click to jump to message"></div>
+                <div class="pinned-content" id="pinnedContent"></div>
                 <button class="unpin-btn" onclick="unpinMessage()" title="Unpin message">✕</button>
             </div>
             
@@ -216,6 +233,7 @@
             </div>
         </div>
 
+        <!-- Right: Bucket List -->
         <div class="side-container box-style">
             <div class="header-style">Bucket List</div>
             <ul id="bucketList" class="bucket-list"></ul>
@@ -230,7 +248,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, child, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", authDomain: "jayabeth-fdaad.firebaseapp.com", projectId: "jayabeth-fdaad", storageBucket: "jayabeth-fdaad.firebasestorage.app", messagingSenderId: "716510918759", appId: "1:716510918759:web:35340b83ad2a134cecbcc2" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
+            authDomain: "jayabeth-fdaad.firebaseapp.com", 
+            projectId: "jayabeth-fdaad", 
+            storageBucket: "jayabeth-fdaad.firebasestorage.app", 
+            messagingSenderId: "716510918759", 
+            appId: "1:716510918759:web:35340b83ad2a134cecbcc2" 
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
@@ -242,26 +267,85 @@
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let otherUserLastSeen = 0;
 
+        // --- Calculate Official Date Counter ---
         window.addEventListener('DOMContentLoaded', () => {
             const startDate = new Date("2026-04-12T00:00:00");
             const today = new Date();
-            document.getElementById("days-count").innerText = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            document.getElementById("days-count").innerText = diffDays;
         });
 
-        // --- Bucket List Logic ---
-        window.deleteBucketItem = (key) => {
-            const el = document.getElementById(`bucket-${key}`);
-            if(el) {
-                el.classList.add('removing');
-                setTimeout(() => remove(child(bucketListRef, key)), 300);
-            }
+        // --- User Status & Read Receipts ---
+        const updateMyStatus = () => {
+            set(ref(db, `status/${currentUser}`), { lastSeen: Date.now() });
+        };
+        window.addEventListener('focus', updateMyStatus);
+        document.addEventListener('click', updateMyStatus);
+        setTimeout(updateMyStatus, 1000);
+
+        const listenToOtherUserStatus = () => {
+            const otherUser = currentUser === 'Shanky' ? 'Reece' : 'Shanky';
+            onValue(ref(db, `status/${otherUser}`), (snapshot) => {
+                if (snapshot.exists()) {
+                    otherUserLastSeen = snapshot.val().lastSeen;
+                    document.querySelectorAll('.tick').forEach(tickEl => {
+                        const ts = parseInt(tickEl.getAttribute('data-timestamp'));
+                        if (ts <= otherUserLastSeen) {
+                            tickEl.classList.remove('unread');
+                            tickEl.classList.add('read');
+                        }
+                    });
+                }
+            });
+        };
+        listenToOtherUserStatus();
+
+        // Theme Load
+        const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230';
+        const savedAlpha = localStorage.getItem('yapboxAlpha') || '0.85';
+        document.documentElement.style.setProperty('--box-base-rgb', savedRGB);
+        document.documentElement.style.setProperty('--box-alpha', savedAlpha);
+        document.getElementById('opacitySlider').value = savedAlpha;
+
+        // Hide all dropdown menus when clicking anywhere else
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.msg-dropdown-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+        });
+
+        // --- Clear Input Logic ---
+        window.toggleClearBtn = () => {
+            const input = document.getElementById("messageInput");
+            const btn = document.getElementById("clearBtn");
+            btn.style.display = input.value.length > 0 ? "flex" : "none";
         };
 
+        window.clearInput = () => {
+            const input = document.getElementById("messageInput");
+            input.value = "";
+            toggleClearBtn();
+            input.focus();
+        };
+
+        // --- Bucket List Logic ---
         window.addBucketItem = () => {
             const input = document.getElementById("bucketInput");
             if (input.value.trim() === "") return;
-            push(bucketListRef, { text: input.value, timestamp: Date.now(), creator: currentUser });
+            push(bucketListRef, { 
+                text: input.value, 
+                timestamp: Date.now(),
+                creator: currentUser 
+            });
             input.value = "";
+        };
+
+        window.handleBucketKeyPress = (e) => {
+            if (e.key === 'Enter') addBucketItem();
+        };
+
+        window.deleteBucketItem = (key) => {
+            remove(child(bucketListRef, key));
         };
 
         onValue(bucketListRef, (snapshot) => {
@@ -272,26 +356,17 @@
                 const data = child.val();
                 const key = child.key;
                 const li = document.createElement('li');
-                li.id = `bucket-${key}`;
                 li.className = 'bucket-item';
-                li.innerHTML = `<span>${data.text}</span><button class="delete-item-btn" onclick="deleteBucketItem('${key}')">✕</button>`;
+                li.innerHTML = `
+                    <span>${data.text}</span>
+                    <button class="delete-item-btn" onclick="deleteBucketItem('${key}')">✕</button>
+                `;
                 listDiv.appendChild(li);
             });
+            listDiv.scrollTop = listDiv.scrollHeight;
         });
 
-        // --- Chat Logic Helpers ---
-        window.toggleClearBtn = () => {
-            const input = document.getElementById("messageInput");
-            document.getElementById("clearBtn").style.display = input.value.length > 0 ? "flex" : "none";
-        };
-
-        window.clearInput = () => {
-            const input = document.getElementById("messageInput");
-            input.value = "";
-            toggleClearBtn();
-            input.focus();
-        };
-
+        // --- Helpers & UI ---
         window.toggleColorMenu = (e) => {
             if(e) e.stopPropagation();
             const menu = document.getElementById('colorMenu');
@@ -308,25 +383,131 @@
             localStorage.setItem('yapboxAlpha', val);
         };
 
-        window.pinMessage = (msgData, key) => { set(pinnedRef, { ...msgData, originalKey: key }); };
-        window.unpinMessage = () => { remove(pinnedRef); };
-        window.deleteMessage = (key) => { if(confirm("Delete this message?")) remove(child(messagesRef, key)); };
+        const formatTime = (ts) => {
+            const date = new Date(ts);
+            return date.getHours().toString().padStart(2, '0') + ':' + 
+                   date.getMinutes().toString().padStart(2, '0');
+        };
+
+        const formatMessageLinks = (text) => {
+            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+        };
+
+        // --- Chat, Dropdowns & Gallery Logic ---
+        let holdTimer = null;
+        let replyingTo = null; 
+
+        window.openLightbox = (src) => {
+            const lightbox = document.getElementById('lightbox');
+            document.getElementById('lightbox-img').src = src;
+            lightbox.style.display = 'flex';
+        };
+
+        window.closeLightbox = () => {
+            document.getElementById('lightbox').style.display = 'none';
+        };
+
+        window.startReply = (text, user) => {
+            replyingTo = { text: text || "[Image]", user: user };
+            const bar = document.getElementById('replyBar');
+            bar.style.display = 'block';
+            bar.innerHTML = `<strong>Replying to ${user}:</strong> ${text || "[Image]"} <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>`;
+        };
+
+        window.cancelReply = () => {
+            replyingTo = null;
+            document.getElementById('replyBar').style.display = 'none';
+        };
+
+        // Pinned Logic
+        window.pinMessage = (msgData) => {
+            set(pinnedRef, msgData);
+        };
         
-        // Pinned Logic Jump
+        window.unpinMessage = () => {
+            remove(pinnedRef);
+        };
+
+        window.deleteMessage = (key) => {
+            if(confirm("Delete this message?")) {
+                remove(child(messagesRef, key));
+            }
+        };
+
         onValue(pinnedRef, (snapshot) => {
             const bar = document.getElementById('pinnedBar');
+            const content = document.getElementById('pinnedContent');
             if(snapshot.exists()) {
                 const data = snapshot.val();
-                document.getElementById('pinnedContent').innerHTML = `<strong>📌 Pinned</strong> - ${data.name}: ${data.text || '[Image]'}`;
-                document.getElementById('pinnedContent').onclick = () => {
-                    const el = document.getElementById(`msg-${data.originalKey}`);
-                    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('highlight-msg'); setTimeout(() => el.classList.remove('highlight-msg'), 1200); }
-                };
+                let displayTxt = data.text ? data.text : '[Image]';
+                content.innerHTML = `<strong>📌 Pinned</strong> - ${data.name}: ${displayTxt}`;
                 bar.style.display = 'flex';
-            } else bar.style.display = 'none';
+            } else {
+                bar.style.display = 'none';
+            }
         });
 
-        // --- Main Chat Render ---
+        window.startHold = (event, imgData) => {
+            holdTimer = setTimeout(() => {
+                const target = event.target;
+                if(target.parentElement.querySelector('.save-overlay')) return;
+                const overlay = document.createElement('div');
+                overlay.className = 'save-overlay';
+                overlay.innerText = 'Save to Gallery';
+                overlay.onclick = (e) => {
+                    e.stopPropagation();
+                    push(galleryRef, { image: imgData, timestamp: Date.now() });
+                    overlay.innerText = 'Saved!';
+                    setTimeout(() => overlay.remove(), 1000);
+                };
+                target.parentElement.appendChild(overlay);
+                setTimeout(() => { if(overlay) overlay.remove(); }, 3000);
+            }, 1000); 
+        };
+
+        window.endHold = () => clearTimeout(holdTimer);
+
+        window.handleImageUpload = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const scale = 400 / img.width;
+                    canvas.width = 400;
+                    canvas.height = img.height * scale;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now(), replyTo: replyingTo });
+                    cancelReply();
+                    updateMyStatus();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        };
+
+        window.sendMessage = () => {
+            const input = document.getElementById("messageInput");
+            if (input.value.trim() === "") return;
+            push(messagesRef, { name: currentUser, text: input.value, timestamp: Date.now(), replyTo: replyingTo });
+            input.value = "";
+            toggleClearBtn();
+            cancelReply();
+            updateMyStatus();
+        };
+
+        window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
+        window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
+        window.resetChat = () => { if (confirm("Clear Chat?")) remove(messagesRef); };
+        window.deleteGalleryItem = (event, key) => { 
+            event.stopPropagation(); 
+            remove(child(galleryRef, key)); 
+        };
+
         onValue(messagesRef, (snapshot) => {
             const messagesDiv = document.getElementById("messages");
             messagesDiv.innerHTML = "";
@@ -338,7 +519,6 @@
                 
                 const row = document.createElement('div');
                 row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
-                row.id = `msg-${key}`;
                 
                 const wrapper = document.createElement('div');
                 wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
@@ -346,34 +526,50 @@
                 const bubble = document.createElement('div');
                 bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
                 
-                // Dropdown setup
+                // Reply triggered by clicking the bubble body
+                bubble.onclick = (e) => {
+                    // Prevent triggering if clicked directly on image or dropdown
+                    if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) {
+                        startReply(data.text || "[Image]", data.name);
+                    }
+                };
+                
+                // --- Dropdown Menu Elements ---
                 const dropdownContainer = document.createElement('div');
                 dropdownContainer.className = 'msg-dropdown-container';
+                
                 const dropBtn = document.createElement('button');
                 dropBtn.className = 'msg-dropdown-btn';
-                dropBtn.innerHTML = '▼';
+                dropBtn.innerHTML = '&#8964;'; // Unicode chevron down (⌄)
+                
                 const dropMenu = document.createElement('div');
                 dropMenu.className = 'msg-dropdown-menu';
                 
-                const actions = [
-                    { t: 'Reply', f: () => { replyingTo = { text: data.text || "[Image]", user: data.name }; document.getElementById('replyBar').style.display = 'block'; document.getElementById('replyBar').innerHTML = `<strong>Replying to ${data.name}:</strong> ${data.text || "[Image]"} <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>`; } },
-                    { t: 'Pin', f: () => pinMessage(data, key) },
-                    { t: 'Delete', f: () => deleteMessage(key), c: 'delete-msg-btn' }
-                ];
+                const pinBtn = document.createElement('button');
+                pinBtn.innerText = '📌 Pin';
+                pinBtn.onclick = (e) => { e.stopPropagation(); pinMessage(data); dropMenu.style.display = 'none'; };
                 
-                actions.forEach(act => {
-                    const btn = document.createElement('button');
-                    btn.innerText = act.t;
-                    if(act.c) btn.className = act.c;
-                    btn.onclick = (e) => { e.stopPropagation(); act.f(); dropMenu.style.display = 'none'; };
-                    dropMenu.appendChild(btn);
-                });
-
-                dropBtn.onclick = (e) => { e.stopPropagation(); document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none'); dropMenu.style.display = dropMenu.style.display === 'flex' ? 'none' : 'flex'; };
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-msg-btn';
+                deleteBtn.innerText = '🗑️ Delete';
+                deleteBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(key); dropMenu.style.display = 'none'; };
+                
+                dropMenu.appendChild(pinBtn);
+                dropMenu.appendChild(deleteBtn);
+                
+                dropBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const isOpen = dropMenu.style.display === 'flex';
+                    // close all others
+                    document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none');
+                    dropMenu.style.display = isOpen ? 'none' : 'flex';
+                };
+                
                 dropdownContainer.appendChild(dropBtn);
                 dropdownContainer.appendChild(dropMenu);
                 bubble.appendChild(dropdownContainer);
-                
+                // -----------------------------
+
                 if (data.replyTo) {
                     const quote = document.createElement('div');
                     quote.className = 'quote-box';
@@ -384,18 +580,34 @@
                 if (data.image) {
                     const img = document.createElement('img');
                     img.src = data.image;
-                    img.onclick = (e) => { e.stopPropagation(); document.getElementById('lightbox-img').src = data.image; document.getElementById('lightbox').style.display = 'flex'; };
+                    img.onmousedown = (e) => startHold(e, data.image);
+                    img.onmouseup = endHold;
+                    img.onmouseleave = endHold;
+                    img.ontouchstart = (e) => startHold(e, data.image);
+                    img.ontouchend = endHold;
+                    // Clicking image opens lightbox
+                    img.onclick = (e) => { e.stopPropagation(); openLightbox(data.image); };
                     bubble.appendChild(img);
                 } else {
+                    // Wrap text in a span so it formats correctly alongside dropdown
                     const textSpan = document.createElement('span');
-                    textSpan.innerHTML = data.text.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig, '<a href="$1" target="_blank">$1</a>');
+                    textSpan.innerHTML = formatMessageLinks(data.text);
                     bubble.appendChild(textSpan);
                 }
                 
                 const time = document.createElement('div');
                 time.className = 'timestamp';
-                time.innerText = new Date(data.timestamp).getHours().toString().padStart(2,'0') + ':' + new Date(data.timestamp).getMinutes().toString().padStart(2,'0');
+                time.innerText = formatTime(data.timestamp);
                 
+                // Add read receipts for sent messages
+                if(isMine) {
+                    const tickSpan = document.createElement('span');
+                    tickSpan.className = 'tick ' + (data.timestamp <= otherUserLastSeen ? 'read' : 'unread');
+                    tickSpan.setAttribute('data-timestamp', data.timestamp);
+                    tickSpan.innerText = '✓✓';
+                    time.appendChild(tickSpan);
+                }
+
                 wrapper.appendChild(bubble);
                 wrapper.appendChild(time);
                 row.appendChild(wrapper);
@@ -404,10 +616,30 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
 
-        // Initialize user selector
-        document.getElementById(currentUser === 'Reece' ? 'userReece' : 'userShanky').checked = true;
-        window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
-        window.cancelReply = () => { document.getElementById('replyBar').style.display = 'none'; };
+        onValue(galleryRef, (snapshot) => {
+            const galleryDiv = document.getElementById("gallery");
+            galleryDiv.innerHTML = "";
+            if (!snapshot.exists()) return;
+            snapshot.forEach((child) => {
+                const data = child.val();
+                const key = child.key;
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                const img = document.createElement('img');
+                img.src = data.image;
+                img.onclick = () => openLightbox(data.image);
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-btn';
+                delBtn.innerText = '✕';
+                delBtn.onclick = (e) => deleteGalleryItem(e, key);
+                item.appendChild(img);
+                item.appendChild(delBtn);
+                galleryDiv.appendChild(item);
+            });
+        });
+
+        if(currentUser === 'Reece') document.getElementById('userReece').checked = true; 
+        else document.getElementById('userShanky').checked = true;
     </script>
 </body>
 </html>

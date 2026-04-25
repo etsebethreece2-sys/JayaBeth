@@ -19,7 +19,6 @@
             align-items: center;
             box-sizing: border-box;
             background-color: #fff9fa;
-            /* Update this to your image path */
             background-image: url('avobackground.jpeg');
             background-repeat: repeat;
             background-size: 650px;
@@ -33,7 +32,6 @@
         .glow-text { color: #666; font-weight: bold; background: linear-gradient(90deg, #666 45%, #bbb 50%, #666 55%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shine 6s linear infinite; }
         @keyframes shine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        /* Chat Container with 3D effect */
         .chat-container {
             width: 400px;
             height: 600px;
@@ -70,13 +68,11 @@
         
         .sender-name { font-size: 11px; color: #555; margin-bottom: 3px; margin-left: 5px; }
         
-        /* Message Bubble Styles */
         .bubble { padding: 10px 14px; border-radius: 20px; font-size: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .bubble:hover { filter: brightness(0.95); }
         .bubble-mine { background-color: #e83e8c; color: white; border-bottom-right-radius: 4px; }
         .bubble-theirs { background-color: #ffffff; color: #333; border-bottom-left-radius: 4px; }
         
-        /* Reply UI */
         .quote { font-size: 11px; background: rgba(0,0,0,0.05); padding: 5px 8px; border-radius: 8px; margin-bottom: 6px; font-style: italic; border-left: 3px solid #e83e8c; }
         .reply-banner { background: rgba(255, 255, 255, 0.7); padding: 8px 15px; border-radius: 15px; margin-bottom: 8px; font-size: 12px; color: #555; display: none; justify-content: space-between; align-items: center; }
 
@@ -123,7 +119,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onChildAdded, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
@@ -141,7 +137,7 @@
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let replyingTo = null;
 
-        // --- Tilt Effect ---
+        // --- UI Initialization ---
         const box = document.getElementById('chat-tilt-box');
         box.addEventListener('mousemove', (e) => {
             const rect = box.getBoundingClientRect();
@@ -151,7 +147,6 @@
         });
         box.addEventListener('mouseleave', () => box.style.transform = `rotateX(0deg) rotateY(0deg)`);
 
-        // --- Reply Logic ---
         window.cancelReply = () => { replyingTo = null; document.getElementById('replyBanner').style.display = 'none'; };
         
         window.startReply = (text, sender) => {
@@ -173,30 +168,34 @@
         window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
         window.resetChat = () => { if (confirm("Are you sure?")) remove(messagesRef); };
 
-        // Real-time listener: If the database is wiped, clear the screen immediately
+        // --- The Fix: Using onValue to Re-render the Entire Chat ---
         onValue(messagesRef, (snapshot) => {
-            if (!snapshot.exists()) {
-                document.getElementById("messages").innerHTML = "";
-            }
-        });
-
-        onChildAdded(messagesRef, (snapshot) => {
-            const data = snapshot.val();
             const messagesDiv = document.getElementById("messages");
-            const isMine = data.name === currentUser;
-            const quoteHtml = data.replyTo ? `<div class="quote">${data.replyTo.sender}: ${data.replyTo.text}</div>` : '';
+            messagesDiv.innerHTML = ""; // Wipe the screen clean every time data changes
 
-            const row = document.createElement('div');
-            row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
-            row.innerHTML = `
-                <div class="message-wrapper">
-                    ${!isMine ? `<div class="sender-name">${data.name}</div>` : ''}
-                    <div class="bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}" onclick="startReply('${data.text.replace(/'/g, "\\'")}', '${data.name}')">
-                        ${quoteHtml}${data.text}
+            // If database is empty, just stop here
+            if (!snapshot.exists()) return;
+
+            // Otherwise, loop through all data and add it back
+            snapshot.forEach((childSnapshot) => {
+                const data = childSnapshot.val();
+                const isMine = data.name === currentUser;
+                const quoteHtml = data.replyTo ? `<div class="quote">${data.replyTo.sender}: ${data.replyTo.text}</div>` : '';
+
+                const row = document.createElement('div');
+                row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
+                row.innerHTML = `
+                    <div class="message-wrapper">
+                        ${!isMine ? `<div class="sender-name">${data.name}</div>` : ''}
+                        <div class="bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}" onclick="startReply('${data.text.replace(/'/g, "\\'")}', '${data.name}')">
+                            ${quoteHtml}${data.text}
+                        </div>
                     </div>
-                </div>
-            `;
-            messagesDiv.appendChild(row);
+                `;
+                messagesDiv.appendChild(row);
+            });
+            
+            // Scroll to bottom
             messagesDiv.scrollTo({ top: messagesDiv.scrollHeight, behavior: 'smooth' });
         });
 

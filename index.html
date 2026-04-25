@@ -12,9 +12,31 @@
             --box-alpha: 0.85;
         }
 
-        /* Added linear-gradient for dark tint */
-        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), #fff9fa url('lilacavo.jpg'); background-size: 650px; animation: moveBackground 144s linear infinite; display: flex; justify-content: center; align-items: center; }
+        body { 
+            font-family: 'Fredoka', sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh; 
+            /* Dark tint background */
+            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), #fff9fa url('avo2.jpg'); 
+            background-size: 650px; 
+            animation: moveBackground 144s linear infinite; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            perspective: 1000px; /* Required for 3D effect */
+            overflow: hidden;
+        }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
+
+        /* 3D Wrapper */
+        #app-wrapper {
+            transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            border-radius: 25px;
+            /* Heavy shadow to make it pop */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
 
         .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1300px; }
 
@@ -174,76 +196,77 @@
         <img id="lightbox-img" class="lightbox-img" style="max-width:90%; max-height:90%; border-radius:15px;" src="">
     </div>
 
-    <div class="main-app-container">
-        
-        <!-- Left: Date Counter Box -->
-        <div class="date-box box-style">
-            <div class="date-text">It was official</div>
-            <div class="date-number" id="days-count">0</div>
-            <div class="date-text">days ago</div>
-        </div>
+    <!-- Wrapper for 3D Tilt Effect -->
+    <div id="app-wrapper">
+        <div class="main-app-container">
+            <!-- Left: Date Counter Box -->
+            <div class="date-box box-style">
+                <div class="date-text">It was official</div>
+                <div class="date-number" id="days-count">0</div>
+                <div class="date-text">days ago</div>
+            </div>
 
-        <!-- Left Center: Gallery -->
-        <div class="side-container box-style">
-            <div class="header-style">Image Gallery</div>
-            <div id="gallery"></div>
-        </div>
+            <!-- Left Center: Gallery -->
+            <div class="side-container box-style">
+                <div class="header-style">Image Gallery</div>
+                <div id="gallery"></div>
+            </div>
 
-        <!-- Center: Chat -->
-        <div class="chat-container box-style">
-            <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
-            <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
-            <div id="colorMenu" class="color-menu">
-                <div class="color-grid">
-                    <div class="color-option" style="background: linear-gradient(135deg, #d8c6f2, #b49cd9);" onclick="changeBaseColor('190, 160, 230')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #ffcce0, #ffb6c1);" onclick="changeBaseColor('255, 182, 193')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #e0f7fa, #add8e6);" onclick="changeBaseColor('173, 216, 230')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #ccffcc, #90ee90);" onclick="changeBaseColor('144, 238, 144')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #ffdb99, #ffa500);" onclick="changeBaseColor('255, 165, 0')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #ffb3a7, #ff6347);" onclick="changeBaseColor('255, 99, 71')"></div>
-                    <div class="color-option" style="background: linear-gradient(135deg, #ffff99, #ffff00);" onclick="changeBaseColor('255, 255, 0')"></div>
+            <!-- Center: Chat -->
+            <div class="chat-container box-style">
+                <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
+                <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
+                <div id="colorMenu" class="color-menu">
+                    <div class="color-grid">
+                        <div class="color-option" style="background: linear-gradient(135deg, #d8c6f2, #b49cd9);" onclick="changeBaseColor('190, 160, 230')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffcce0, #ffb6c1);" onclick="changeBaseColor('255, 182, 193')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #e0f7fa, #add8e6);" onclick="changeBaseColor('173, 216, 230')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ccffcc, #90ee90);" onclick="changeBaseColor('144, 238, 144')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffdb99, #ffa500);" onclick="changeBaseColor('255, 165, 0')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffb3a7, #ff6347);" onclick="changeBaseColor('255, 99, 71')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffff99, #ffff00);" onclick="changeBaseColor('255, 255, 0')"></div>
+                    </div>
+                    <div class="slider-label">Transparency/Darkness</div>
+                    <input type="range" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
                 </div>
-                <div class="slider-label">Transparency/Darkness</div>
-                <input type="range" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
-            </div>
 
-            <div class="chat-header">
-                The Yap Box
-                <div class="user-selector">
-                    <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
-                    <label for="userShanky">Shanky</label>
-                    <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
-                    <label for="userReece">Reece</label>
+                <div class="chat-header">
+                    The Yap Box
+                    <div class="user-selector">
+                        <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
+                        <label for="userShanky">Shanky</label>
+                        <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
+                        <label for="userReece">Reece</label>
+                    </div>
+                </div>
+
+                <div id="pinnedBar" class="pinned-bar" style="display: none;">
+                    <div class="pinned-content" id="pinnedContent"></div>
+                    <button class="unpin-btn" onclick="unpinMessage()" title="Unpin message">✕</button>
+                </div>
+                
+                <div class="messages" id="messages"></div>
+                
+                <div id="replyBar" class="reply-bar"></div>
+                <div class="chat-inputs">
+                    <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                    <button onclick="document.getElementById('fileInput').click()" title="Upload Image">📷</button>
+                    <div class="input-wrapper">
+                        <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)" oninput="toggleClearBtn()">
+                        <div id="clearBtn" class="clear-btn" onclick="clearInput()" title="Clear text">✕</div>
+                    </div>
+                    <button onclick="sendMessage()">Send</button>
                 </div>
             </div>
 
-            <!-- Pinned Message Bar -->
-            <div id="pinnedBar" class="pinned-bar" style="display: none;">
-                <div class="pinned-content" id="pinnedContent"></div>
-                <button class="unpin-btn" onclick="unpinMessage()" title="Unpin message">✕</button>
-            </div>
-            
-            <div class="messages" id="messages"></div>
-            
-            <div id="replyBar" class="reply-bar"></div>
-            <div class="chat-inputs">
-                <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-                <button onclick="document.getElementById('fileInput').click()" title="Upload Image">📷</button>
-                <div class="input-wrapper">
-                    <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)" oninput="toggleClearBtn()">
-                    <div id="clearBtn" class="clear-btn" onclick="clearInput()" title="Clear text">✕</div>
+            <!-- Right: Bucket List -->
+            <div class="side-container box-style">
+                <div class="header-style">Bucket List</div>
+                <ul id="bucketList" class="bucket-list"></ul>
+                <div class="chat-inputs">
+                    <input type="text" id="bucketInput" placeholder="New adventure..." onkeypress="handleBucketKeyPress(event)" style="flex-grow:1; border-radius:25px; padding:12px 15px; border:none; outline:none; font-family:'Fredoka',sans-serif;">
+                    <button onclick="addBucketItem()">Add</button>
                 </div>
-                <button onclick="sendMessage()">Send</button>
-            </div>
-        </div>
-
-        <!-- Right: Bucket List -->
-        <div class="side-container box-style">
-            <div class="header-style">Bucket List</div>
-            <ul id="bucketList" class="bucket-list"></ul>
-            <div class="chat-inputs">
-                <input type="text" id="bucketInput" placeholder="New adventure..." onkeypress="handleBucketKeyPress(event)" style="flex-grow:1; border-radius:25px; padding:12px 15px; border:none; outline:none; font-family:'Fredoka',sans-serif;">
-                <button onclick="addBucketItem()">Add</button>
             </div>
         </div>
     </div>
@@ -252,6 +275,19 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
+        // --- 3D Tilt Script ---
+        const wrapper = document.getElementById('app-wrapper');
+        window.addEventListener('mousemove', (e) => {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const x = (e.clientX - centerX) / 40; // X axis sensitivity
+            const y = (e.clientY - centerY) / 40; // Y axis sensitivity
+            
+            wrapper.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+            wrapper.style.boxShadow = `${-x}px ${y+20}px 50px rgba(0,0,0,0.3)`;
+        });
+
+        // --- Firebase & App Logic ---
         const firebaseConfig = { 
             apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
             authDomain: "jayabeth-fdaad.firebaseapp.com", 
@@ -271,7 +307,6 @@
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let otherUserLastSeen = 0;
 
-        // --- Message Limit Logic ---
         const enforceMessageLimit = () => {
             get(messagesRef).then((snapshot) => {
                 if (snapshot.size > 50) {
@@ -279,14 +314,12 @@
                     snapshot.forEach((childNode) => {
                         messages.push({ key: childNode.key, timestamp: childNode.val().timestamp });
                     });
-                    // Sort by timestamp and remove the oldest one
                     messages.sort((a, b) => a.timestamp - b.timestamp);
                     remove(child(messagesRef, messages[0].key));
                 }
             });
         };
 
-        // --- Calculate Official Date Counter ---
         window.addEventListener('DOMContentLoaded', () => {
             const startDate = new Date("2026-04-12T00:00:00");
             const today = new Date();
@@ -294,7 +327,6 @@
             document.getElementById("days-count").innerText = diffDays;
         });
 
-        // --- User Status & Read Receipts ---
         const updateMyStatus = () => {
             set(ref(db, `status/${currentUser}`), { lastSeen: Date.now() });
         };
@@ -319,21 +351,18 @@
         };
         listenToOtherUserStatus();
 
-        // Theme Load
         const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230';
         const savedAlpha = localStorage.getItem('yapboxAlpha') || '0.85';
         document.documentElement.style.setProperty('--box-base-rgb', savedRGB);
         document.documentElement.style.setProperty('--box-alpha', savedAlpha);
         document.getElementById('opacitySlider').value = savedAlpha;
 
-        // Hide all dropdown menus when clicking anywhere else
         document.addEventListener('click', () => {
             document.querySelectorAll('.msg-dropdown-menu').forEach(menu => {
                 menu.style.display = 'none';
             });
         });
 
-        // --- Clear Input Logic ---
         window.toggleClearBtn = () => {
             const input = document.getElementById("messageInput");
             const btn = document.getElementById("clearBtn");
@@ -347,7 +376,6 @@
             input.focus();
         };
 
-        // --- Bucket List Logic ---
         window.addBucketItem = () => {
             const input = document.getElementById("bucketInput");
             if (input.value.trim() === "") return;
@@ -389,7 +417,6 @@
             listDiv.scrollTop = listDiv.scrollHeight;
         });
 
-        // --- Helpers & UI ---
         window.toggleColorMenu = (e) => {
             if(e) e.stopPropagation();
             const menu = document.getElementById('colorMenu');
@@ -417,7 +444,6 @@
             return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
         };
 
-        // --- Chat, Dropdowns & Gallery Logic ---
         let holdTimer = null;
         let replyingTo = null; 
 
@@ -540,94 +566,38 @@
                 const data = childNode.val();
                 const key = childNode.key;
                 const isMine = data.name === currentUser;
-                
                 const row = document.createElement('div');
                 row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
-                
                 const wrapper = document.createElement('div');
                 wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
-                
                 const bubble = document.createElement('div');
                 bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
-                
-                bubble.onclick = (e) => {
-                    if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) {
-                        startReply(data.text || "[Image]", data.name);
-                    }
-                };
-                
+                bubble.onclick = (e) => { if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) { startReply(data.text || "[Image]", data.name); } };
                 const dropdownContainer = document.createElement('div');
                 dropdownContainer.className = 'msg-dropdown-container';
-                
                 const dropBtn = document.createElement('button');
                 dropBtn.className = 'msg-dropdown-btn';
                 dropBtn.innerHTML = '&#8964;'; 
-                
                 const dropMenu = document.createElement('div');
                 dropMenu.className = 'msg-dropdown-menu';
-                
                 const pinBtn = document.createElement('button');
                 pinBtn.innerText = '📌 Pin';
                 pinBtn.onclick = (e) => { e.stopPropagation(); pinMessage(data); dropMenu.style.display = 'none'; };
-                
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-msg-btn';
                 deleteBtn.innerText = '🗑️ Delete';
                 deleteBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(key); dropMenu.style.display = 'none'; };
-                
                 dropMenu.appendChild(pinBtn);
                 dropMenu.appendChild(deleteBtn);
-                
-                dropBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    const isOpen = dropMenu.style.display === 'flex';
-                    document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none');
-                    dropMenu.style.display = isOpen ? 'none' : 'flex';
-                };
-                
+                dropBtn.onclick = (e) => { e.stopPropagation(); const isOpen = dropMenu.style.display === 'flex'; document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none'); dropMenu.style.display = isOpen ? 'none' : 'flex'; };
                 dropdownContainer.appendChild(dropBtn);
                 dropdownContainer.appendChild(dropMenu);
                 bubble.appendChild(dropdownContainer);
-
-                if (data.replyTo) {
-                    const quote = document.createElement('div');
-                    quote.className = 'quote-box';
-                    quote.innerText = `${data.replyTo.user}: ${data.replyTo.text.length > 20 ? data.replyTo.text.substring(0,20) + '...' : data.replyTo.text}`;
-                    bubble.appendChild(quote);
-                }
-                
-                if (data.image) {
-                    const img = document.createElement('img');
-                    img.src = data.image;
-                    img.onmousedown = (e) => startHold(e, data.image);
-                    img.onmouseup = endHold;
-                    img.onmouseleave = endHold;
-                    img.ontouchstart = (e) => startHold(e, data.image);
-                    img.ontouchend = endHold;
-                    img.onclick = (e) => { e.stopPropagation(); openLightbox(data.image); };
-                    bubble.appendChild(img);
-                } else {
-                    const textSpan = document.createElement('span');
-                    textSpan.innerHTML = formatMessageLinks(data.text);
-                    bubble.appendChild(textSpan);
-                }
-                
-                const time = document.createElement('div');
-                time.className = 'timestamp';
-                time.innerText = formatTime(data.timestamp);
-                
-                if(isMine) {
-                    const tickSpan = document.createElement('span');
-                    tickSpan.className = 'tick ' + (data.timestamp <= otherUserLastSeen ? 'read' : 'unread');
-                    tickSpan.setAttribute('data-timestamp', data.timestamp);
-                    tickSpan.innerText = '✓✓';
-                    time.appendChild(tickSpan);
-                }
-
-                wrapper.appendChild(bubble);
-                wrapper.appendChild(time);
-                row.appendChild(wrapper);
-                messagesDiv.appendChild(row);
+                if (data.replyTo) { const quote = document.createElement('div'); quote.className = 'quote-box'; quote.innerText = `${data.replyTo.user}: ${data.replyTo.text.length > 20 ? data.replyTo.text.substring(0,20) + '...' : data.replyTo.text}`; bubble.appendChild(quote); }
+                if (data.image) { const img = document.createElement('img'); img.src = data.image; img.onmousedown = (e) => startHold(e, data.image); img.onmouseup = endHold; img.onmouseleave = endHold; img.ontouchstart = (e) => startHold(e, data.image); img.ontouchend = endHold; img.onclick = (e) => { e.stopPropagation(); openLightbox(data.image); }; bubble.appendChild(img); } else { const textSpan = document.createElement('span'); textSpan.innerHTML = formatMessageLinks(data.text); bubble.appendChild(textSpan); }
+                const time = document.createElement('div'); time.className = 'timestamp'; time.innerText = formatTime(data.timestamp);
+                if(isMine) { const tickSpan = document.createElement('span'); tickSpan.className = 'tick ' + (data.timestamp <= otherUserLastSeen ? 'read' : 'unread'); tickSpan.setAttribute('data-timestamp', data.timestamp); tickSpan.innerText = '✓✓'; time.appendChild(tickSpan); }
+                wrapper.appendChild(bubble); wrapper.appendChild(time); row.appendChild(wrapper); messagesDiv.appendChild(row);
             });
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });

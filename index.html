@@ -4,18 +4,17 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-    
-    /* ADD THESE LINES */
-    background-image: url(Avo.jpg'); 
-    background-size: cover;          /* Keeps image filling the screen */
-    background-position: center;     /* Keeps image centered */
-    background-repeat: no-repeat;    /* Prevents tiling */
-    background-attachment: fixed;    /* Keeps background static if page scrolls */
-    
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    perspective: 1000px; 
+            /* This points to the file in the same folder as this code */
+            background-image: url('Avo.jpeg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            perspective: 1000px; 
         }
 
         .container {
@@ -38,21 +37,12 @@
         .glow-text {
             color: #666; 
             font-weight: bold;
-            
-            /* 
-               45% - 55% creates a narrow sliver. 
-               #bbb is a softer, less aggressive highlight than pure white.
-            */
-            background: linear-gradient(90deg, #666 40%, #bbb 50%, #666 60%);
-            
-            /* 200% size ensures the glow is smaller relative to the text width */
+            background: linear-gradient(90deg, #666 45%, #bbb 50%, #666 55%);
             background-size: 200% 100%;
-            
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            
-            animation: shine 8s linear infinite;
+            animation: shine 6s linear infinite;
         }
 
         @keyframes shine {

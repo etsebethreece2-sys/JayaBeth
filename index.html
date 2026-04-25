@@ -14,7 +14,6 @@
             padding: 0;
             height: 100vh;
             perspective: 1000px; 
-            /* Removed flexbox properties here as we are using absolute positioning for everything */
         }
 
         /* Your existing Title Box */
@@ -57,13 +56,12 @@
             /* Centering the chatroom */
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); /* Base transform */
             
-            /* Made larger and longer */
             width: 450px;
             height: 600px;
             
-            background: rgba(255, 182, 193, 0.85); /* Matching pink theme */
+            background: rgba(255, 182, 193, 0.85); 
             backdrop-filter: blur(5px);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -71,6 +69,10 @@
             flex-direction: column;
             padding: 15px;
             box-sizing: border-box;
+            
+            /* Added animation properties */
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
         }
 
         .chat-header {
@@ -80,29 +82,29 @@
             text-align: center;
             border-bottom: 2px solid rgba(0,0,0,0.1);
             padding-bottom: 5px;
-            font-size: 1.2em; /* Slightly larger header text */
+            font-size: 1.2em; 
         }
 
         .messages {
             flex-grow: 1;
             overflow-y: auto;
-            margin-bottom: 15px; /* slightly more space at bottom */
+            margin-bottom: 15px; 
             display: flex;
             flex-direction: column;
-            gap: 10px; /* slightly more space between messages */
+            gap: 10px; 
             padding-right: 5px;
         }
 
         .message-box {
             background: rgba(255, 255, 255, 0.6);
-            padding: 10px; /* slightly larger padding */
+            padding: 10px; 
             border-radius: 8px;
-            font-size: 15px; /* slightly larger text */
+            font-size: 15px; 
             color: #222;
         }
 
         .message-box strong {
-            color: #e83e8c; /* Darker pink for names */
+            color: #e83e8c; 
         }
 
         .chat-inputs {
@@ -147,8 +149,9 @@
     </div>
 
     <!-- The Chatroom UI -->
-    <div class="chat-container">
-        <div class="chat-header">The Yap Box</div>
+    <!-- Added ID "chat-tilt-box" for the new script -->
+    <div class="chat-container" id="chat-tilt-box">
+        <div class="chat-header">Live Chatroom</div>
         <div class="messages" id="messages">
             <!-- Messages will load here -->
         </div>
@@ -159,17 +162,35 @@
         </div>
     </div>
 
-    <!-- Your Tilt Script -->
+    <!-- Your Tilt Scripts -->
     <script>
+        // 1. Tilt Script for Title Box (Aggressive)
         const container = document.getElementById('tilt-box');
         container.addEventListener('mousemove', (e) => {
             const rect = container.getBoundingClientRect();
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
+            // Divided by 10 for a sharp tilt
             container.style.transform = `rotateX(${-y / 10}deg) rotateY(${x / 10}deg)`;
         });
         container.addEventListener('mouseleave', () => {
             container.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        });
+
+        // 2. Tilt Script for Chatroom (Less Aggressive & Keeps Centering)
+        const chatContainer = document.getElementById('chat-tilt-box');
+        chatContainer.addEventListener('mousemove', (e) => {
+            const rect = chatContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            // We MUST include translate(-50%, -50%) to keep it centered!
+            // Divided by 50 to make the tilt much softer and less aggressive
+            chatContainer.style.transform = `translate(-50%, -50%) rotateX(${-y / 50}deg) rotateY(${x / 50}deg)`;
+        });
+        chatContainer.addEventListener('mouseleave', () => {
+            // Return to perfectly flat, but stay centered
+            chatContainer.style.transform = 'translate(-50%, -50%) rotateX(0deg) rotateY(0deg)';
         });
     </script>
 

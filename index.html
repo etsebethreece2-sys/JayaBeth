@@ -9,14 +9,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; height: 100vh; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; background-color: #fff9fa; background-image: url('avobackground.jpeg'); background-repeat: repeat; background-size: 650px; animation: moveBackground 100s linear infinite; }
+        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; background-color: #fff9fa; background-image: url('avobackground.jpeg'); background-repeat: repeat; background-size: 650px; animation: moveBackground 100s linear infinite; }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
-        .main-header { text-align: center; margin-bottom: 20px; z-index: 10; }
+        
+        .master-wrapper { display: flex; gap: 20px; align-items: flex-start; justify-content: center; z-index: 10; margin-top: 20px; }
+        
+        .main-header { text-align: center; z-index: 10; }
         .main-header h1 { color: #333; margin: 0; font-size: 2.5rem; }
         .glow-text { color: #666; font-weight: bold; background: linear-gradient(90deg, #666 45%, #bbb 50%, #666 55%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shine 6s linear infinite; }
         @keyframes shine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        .chat-container { width: 400px; height: 600px; background: rgba(255, 182, 193, 0.85); backdrop-filter: blur(5px); border-radius: 25px; box-shadow: 0 15px 35px rgba(232, 62, 140, 0.15), 0 0 80px rgba(138, 43, 226, 0.6); display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; transition: transform 0.1s ease-out; transform-style: preserve-3d; position: relative; }
+        /* Shared Container Styles */
+        .box-style { background: rgba(255, 182, 193, 0.85); backdrop-filter: blur(5px); border-radius: 25px; box-shadow: 0 15px 35px rgba(232, 62, 140, 0.15), 0 0 80px rgba(138, 43, 226, 0.6); padding: 15px; box-sizing: border-box; }
+
+        /* Gallery Styles */
+        .gallery-container { width: 300px; height: 600px; display: flex; flex-direction: column; }
+        .gallery-header { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; border-bottom: 2px solid rgba(255, 255, 255, 0.5); padding-bottom: 10px; }
+        #gallery { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; align-content: flex-start; }
+        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        /* Chat Styles */
+        .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
         .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #888; font-size: 11px; cursor: pointer; text-decoration: underline; z-index: 10; }
         .chat-header { font-weight: bold; color: #333; margin-bottom: 15px; text-align: center; padding-bottom: 10px; font-size: 1.3em; border-bottom: 2px solid rgba(255, 255, 255, 0.5); }
         .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.6); border-radius: 20px; padding: 4px; width: 180px; margin: 8px auto 0 auto; }
@@ -52,36 +67,45 @@
         <p class="glow-text">Shanky and Reece est. 2024</p>
     </div>
 
-    <div class="chat-container" id="chat-tilt-box">
-        <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
-        <div class="chat-header">
-            The Yap Box
-            <div class="user-selector">
-                <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
-                <label for="userShanky">Shanky</label>
-                <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
-                <label for="userReece">Reece</label>
-            </div>
-        </div>
-        
-        <div class="messages" id="messages"></div>
-        
-        <div id="replyBanner" class="reply-banner">
-            <span id="replyText"></span>
-            <span onclick="cancelReply()" style="cursor:pointer; font-weight:bold;">✕</span>
+    <div class="master-wrapper">
+        <!-- New Gallery Side -->
+        <div class="gallery-container box-style">
+            <div class="gallery-header">Image Gallery</div>
+            <div id="gallery"></div>
         </div>
 
-        <div class="chat-inputs">
-            <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-            <button onclick="document.getElementById('fileInput').click()">📷</button>
-            <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)">
-            <button id="sendBtn" onclick="sendMessage()">Send</button>
+        <!-- Chat Container -->
+        <div class="chat-container box-style" id="chat-tilt-box">
+            <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
+            <div class="chat-header">
+                The Yap Box
+                <div class="user-selector">
+                    <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
+                    <label for="userShanky">Shanky</label>
+                    <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
+                    <label for="userReece">Reece</label>
+                </div>
+            </div>
+            
+            <div class="messages" id="messages"></div>
+            
+            <div id="replyBanner" class="reply-banner">
+                <span id="replyText"></span>
+                <span onclick="cancelReply()" style="cursor:pointer; font-weight:bold;">✕</span>
+            </div>
+
+            <div class="chat-inputs">
+                <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                <button onclick="document.getElementById('fileInput').click()">📷</button>
+                <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)">
+                <button id="sendBtn" onclick="sendMessage()">Send</button>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
@@ -98,17 +122,7 @@
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let replyingTo = null;
 
-        // UI Logic
-        const box = document.getElementById('chat-tilt-box');
-        box.addEventListener('mousemove', (e) => {
-            const rect = box.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            box.style.transform = `rotateX(${-y / 50}deg) rotateY(${x / 50}deg)`;
-        });
-        box.addEventListener('mouseleave', () => box.style.transform = `rotateX(0deg) rotateY(0deg)`);
-
-        // Image Handling (Compressed)
+        // Image Handling
         window.handleImageUpload = (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -127,6 +141,10 @@
             };
             reader.readAsDataURL(file);
             e.target.value = '';
+        };
+
+        window.deleteMessage = (key) => {
+            if(confirm("Delete this?")) remove(child(messagesRef, key));
         };
 
         window.cancelReply = () => { replyingTo = null; document.getElementById('replyBanner').style.display = 'none'; };
@@ -151,10 +169,18 @@
 
         onValue(messagesRef, (snapshot) => {
             const messagesDiv = document.getElementById("messages");
+            const galleryDiv = document.getElementById("gallery");
+            
             messagesDiv.innerHTML = "";
+            galleryDiv.innerHTML = "";
+            
             if (!snapshot.exists()) return;
+            
             snapshot.forEach((child) => {
                 const data = child.val();
+                const key = child.key;
+                
+                // RENDER CHAT
                 const isMine = data.name === currentUser;
                 const quoteHtml = data.replyTo ? `<div class="quote">${data.replyTo.sender}: ${data.replyTo.text}</div>` : '';
                 const content = data.image ? `<img src="${data.image}" onclick="window.open('${data.image}')">` : data.text;
@@ -169,6 +195,17 @@
                         </div>
                     </div>`;
                 messagesDiv.appendChild(row);
+
+                // RENDER GALLERY
+                if(data.image) {
+                    const gItem = document.createElement('div');
+                    gItem.className = 'gallery-item';
+                    gItem.innerHTML = `
+                        <img src="${data.image}" onclick="window.open('${data.image}')">
+                        <button class="delete-btn" onclick="deleteMessage('${key}')">✕</button>
+                    `;
+                    galleryDiv.appendChild(gItem);
+                }
             });
             messagesDiv.scrollTo({ top: messagesDiv.scrollHeight, behavior: 'smooth' });
         });

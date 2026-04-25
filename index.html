@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- ADDED: Google Fonts link for Fredoka -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
-            /* CHANGED: Font is now Fredoka */
             font-family: 'Fredoka', sans-serif; 
+            background-color: #fff9fa; /* Very subtle pink background for the whole page */
             background-image: url(''); 
             background-size: cover;
             background-position: center;
@@ -22,7 +21,7 @@
             perspective: 1000px; 
         }
 
-        /* Your existing Title Box */
+        /* --- Title Box --- */
         .container {
             position: absolute;
             top: 20px;
@@ -56,23 +55,23 @@
             100% { background-position: -200% 0; }
         }
 
-        /* --- UPDATED CHATROOM UI --- */
+        /* --- CHATROOM UI --- */
         .chat-container {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%); 
             
-            width: 450px;
+            width: 400px; /* Slightly slimmer for a "phone" feel */
             height: 600px;
             
             background: rgba(255, 182, 193, 0.85); 
             backdrop-filter: blur(5px);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 25px; /* Softer outer corners */
+            box-shadow: 0 15px 35px rgba(232, 62, 140, 0.15);
             display: flex;
             flex-direction: column;
-            padding: 15px;
+            padding: 15px 15px 30px 15px; /* Extra bottom padding for reset button */
             box-sizing: border-box;
             
             transition: transform 0.1s ease-out;
@@ -82,85 +81,163 @@
         .chat-header {
             font-weight: bold;
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-align: center;
-            border-bottom: 2px solid rgba(0,0,0,0.1);
-            padding-bottom: 5px;
-            font-size: 1.2em; 
-            position: relative;
+            padding-bottom: 10px;
+            font-size: 1.3em; 
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
         }
 
+        /* --- Custom Name Toggle Switch --- */
+        .user-selector {
+            display: flex;
+            justify-content: center;
+            background: rgba(255,255,255,0.6);
+            border-radius: 20px;
+            padding: 4px;
+            width: 180px;
+            margin: 8px auto 0 auto;
+        }
+
+        .user-selector input[type="radio"] {
+            display: none; /* Hide the default radio circles */
+        }
+
+        .user-selector label {
+            padding: 5px 15px;
+            cursor: pointer;
+            font-size: 13px;
+            border-radius: 16px;
+            color: #555;
+            transition: all 0.2s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .user-selector input[type="radio"]:checked + label {
+            background: #e83e8c;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* --- Messages Area --- */
         .messages {
             flex-grow: 1;
             overflow-y: auto;
             margin-bottom: 15px; 
             display: flex;
             flex-direction: column;
-            gap: 10px; 
-            padding-right: 5px;
+            gap: 12px; 
+            padding: 10px 5px;
         }
 
-        .message-box {
-            background: rgba(255, 255, 255, 0.6);
-            padding: 10px; 
-            border-radius: 8px;
-            font-size: 15px; 
-            color: #222;
-        }
+        /* Custom Scrollbar */
+        .messages::-webkit-scrollbar { width: 6px; }
+        .messages::-webkit-scrollbar-thumb { background-color: rgba(232, 62, 140, 0.3); border-radius: 10px; }
 
-        .message-box strong {
-            color: #e83e8c; 
+        /* --- Chat Bubbles Flexbox Setup --- */
+        .message-row {
+            display: flex;
+            width: 100%;
         }
+        .message-row.mine { justify-content: flex-end; }
+        .message-row.theirs { justify-content: flex-start; }
 
-        .chat-inputs {
+        .message-wrapper {
+            max-width: 75%;
             display: flex;
             flex-direction: column;
+        }
+        .message-row.mine .message-wrapper { align-items: flex-end; }
+        .message-row.theirs .message-wrapper { align-items: flex-start; }
+
+        .sender-name {
+            font-size: 11px;
+            color: #555;
+            margin-bottom: 3px;
+            margin-left: 5px;
+        }
+
+        /* --- The Bubbles themselves --- */
+        .bubble {
+            padding: 10px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.3;
+            word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .bubble-mine {
+            background-color: #e83e8c; /* Dark Pink */
+            color: white;
+            border-bottom-right-radius: 4px; /* The little message tail */
+        }
+
+        .bubble-theirs {
+            background-color: #ffffff; /* White */
+            color: #333;
+            border-bottom-left-radius: 4px; /* The little message tail */
+        }
+
+        /* --- Input Area --- */
+        .chat-inputs {
+            display: flex;
+            flex-direction: row; /* Side by side */
             gap: 8px;
+            margin-bottom: 5px;
         }
 
         .chat-inputs input {
-            padding: 10px;
+            flex-grow: 1;
+            padding: 12px 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px; /* Pill shape text box */
             outline: none;
-            /* CHANGED: Inputs to use Fredoka */
             font-family: 'Fredoka', sans-serif;
             font-size: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .chat-inputs button {
-            padding: 10px;
+            padding: 0 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px;
             background-color: #e83e8c;
             color: white;
             font-weight: bold;
             font-size: 15px;
             cursor: pointer;
             transition: background 0.2s;
-            /* ADDED: Buttons to use Fredoka */
             font-family: 'Fredoka', sans-serif;
+            box-shadow: 0 2px 10px rgba(232, 62, 140, 0.2);
         }
 
-        .chat-inputs button:hover {
-            background-color: #d82b78;
-        }
+        .chat-inputs button:hover { background-color: #d82b78; }
 
-        /* Styling for the new Reset Button */
+        /* --- Tiny Reset Button --- */
         .btn-reset {
-            background-color: #ff4d4d !important; /* Red for danger */
-            margin-top: 5px;
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            background: none !important;
+            border: none;
+            color: #888;
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: underline;
+            font-family: 'Fredoka', sans-serif;
+            box-shadow: none;
         }
 
-        .btn-reset:hover {
-            background-color: #cc0000 !important;
-        }
+        .btn-reset:hover { color: #e83e8c; }
     </style>
 </head>
 
 <body>
 
-    <!-- Your existing box -->
     <div class="container" id="tilt-box">
         <h1>JayaBeth</h1>
         <p class="glow-text">Shanky and Reece est. 2024</p>
@@ -168,24 +245,51 @@
 
     <!-- The Chatroom UI -->
     <div class="chat-container" id="chat-tilt-box">
-        <div class="chat-header">The Yap Box</div>
+        <div class="chat-header">
+            The Yap Box
+            <!-- The new Toggle Switch -->
+            <div class="user-selector">
+                <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
+                <label for="userShanky">Shanky</label>
+                
+                <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
+                <label for="userReece">Reece</label>
+            </div>
+        </div>
         
         <div class="messages" id="messages">
             <!-- Messages will load here -->
         </div>
         
+        <!-- Streamlined Input Area -->
         <div class="chat-inputs">
-            <input type="text" id="usernameInput" placeholder="Your Name" maxlength="15">
-            <input type="text" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)">
             <button onclick="sendMessage()">Send</button>
-            <!-- New Reset Button -->
-            <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
         </div>
+
+        <!-- Tiny Reset Button bottom left -->
+        <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
     </div>
 
-    <!-- Your Tilt Scripts -->
     <script>
-        // 1. Tilt Script for Title Box
+        // --- 1. User Selection Logic ---
+        // Checks memory to see who used this browser last. Defaults to Shanky.
+        let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
+        
+        if(currentUser === 'Reece') {
+            document.getElementById('userReece').checked = true;
+        } else {
+            document.getElementById('userShanky').checked = true;
+        }
+
+        window.changeUser = function(radio) {
+            localStorage.setItem('yapboxUser', radio.value);
+            currentUser = radio.value;
+            // Reload page to correctly align old messages left/right based on new selection
+            location.reload(); 
+        }
+
+        // --- 2. Tilt Scripts ---
         const container = document.getElementById('tilt-box');
         container.addEventListener('mousemove', (e) => {
             const rect = container.getBoundingClientRect();
@@ -197,7 +301,6 @@
             container.style.transform = 'rotateX(0deg) rotateY(0deg)';
         });
 
-        // 2. Tilt Script for Chatroom
         const chatContainer = document.getElementById('chat-tilt-box');
         chatContainer.addEventListener('mousemove', (e) => {
             const rect = chatContainer.getBoundingClientRect();
@@ -210,9 +313,8 @@
         });
     </script>
 
-    <!-- Firebase Script (Module setup) -->
+    <!-- Firebase Script -->
     <script type="module">
-        // Import Firebase functions (Added remove and onValue for resetting)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onChildAdded, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
@@ -226,46 +328,34 @@
             measurementId: "G-6C4G5SNN73" 
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const messagesRef = ref(db, "chatroom");
 
-        // Function to send message to database
         window.sendMessage = function() {
-            const username = document.getElementById("usernameInput").value;
             const message = document.getElementById("messageInput").value;
 
-            if (username.trim() === "" || message.trim() === "") {
-                alert("Please enter a name and a message!");
-                return;
-            }
+            if (message.trim() === "") return; // Don't send empty messages
 
-            // Push to Firebase
+            // Push to Firebase using the toggled username
             push(messagesRef, {
-                name: username,
+                name: currentUser, 
                 text: message,
                 timestamp: Date.now()
             });
 
-            // Clear message input
             document.getElementById("messageInput").value = "";
         };
 
-        // Allow sending with 'Enter' key
         window.handleKeyPress = function(e) {
             if (e.key === 'Enter') {
                 sendMessage();
             }
         };
 
-        // NEW: Function to reset the chat
         window.resetChat = function() {
-            // Trigger browser confirmation popup
             const isConfirmed = confirm("Are you sure you want to clear the entire chat? This cannot be undone.");
-            
             if (isConfirmed) {
-                // Delete the chatroom node from Firebase database
                 remove(messagesRef).catch((error) => {
                     console.error("Error clearing chat: ", error);
                     alert("Failed to reset the chatroom.");
@@ -273,26 +363,44 @@
             }
         };
 
-        // Listen for new messages
+        // Custom function to create Chat Bubbles
         onChildAdded(messagesRef, (snapshot) => {
             const data = snapshot.val();
             const messagesDiv = document.getElementById("messages");
             
-            const messageElement = document.createElement("div");
-            messageElement.classList.add("message-box");
-            messageElement.innerHTML = `<strong>${data.name}:</strong> ${data.text}`;
+            // Check if the message belongs to the current user toggle
+            const isMine = data.name === currentUser;
+
+            // Create wrapper row
+            const row = document.createElement('div');
+            row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
             
-            messagesDiv.appendChild(messageElement);
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-wrapper';
+
+            // Show name label ONLY if it's the other person (looks cleaner)
+            if (!isMine) {
+                const nameLabel = document.createElement('div');
+                nameLabel.className = 'sender-name';
+                nameLabel.innerText = data.name;
+                wrapper.appendChild(nameLabel);
+            }
+
+            // Create bubble
+            const bubble = document.createElement('div');
+            bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
+            bubble.innerText = data.text; // Safer than innerHTML
             
-            // Auto-scroll to bottom
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            wrapper.appendChild(bubble);
+            row.appendChild(wrapper);
+            messagesDiv.appendChild(row);
+            
+            // Auto-scroll to bottom smoothly
+            messagesDiv.scrollTo({ top: messagesDiv.scrollHeight, behavior: 'smooth' });
         });
 
-        // NEW: Listen for when the chat is completely deleted by someone
         onValue(messagesRef, (snapshot) => {
-            // If the "chatroom" data doesn't exist (meaning it was removed)
             if (!snapshot.exists()) {
-                // Clear the HTML inside the chat window for everyone looking at the page
                 document.getElementById("messages").innerHTML = "";
             }
         });

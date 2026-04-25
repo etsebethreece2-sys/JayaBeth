@@ -8,8 +8,8 @@
 
     <style>
         :root {
-            /* Default Lilac */
-            --box-bg: rgba(190, 160, 230, 0.85);
+            --box-base-rgb: 190, 160, 230; /* Default Lilac */
+            --box-alpha: 0.85;
         }
 
         body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background: #fff9fa url('avo2.jpg'); background-size: 650px; animation: moveBackground 120s linear infinite; display: flex; justify-content: center; align-items: center; }
@@ -17,14 +17,14 @@
 
         .main-app-container { display: flex; gap: 30px; align-items: flex-start; }
 
-        /* Shared Box Style (Updated for Border + Variable Color) */
+        /* Shared Box Style */
         .box-style { 
-            background-color: var(--box-bg);
+            background-color: rgba(var(--box-base-rgb), var(--box-alpha));
             background-image: radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
             background-size: 20px 20px;
             backdrop-filter: blur(5px); 
             border-radius: 25px; 
-            border: 1px solid #000; /* Added black border */
+            border: 1px solid #000; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 0 80px rgba(0,0,0,0.05); 
             padding: 15px; 
             box-sizing: border-box; 
@@ -38,19 +38,17 @@
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; z-index: 2;}
 
-        /* Lightbox Styles */
-        .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 9999; display: none; align-items: center; justify-content: center; }
-        .lightbox-img { max-width: 90%; max-height: 90%; border-radius: 15px; box-shadow: 0 0 30px rgba(255,255,255,0.2); }
-        .close-lightbox { position: absolute; top: 30px; right: 40px; font-size: 40px; color: white; cursor: pointer; font-weight: bold; }
-
         /* Chat */
         .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
         .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #333; font-size: 11px; cursor: pointer; text-decoration: underline; }
         
         /* Color Menu */
         .color-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; z-index: 10; }
-        .color-menu { display: none; position: absolute; top: 45px; right: 15px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 20; gap: 10px; flex-direction: column; }
-        .color-option { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 1px solid #ccc; }
+        .color-menu { display: none; position: absolute; top: 45px; right: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 20; width: 180px; }
+        .color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+        .color-option { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 1px solid #ccc; }
+        .slider-label { font-size: 12px; color: #333; margin-bottom: 5px; font-weight: bold; }
+        input[type=range] { width: 100%; }
 
         .chat-header { font-weight: bold; color: #333; margin-bottom: 15px; text-align: center; padding-bottom: 10px; font-size: 1.3em; border-bottom: 2px solid rgba(255, 255, 255, 0.5); }
         .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.4); border-radius: 20px; padding: 4px; width: 180px; margin: 8px auto 0 auto; }
@@ -85,10 +83,9 @@
 </head>
 
 <body>
-    <!-- Lightbox -->
-    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
-        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
-        <img id="lightbox-img" class="lightbox-img" src="">
+    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center;">
+        <span class="close-lightbox" onclick="closeLightbox()" style="position:absolute; top:30px; right:40px; font-size:40px; color:white; cursor:pointer; font-weight:bold;">&times;</span>
+        <img id="lightbox-img" class="lightbox-img" style="max-width:90%; max-height:90%; border-radius:15px;" src="">
     </div>
 
     <div class="main-app-container">
@@ -100,13 +97,19 @@
         <div class="chat-container box-style">
             <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
             
-            <!-- Color Picker -->
             <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
             <div id="colorMenu" class="color-menu">
-                <div class="color-option" style="background: rgba(190, 160, 230, 0.85);" onclick="changeTheme('rgba(190, 160, 230, 0.85)')"></div>
-                <div class="color-option" style="background: rgba(255, 182, 193, 0.85);" onclick="changeTheme('rgba(255, 182, 193, 0.85)')"></div>
-                <div class="color-option" style="background: rgba(173, 216, 230, 0.85);" onclick="changeTheme('rgba(173, 216, 230, 0.85)')"></div>
-                <div class="color-option" style="background: rgba(144, 238, 144, 0.85);" onclick="changeTheme('rgba(144, 238, 144, 0.85)')"></div>
+                <div class="color-grid">
+                    <div class="color-option" style="background: rgb(190, 160, 230);" onclick="changeBaseColor('190, 160, 230')"></div>
+                    <div class="color-option" style="background: rgb(255, 182, 193);" onclick="changeBaseColor('255, 182, 193')"></div>
+                    <div class="color-option" style="background: rgb(173, 216, 230);" onclick="changeBaseColor('173, 216, 230')"></div>
+                    <div class="color-option" style="background: rgb(144, 238, 144);" onclick="changeBaseColor('144, 238, 144')"></div>
+                    <div class="color-option" style="background: rgb(255, 165, 0);" onclick="changeBaseColor('255, 165, 0')"></div>
+                    <div class="color-option" style="background: rgb(255, 99, 71);" onclick="changeBaseColor('255, 99, 71')"></div>
+                    <div class="color-option" style="background: rgb(255, 255, 0);" onclick="changeBaseColor('255, 255, 0')"></div>
+                </div>
+                <div class="slider-label">Transparency/Darkness</div>
+                <input type="range" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
             </div>
 
             <div class="chat-header">
@@ -149,26 +152,33 @@
         const messagesRef = ref(db, "chatroom");
         const galleryRef = ref(db, "gallery");
         
+        // Initial Theme Load
+        const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230';
+        const savedAlpha = localStorage.getItem('yapboxAlpha') || '0.85';
+        document.documentElement.style.setProperty('--box-base-rgb', savedRGB);
+        document.documentElement.style.setProperty('--box-alpha', savedAlpha);
+        document.getElementById('opacitySlider').value = savedAlpha;
+
+        window.toggleColorMenu = () => {
+            const menu = document.getElementById('colorMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        };
+
+        window.changeBaseColor = (rgb) => {
+            document.documentElement.style.setProperty('--box-base-rgb', rgb);
+            localStorage.setItem('yapboxRGB', rgb);
+        };
+
+        window.changeAlpha = (val) => {
+            document.documentElement.style.setProperty('--box-alpha', val);
+            localStorage.setItem('yapboxAlpha', val);
+        };
+
+        // Standard App Logic
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let holdTimer = null;
         let replyingTo = null; 
 
-        // Theme Loading
-        const savedColor = localStorage.getItem('yapboxTheme') || 'rgba(190, 160, 230, 0.85)';
-        document.documentElement.style.setProperty('--box-bg', savedColor);
-
-        window.toggleColorMenu = () => {
-            const menu = document.getElementById('colorMenu');
-            menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-        };
-
-        window.changeTheme = (color) => {
-            document.documentElement.style.setProperty('--box-bg', color);
-            localStorage.setItem('yapboxTheme', color);
-            document.getElementById('colorMenu').style.display = 'none';
-        };
-
-        // Lightbox
         window.openLightbox = (src) => {
             const lightbox = document.getElementById('lightbox');
             document.getElementById('lightbox-img').src = src;
@@ -179,7 +189,6 @@
             document.getElementById('lightbox').style.display = 'none';
         };
 
-        // Reply Logic
         window.startReply = (text, user) => {
             replyingTo = { text: text || "[Image]", user: user };
             const bar = document.getElementById('replyBar');

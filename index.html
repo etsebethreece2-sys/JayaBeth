@@ -15,7 +15,7 @@
         body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background: #fff9fa url('avo2.jpg'); background-size: 650px; animation: moveBackground 120s linear infinite; display: flex; justify-content: center; align-items: center; }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
-        .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1200px; }
+        .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1300px; }
 
         /* Shared Box Style */
         .box-style { 
@@ -29,6 +29,20 @@
             padding: 15px; 
             box-sizing: border-box; 
         }
+
+        /* Far Left Date Counter */
+        .date-box {
+            width: 140px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            padding: 20px 15px;
+        }
+        .date-number { font-size: 2.8em; font-weight: 700; color: #8a2be2; line-height: 1; text-shadow: 1px 1px 0px rgba(255,255,255,0.7); }
+        .date-text { font-size: 0.9em; font-weight: 600; color: #333; line-height: 1.2; }
 
         /* Side Containers (Gallery & Bucket List) */
         .side-container { width: 260px; height: 600px; display: flex; flex-direction: column; }
@@ -88,7 +102,6 @@
         .bubble-mine { background-color: #8a2be2; color: white; border-bottom-right-radius: 4px; }
         .bubble-theirs { background-color: #ffffff; color: #333; border-bottom-left-radius: 4px; }
         
-        /* Link styles */
         .bubble a { color: inherit; text-decoration: underline; font-weight: bold; }
         
         .timestamp { font-size: 10px; color: #444; margin: 2px 5px 0 5px; opacity: 0.7; }
@@ -98,7 +111,10 @@
 
         .reply-bar { background: rgba(255,255,255,0.4); padding: 8px; border-radius: 15px; font-size: 12px; margin-bottom: 5px; display: none; position: relative; }
         .chat-inputs { display: flex; flex-direction: row; gap: 8px; margin-top: 10px; }
-        .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; font-family: 'Fredoka', sans-serif; }
+        .input-wrapper { display: flex; flex-grow: 1; position: relative; align-items: center; }
+        .input-wrapper input { width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 25px; outline: none; font-family: 'Fredoka', sans-serif; box-sizing: border-box; }
+        .clear-btn { position: absolute; right: 10px; background: rgba(0,0,0,0.15); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 10px; cursor: pointer; display: none; align-items: center; justify-content: center; font-weight: bold; transition: 0.2s; }
+        .clear-btn:hover { background: #ff4d4d; }
         .chat-inputs button { padding: 0 15px; border: none; border-radius: 25px; background: linear-gradient(135deg, #b19cd9, #8a2be2); color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4); transition: all 0.2s ease; }
     </style>
 </head>
@@ -110,7 +126,15 @@
     </div>
 
     <div class="main-app-container">
-        <!-- Left: Gallery -->
+        
+        <!-- Left: Date Counter Box -->
+        <div class="date-box box-style">
+            <div class="date-text">It was official</div>
+            <div class="date-number" id="days-count">0</div>
+            <div class="date-text">days ago</div>
+        </div>
+
+        <!-- Left Center: Gallery -->
         <div class="side-container box-style">
             <div class="header-style">Image Gallery</div>
             <div id="gallery"></div>
@@ -150,7 +174,10 @@
             <div class="chat-inputs">
                 <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
                 <button onclick="document.getElementById('fileInput').click()">📷</button>
-                <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)">
+                <div class="input-wrapper">
+                    <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)" oninput="toggleClearBtn()">
+                    <div id="clearBtn" class="clear-btn" onclick="clearInput()">✕</div>
+                </div>
                 <button onclick="sendMessage()">Send</button>
             </div>
         </div>
@@ -160,7 +187,7 @@
             <div class="header-style">Bucket List</div>
             <ul id="bucketList" class="bucket-list"></ul>
             <div class="chat-inputs">
-                <input type="text" id="bucketInput" placeholder="New adventure..." onkeypress="handleBucketKeyPress(event)">
+                <input type="text" id="bucketInput" placeholder="New adventure..." onkeypress="handleBucketKeyPress(event)" style="flex-grow:1; border-radius:25px; padding:12px 15px; border:none; outline:none; font-family:'Fredoka',sans-serif;">
                 <button onclick="addBucketItem()">Add</button>
             </div>
         </div>
@@ -185,12 +212,35 @@
         const galleryRef = ref(db, "gallery");
         const bucketListRef = ref(db, "bucketlist");
         
+        // --- Calculate Official Date Counter ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const startDate = new Date("2026-04-12T00:00:00");
+            const today = new Date();
+            // Calculates the raw difference in days (negative if looking back from before 2026)
+            const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            document.getElementById("days-count").innerText = diffDays;
+        });
+
         // Theme Load
         const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230';
         const savedAlpha = localStorage.getItem('yapboxAlpha') || '0.85';
         document.documentElement.style.setProperty('--box-base-rgb', savedRGB);
         document.documentElement.style.setProperty('--box-alpha', savedAlpha);
         document.getElementById('opacitySlider').value = savedAlpha;
+
+        // --- Clear Input Logic ---
+        window.toggleClearBtn = () => {
+            const input = document.getElementById("messageInput");
+            const btn = document.getElementById("clearBtn");
+            btn.style.display = input.value.length > 0 ? "flex" : "none";
+        };
+
+        window.clearInput = () => {
+            const input = document.getElementById("messageInput");
+            input.value = "";
+            toggleClearBtn();
+            input.focus();
+        };
 
         // --- Bucket List Logic ---
         window.addBucketItem = () => {
@@ -329,6 +379,7 @@
             if (input.value.trim() === "") return;
             push(messagesRef, { name: currentUser, text: input.value, timestamp: Date.now(), replyTo: replyingTo });
             input.value = "";
+            toggleClearBtn(); // hide X button after sending
             cancelReply();
         };
 

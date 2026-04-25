@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+          <!DOCTYPE html>
 <html>
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -8,20 +8,25 @@
     <style>
         body {
             font-family: 'Fredoka', sans-serif; 
-    background-image: url('avobackground.jpeg');
-    background-size: cover;        /* Makes the image fill the screen */
-    background-position: center;   /* Keeps the image centered */
-    background-repeat: no-repeat;  /* Prevents the image from tiling */
-    background-attachment: fixed;  /* Keeps the background steady when scrolling */
-    
-    /* Keep your existing layout styles */
-    margin: 0;
-    padding: 20px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-sizing: border-box;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            
+            /* Animated Background */
+            background-color: #fff9fa;
+            background-image: url('avobackground.jpeg');
+            background-repeat: repeat;
+            background-size: 250px; /* Adjust size of avocados here */
+            animation: moveBackground 60s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            from { background-position: 0 0; }
+            to { background-position: 1000px 1000px; }
         }
 
         /* --- New Header Section --- */
@@ -60,7 +65,6 @@
             background: rgba(255, 182, 193, 0.85); 
             backdrop-filter: blur(5px);
             border-radius: 25px;
-            /* Added Purple Glow here */
             box-shadow: 0 15px 35px rgba(232, 62, 140, 0.15), 0 0 80px rgba(138, 43, 226, 0.6); 
             display: flex;
             flex-direction: column;
@@ -68,7 +72,7 @@
             box-sizing: border-box;
             transition: transform 0.1s ease-out;
             transform-style: preserve-3d;
-            position: relative; /* Keep relative to parent */
+            position: relative;
         }
 
         .chat-header {
@@ -154,7 +158,6 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* --- Button Animation --- */
         .chat-inputs button {
             padding: 0 20px;
             border: none;
@@ -164,12 +167,11 @@
             font-weight: bold;
             font-size: 15px;
             cursor: pointer;
-            transition: all 0.15s ease; /* Smooth transition */
+            transition: all 0.15s ease;
             font-family: 'Fredoka', sans-serif;
             box-shadow: 0 2px 10px rgba(232, 62, 140, 0.2);
         }
 
-        /* The animation class */
         .btn-clicked { transform: scale(0.9); background-color: #c92f75 !important; }
 
         .btn-reset {
@@ -192,13 +194,11 @@
 
 <body>
 
-    <!-- Header Section -->
     <div class="main-header">
         <h1>JayaBeth</h1>
         <p class="glow-text">Shanky and Reece est. 2024</p>
     </div>
 
-    <!-- Chatroom UI -->
     <div class="chat-container" id="chat-tilt-box">
         <div class="chat-header">
             The Yap Box
@@ -231,7 +231,6 @@
             location.reload(); 
         }
 
-        // Tilt effect
         const chatContainer = document.getElementById('chat-tilt-box');
         chatContainer.addEventListener('mousemove', (e) => {
             const rect = chatContainer.getBoundingClientRect();
@@ -269,7 +268,6 @@
 
             if (message.trim() === "") return;
 
-            // Trigger Animation
             sendBtn.classList.add('btn-clicked');
             setTimeout(() => sendBtn.classList.remove('btn-clicked'), 150);
 

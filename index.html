@@ -48,6 +48,20 @@
             position: relative;
         }
 
+        /* Updated Position for Reset Button */
+        .btn-reset { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            background: none; 
+            border: none; 
+            color: #888; 
+            font-size: 11px; 
+            cursor: pointer; 
+            text-decoration: underline; 
+            z-index: 10;
+        }
+
         .chat-header { font-weight: bold; color: #333; margin-bottom: 15px; text-align: center; padding-bottom: 10px; font-size: 1.3em; border-bottom: 2px solid rgba(255, 255, 255, 0.5); }
 
         .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.6); border-radius: 20px; padding: 4px; width: 180px; margin: 8px auto 0 auto; }
@@ -79,8 +93,6 @@
         .chat-inputs { display: flex; flex-direction: row; gap: 8px; }
         .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; font-family: 'Fredoka'; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .chat-inputs button { padding: 0 20px; border: none; border-radius: 25px; background-color: #e83e8c; color: white; font-weight: bold; cursor: pointer; }
-        
-        .btn-reset { position: absolute; bottom: 10px; left: 15px; background: none; border: none; color: #888; font-size: 11px; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 
@@ -92,6 +104,9 @@
     </div>
 
     <div class="chat-container" id="chat-tilt-box">
+        <!-- Moved Button here -->
+        <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
+        
         <div class="chat-header">
             The Yap Box
             <div class="user-selector">
@@ -113,8 +128,6 @@
             <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)">
             <button id="sendBtn" onclick="sendMessage()">Send</button>
         </div>
-
-        <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
     </div>
 
     <script type="module">
@@ -137,7 +150,7 @@
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let replyingTo = null;
 
-        // --- UI Initialization ---
+        // --- UI Logic ---
         const box = document.getElementById('chat-tilt-box');
         box.addEventListener('mousemove', (e) => {
             const rect = box.getBoundingClientRect();
@@ -168,15 +181,13 @@
         window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
         window.resetChat = () => { if (confirm("Are you sure?")) remove(messagesRef); };
 
-        // --- The Fix: Using onValue to Re-render the Entire Chat ---
+        // Full Sync Listener
         onValue(messagesRef, (snapshot) => {
             const messagesDiv = document.getElementById("messages");
-            messagesDiv.innerHTML = ""; // Wipe the screen clean every time data changes
+            messagesDiv.innerHTML = ""; 
 
-            // If database is empty, just stop here
             if (!snapshot.exists()) return;
 
-            // Otherwise, loop through all data and add it back
             snapshot.forEach((childSnapshot) => {
                 const data = childSnapshot.val();
                 const isMine = data.name === currentUser;
@@ -194,8 +205,6 @@
                 `;
                 messagesDiv.appendChild(row);
             });
-            
-            // Scroll to bottom
             messagesDiv.scrollTo({ top: messagesDiv.scrollHeight, behavior: 'smooth' });
         });
 

@@ -14,8 +14,7 @@
             padding: 0;
             height: 100vh;
             perspective: 1000px; 
-            display: flex;
-            justify-content: space-between;
+            /* Removed flexbox properties here as we are using absolute positioning for everything */
         }
 
         /* Your existing Title Box */
@@ -52,13 +51,18 @@
             100% { background-position: -200% 0; }
         }
 
-        /* --- NEW CHATROOM UI --- */
+        /* --- UPDATED CHATROOM UI --- */
         .chat-container {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 300px;
-            height: 400px;
+            /* Centering the chatroom */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            
+            /* Made larger and longer */
+            width: 450px;
+            height: 600px;
+            
             background: rgba(255, 182, 193, 0.85); /* Matching pink theme */
             backdrop-filter: blur(5px);
             border-radius: 15px;
@@ -76,23 +80,24 @@
             text-align: center;
             border-bottom: 2px solid rgba(0,0,0,0.1);
             padding-bottom: 5px;
+            font-size: 1.2em; /* Slightly larger header text */
         }
 
         .messages {
             flex-grow: 1;
             overflow-y: auto;
-            margin-bottom: 10px;
+            margin-bottom: 15px; /* slightly more space at bottom */
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px; /* slightly more space between messages */
             padding-right: 5px;
         }
 
         .message-box {
             background: rgba(255, 255, 255, 0.6);
-            padding: 8px;
+            padding: 10px; /* slightly larger padding */
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 15px; /* slightly larger text */
             color: #222;
         }
 
@@ -103,24 +108,26 @@
         .chat-inputs {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 8px;
         }
 
         .chat-inputs input {
-            padding: 8px;
+            padding: 10px;
             border: none;
             border-radius: 5px;
             outline: none;
             font-family: Arial, sans-serif;
+            font-size: 14px;
         }
 
         .chat-inputs button {
-            padding: 8px;
+            padding: 10px;
             border: none;
             border-radius: 5px;
             background-color: #e83e8c;
             color: white;
             font-weight: bold;
+            font-size: 15px;
             cursor: pointer;
             transition: background 0.2s;
         }
@@ -172,8 +179,16 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // ⚠️ REPLACE THIS ENTIRE CONFIG WITH YOURS FROM FIREBASE ⚠️
-        const firebaseConfig = { apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", authDomain: "jayabeth-fdaad.firebaseapp.com", projectId: "jayabeth-fdaad", storageBucket: "jayabeth-fdaad.firebasestorage.app", messagingSenderId: "716510918759", appId: "1:716510918759:web:35340b83ad2a134cecbcc2", measurementId: "G-6C4G5SNN73" }; // Initialize Firebase const app = initializeApp(firebaseConfig); const analytics = getAnalytics(app);
+        // Fixed syntax formatting here so JS doesn't break
+        const firebaseConfig = { 
+            apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
+            authDomain: "jayabeth-fdaad.firebaseapp.com", 
+            projectId: "jayabeth-fdaad", 
+            storageBucket: "jayabeth-fdaad.firebasestorage.app", 
+            messagingSenderId: "716510918759", 
+            appId: "1:716510918759:web:35340b83ad2a134cecbcc2", 
+            measurementId: "G-6C4G5SNN73" 
+        };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);

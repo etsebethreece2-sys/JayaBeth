@@ -9,104 +9,51 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Fredoka', sans-serif; 
-            margin: 0;
-            padding: 20px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-sizing: border-box;
-            background-color: #fff9fa;
-            background-image: url('avobackground.jpeg');
-            background-repeat: repeat;
-            background-size: 650px;
-            animation: moveBackground 100s linear infinite;
-        }
-
+        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; height: 100vh; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; background-color: #fff9fa; background-image: url('avobackground.jpeg'); background-repeat: repeat; background-size: 650px; animation: moveBackground 100s linear infinite; }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
-
         .main-header { text-align: center; margin-bottom: 20px; z-index: 10; }
         .main-header h1 { color: #333; margin: 0; font-size: 2.5rem; }
         .glow-text { color: #666; font-weight: bold; background: linear-gradient(90deg, #666 45%, #bbb 50%, #666 55%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shine 6s linear infinite; }
         @keyframes shine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        .chat-container {
-            width: 400px;
-            height: 600px;
-            background: rgba(255, 182, 193, 0.85); 
-            backdrop-filter: blur(5px);
-            border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(232, 62, 140, 0.15), 0 0 80px rgba(138, 43, 226, 0.6); 
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-            box-sizing: border-box;
-            transition: transform 0.1s ease-out;
-            transform-style: preserve-3d;
-            position: relative;
-        }
-
-        /* Updated Position for Reset Button */
-        .btn-reset { 
-            position: absolute; 
-            top: 20px; 
-            left: 20px; 
-            background: none; 
-            border: none; 
-            color: #888; 
-            font-size: 11px; 
-            cursor: pointer; 
-            text-decoration: underline; 
-            z-index: 10;
-        }
-
+        .chat-container { width: 400px; height: 600px; background: rgba(255, 182, 193, 0.85); backdrop-filter: blur(5px); border-radius: 25px; box-shadow: 0 15px 35px rgba(232, 62, 140, 0.15), 0 0 80px rgba(138, 43, 226, 0.6); display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; transition: transform 0.1s ease-out; transform-style: preserve-3d; position: relative; }
+        .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #888; font-size: 11px; cursor: pointer; text-decoration: underline; z-index: 10; }
         .chat-header { font-weight: bold; color: #333; margin-bottom: 15px; text-align: center; padding-bottom: 10px; font-size: 1.3em; border-bottom: 2px solid rgba(255, 255, 255, 0.5); }
-
         .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.6); border-radius: 20px; padding: 4px; width: 180px; margin: 8px auto 0 auto; }
         .user-selector input[type="radio"] { display: none; }
         .user-selector label { padding: 5px 15px; cursor: pointer; font-size: 13px; border-radius: 16px; color: #555; transition: all 0.2s ease; flex: 1; text-align: center; }
         .user-selector input[type="radio"]:checked + label { background: #e83e8c; color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
         .messages { flex-grow: 1; overflow-y: auto; margin-bottom: 10px; display: flex; flex-direction: column; gap: 12px; padding: 10px 5px; }
         .messages::-webkit-scrollbar { width: 6px; }
         .messages::-webkit-scrollbar-thumb { background-color: rgba(232, 62, 140, 0.3); border-radius: 10px; }
-
         .message-row { display: flex; width: 100%; }
         .message-row.mine { justify-content: flex-end; }
         .message-row.theirs { justify-content: flex-start; }
         .message-wrapper { max-width: 75%; display: flex; flex-direction: column; }
         .message-row.mine .message-wrapper { align-items: flex-end; }
         .message-row.theirs .message-wrapper { align-items: flex-start; }
-        
         .sender-name { font-size: 11px; color: #555; margin-bottom: 3px; margin-left: 5px; }
-        
         .bubble { padding: 10px 14px; border-radius: 20px; font-size: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .bubble:hover { filter: brightness(0.95); }
         .bubble-mine { background-color: #e83e8c; color: white; border-bottom-right-radius: 4px; }
         .bubble-theirs { background-color: #ffffff; color: #333; border-bottom-left-radius: 4px; }
-        
         .quote { font-size: 11px; background: rgba(0,0,0,0.05); padding: 5px 8px; border-radius: 8px; margin-bottom: 6px; font-style: italic; border-left: 3px solid #e83e8c; }
         .reply-banner { background: rgba(255, 255, 255, 0.7); padding: 8px 15px; border-radius: 15px; margin-bottom: 8px; font-size: 12px; color: #555; display: none; justify-content: space-between; align-items: center; }
-
         .chat-inputs { display: flex; flex-direction: row; gap: 8px; }
         .chat-inputs input { flex-grow: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; font-family: 'Fredoka'; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .chat-inputs button { padding: 0 20px; border: none; border-radius: 25px; background-color: #e83e8c; color: white; font-weight: bold; cursor: pointer; }
+        .chat-inputs button { padding: 0 15px; border: none; border-radius: 25px; background-color: #e83e8c; color: white; font-weight: bold; cursor: pointer; }
+        .bubble img { max-width: 100%; border-radius: 10px; display: block; cursor: pointer; }
     </style>
 </head>
 
 <body>
-
     <div class="main-header">
         <h1>JayaBeth</h1>
         <p class="glow-text">Shanky and Reece est. 2024</p>
     </div>
 
     <div class="chat-container" id="chat-tilt-box">
-        <!-- Moved Button here -->
         <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
-        
         <div class="chat-header">
             The Yap Box
             <div class="user-selector">
@@ -125,84 +72,109 @@
         </div>
 
         <div class="chat-inputs">
+            <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+            <button onclick="document.getElementById('fileInput').click()">📷</button>
             <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)">
             <button id="sendBtn" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    const firebaseConfig = { 
-        apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
-        authDomain: "jayabeth-fdaad.firebaseapp.com", 
-        projectId: "jayabeth-fdaad", 
-        storageBucket: "jayabeth-fdaad.firebasestorage.app", 
-        messagingSenderId: "716510918759", 
-        appId: "1:716510918759:web:35340b83ad2a134cecbcc2" 
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const messagesRef = ref(db, "chatroom");
-    let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
-
-    // Image logic: Resize + Compress to Base64
-    window.handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const maxWidth = 600; // Limits image width for speed
-                const scale = maxWidth / img.width;
-                canvas.width = maxWidth;
-                canvas.height = img.height * scale;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                
-                // Convert to compressed jpeg
-                const base64Image = canvas.toDataURL('image/jpeg', 0.5); 
-                push(messagesRef, { name: currentUser, image: base64Image, timestamp: Date.now() });
-            };
-            img.src = event.target.result;
+        const firebaseConfig = { 
+            apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
+            authDomain: "jayabeth-fdaad.firebaseapp.com", 
+            projectId: "jayabeth-fdaad", 
+            storageBucket: "jayabeth-fdaad.firebasestorage.app", 
+            messagingSenderId: "716510918759", 
+            appId: "1:716510918759:web:35340b83ad2a134cecbcc2" 
         };
-        reader.readAsDataURL(file);
-        e.target.value = '';
-    };
 
-    window.sendMessage = () => {
-        const input = document.getElementById("messageInput");
-        if (input.value.trim() === "") return;
-        push(messagesRef, { name: currentUser, text: input.value, timestamp: Date.now() });
-        input.value = "";
-    };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const messagesRef = ref(db, "chatroom");
+        let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
+        let replyingTo = null;
 
-    onValue(messagesRef, (snapshot) => {
-        const container = document.getElementById("messages");
-        container.innerHTML = "";
-        if (!snapshot.exists()) return;
-        
-        snapshot.forEach((child) => {
-            const data = child.val();
-            const isMine = data.name === currentUser;
-            const content = data.image ? `<img src="${data.image}" style="width:100%; border-radius:15px; cursor:pointer;" onclick="window.open('${data.image}')">` : data.text;
-
-            container.innerHTML += `
-                <div class="message-row ${isMine ? 'mine' : 'theirs'}">
-                    <div class="bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}">
-                        ${content}
-                    </div>
-                </div>`;
+        // UI Logic
+        const box = document.getElementById('chat-tilt-box');
+        box.addEventListener('mousemove', (e) => {
+            const rect = box.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            box.style.transform = `rotateX(${-y / 50}deg) rotateY(${x / 50}deg)`;
         });
-        container.scrollTop = container.scrollHeight;
-    });
+        box.addEventListener('mouseleave', () => box.style.transform = `rotateX(0deg) rotateY(0deg)`);
 
-    window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
-</script>
+        // Image Handling (Compressed)
+        window.handleImageUpload = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const scale = 600 / img.width;
+                    canvas.width = 600;
+                    canvas.height = img.height * scale;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now() });
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        };
+
+        window.cancelReply = () => { replyingTo = null; document.getElementById('replyBanner').style.display = 'none'; };
+        window.startReply = (text, sender) => {
+            replyingTo = { text, sender };
+            document.getElementById('replyBanner').style.display = 'flex';
+            document.getElementById('replyText').innerText = `Replying to ${sender}: "${text.substring(0, 15)}..."`;
+            document.getElementById('messageInput').focus();
+        };
+
+        window.sendMessage = () => {
+            const input = document.getElementById("messageInput");
+            if (input.value.trim() === "") return;
+            push(messagesRef, { name: currentUser, text: input.value, replyTo: replyingTo, timestamp: Date.now() });
+            input.value = "";
+            cancelReply();
+        };
+
+        window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
+        window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
+        window.resetChat = () => { if (confirm("Are you sure?")) remove(messagesRef); };
+
+        onValue(messagesRef, (snapshot) => {
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML = "";
+            if (!snapshot.exists()) return;
+            snapshot.forEach((child) => {
+                const data = child.val();
+                const isMine = data.name === currentUser;
+                const quoteHtml = data.replyTo ? `<div class="quote">${data.replyTo.sender}: ${data.replyTo.text}</div>` : '';
+                const content = data.image ? `<img src="${data.image}" onclick="window.open('${data.image}')">` : data.text;
+
+                const row = document.createElement('div');
+                row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
+                row.innerHTML = `
+                    <div class="message-wrapper">
+                        ${!isMine ? `<div class="sender-name">${data.name}</div>` : ''}
+                        <div class="bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}" onclick="${!data.image ? `startReply('${(data.text||'').replace(/'/g, "\\'")}', '${data.name}')` : ''}">
+                            ${quoteHtml}${content}
+                        </div>
+                    </div>`;
+                messagesDiv.appendChild(row);
+            });
+            messagesDiv.scrollTo({ top: messagesDiv.scrollHeight, behavior: 'smooth' });
+        });
+
+        if(currentUser === 'Reece') document.getElementById('userReece').checked = true; 
+        else document.getElementById('userShanky').checked = true;
+    </script>
 </body>
 </html>

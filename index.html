@@ -70,7 +70,8 @@
         }
 
         /* Left Side Container (Date & Music) */
-        .left-column { display: flex; flex-direction: column; gap: 20px; }
+        /* Gap slightly reduced to accommodate volume slider while keeping overall height balanced */
+        .left-column { display: flex; flex-direction: column; gap: 15px; }
 
         /* Date Counter */
         .date-box {
@@ -81,7 +82,7 @@
             justify-content: center;
             align-items: center;
             gap: 5px;
-            padding: 20px 15px;
+            padding: 15px;
         }
         .date-number { font-size: 2.8em; font-weight: 700; color: #8a2be2; line-height: 1; text-shadow: 1px 1px 0px rgba(255,255,255,0.7); }
         .date-text { font-size: 0.9em; font-weight: 600; color: #333; line-height: 1.2; }
@@ -95,19 +96,81 @@
             align-items: center;
             gap: 10px;
         }
-        .song-title { font-size: 0.85em; font-weight: bold; color: #333; }
+        .song-title { font-size: 0.85em; font-weight: bold; color: #333; margin-bottom: -2px; }
         #playPauseBtn { 
             background: #8a2be2; color: white; border: none; border-radius: 50%; 
             width: 40px; height: 40px; cursor: pointer; font-size: 16px; 
             transition: transform 0.2s, background 0.2s;
         }
         #playPauseBtn:hover { transform: scale(1.1); filter: brightness(1.1); }
-        #musicSlider { width: 100%; cursor: pointer; accent-color: #8a2be2; }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 6px;
+            font-size: 12px;
+            color: #333;
+        }
 
-        /* Calendar */
+        /* Custom Expanding Sliders for Music, Volume, and Opacity */
+        .custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        .custom-slider:focus {
+            outline: none;
+        }
+        .custom-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: rgba(138, 43, 226, 0.3);
+            border-radius: 3px;
+        }
+        .custom-slider::-webkit-slider-thumb {
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: #8a2be2;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -3px; /* Centers thumb vertically on track */
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .custom-slider:hover::-webkit-slider-thumb,
+        .custom-slider:active::-webkit-slider-thumb {
+            transform: scale(1.6);
+        }
+        /* Firefox support */
+        .custom-slider::-moz-range-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: rgba(138, 43, 226, 0.3);
+            border-radius: 3px;
+        }
+        .custom-slider::-moz-range-thumb {
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: #8a2be2;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .custom-slider:hover::-moz-range-thumb,
+        .custom-slider:active::-moz-range-thumb {
+            transform: scale(1.6);
+        }
+
+        /* Calendar - adjusted padding to seamlessly fit the taller music player */
         .calendar-box {
             width: 140px;
-            padding: 15px 10px;
+            padding: 12px 10px;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -216,7 +279,6 @@
         .color-option { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 1px solid #ccc; transition: transform 0.2s; }
         .color-option:hover { transform: scale(1.15); }
         .slider-label { font-size: 12px; color: #333; margin-bottom: 5px; font-weight: bold; }
-        input[type=range] { width: 100%; cursor: pointer; }
 
         .chat-header { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; padding-bottom: 10px; font-size: 1.3em; border-bottom: 2px solid rgba(255, 255, 255, 0.5); }
         .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.4); border-radius: 20px; padding: 4px; width: 180px; margin: 8px auto 0 auto; }
@@ -312,7 +374,14 @@
                     <audio id="audioPlayer" src="Song.mp3"></audio> <!-- REPLACE song.mp3 with your actual file -->
                     <div class="song-title">Play some vibes</div>
                     <button id="playPauseBtn" onclick="togglePlay()">▶</button>
-                    <input type="range" id="musicSlider" value="0" min="0" max="100" oninput="seekAudio()">
+                    <!-- Enhanced music progress slider -->
+                    <input type="range" id="musicSlider" class="custom-slider" value="0" min="0" max="100" oninput="seekAudio()">
+                    
+                    <!-- Added Volume Control -->
+                    <div class="volume-control">
+                        <span>🔊</span>
+                        <input type="range" id="volumeSlider" class="custom-slider" value="1" min="0" max="1" step="0.01" oninput="changeVolume()">
+                    </div>
                 </div>
 
                 <!-- Calendar UI added here -->
@@ -350,7 +419,7 @@
                         <div class="color-option" style="background: linear-gradient(135deg, #ffff99, #ffff00);" onclick="changeBaseColor('255, 255, 0')"></div>
                     </div>
                     <div class="slider-label">Transparency/Darkness</div>
-                    <input type="range" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
+                    <input type="range" class="custom-slider" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
                 </div>
 
                 <div class="chat-header">
@@ -402,6 +471,10 @@
         const audio = document.getElementById('audioPlayer');
         const playBtn = document.getElementById('playPauseBtn');
         const slider = document.getElementById('musicSlider');
+        const volSlider = document.getElementById('volumeSlider');
+
+        // Set initial volume
+        audio.volume = volSlider.value;
 
         window.togglePlay = () => {
             if (audio.paused) {
@@ -423,6 +496,10 @@
         window.seekAudio = () => {
             const time = (slider.value / 100) * audio.duration;
             audio.currentTime = time;
+        };
+
+        window.changeVolume = () => {
+            audio.volume = volSlider.value;
         };
 
         // --- Calendar Logic ---

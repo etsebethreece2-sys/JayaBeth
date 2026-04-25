@@ -12,7 +12,8 @@
             --box-alpha: 0.85;
         }
 
-        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background: #fff9fa url('lilacavo.jpg'); background-size: 650px; animation: moveBackground 144s linear infinite; display: flex; justify-content: center; align-items: center; }
+        /* Added linear-gradient for dark tint */
+        body { font-family: 'Fredoka', sans-serif; margin: 0; padding: 20px; min-height: 100vh; background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), #fff9fa url('avo2.jpg'); background-size: 650px; animation: moveBackground 144s linear infinite; display: flex; justify-content: center; align-items: center; }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
         .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1300px; }
@@ -249,7 +250,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove, child, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
@@ -269,6 +270,21 @@
         
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let otherUserLastSeen = 0;
+
+        // --- Message Limit Logic ---
+        const enforceMessageLimit = () => {
+            get(messagesRef).then((snapshot) => {
+                if (snapshot.size > 50) {
+                    const messages = [];
+                    snapshot.forEach((childNode) => {
+                        messages.push({ key: childNode.key, timestamp: childNode.val().timestamp });
+                    });
+                    // Sort by timestamp and remove the oldest one
+                    messages.sort((a, b) => a.timestamp - b.timestamp);
+                    remove(child(messagesRef, messages[0].key));
+                }
+            });
+        };
 
         // --- Calculate Official Date Counter ---
         window.addEventListener('DOMContentLoaded', () => {
@@ -427,7 +443,6 @@
             document.getElementById('replyBar').style.display = 'none';
         };
 
-        // Pinned Logic
         window.pinMessage = (msgData) => {
             set(pinnedRef, msgData);
         };
@@ -490,6 +505,7 @@
                     push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now(), replyTo: replyingTo });
                     cancelReply();
                     updateMyStatus();
+                    enforceMessageLimit();
                 };
                 img.src = event.target.result;
             };
@@ -505,6 +521,7 @@
             toggleClearBtn();
             cancelReply();
             updateMyStatus();
+            enforceMessageLimit();
         };
 
         window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };

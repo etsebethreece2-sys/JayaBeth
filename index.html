@@ -280,8 +280,8 @@
         window.addEventListener('mousemove', (e) => {
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
-            const x = (e.clientX - centerX) / 60; // X axis sensitivity
-            const y = (e.clientY - centerY) / 60; // Y axis sensitivity
+            const x = (e.clientX - centerX) / 80; // X axis sensitivity
+            const y = (e.clientY - centerY) / 80; // Y axis sensitivity
             
             wrapper.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
             wrapper.style.boxShadow = `${-x}px ${y+20}px 50px rgba(0,0,0,0.3)`;

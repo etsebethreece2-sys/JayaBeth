@@ -8,7 +8,7 @@
 
     <style>
         :root {
-            --box-base-rgb: 190, 160, 230;
+            --box-base-rgb: 190, 160, 230; 
             --box-alpha: 0.85;
         }
 
@@ -28,17 +28,17 @@
         }
         @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
-        /* 3D Wrapper - Shadows explicitly increased by 30% */
+        /* 3D Wrapper */
         #app-wrapper {
             transition: transform 0.1s ease-out, box-shadow 0.3s ease;
             transform-style: preserve-3d;
             border-radius: 25px;
-            box-shadow: 0 32px 91px rgba(0,0,0,0.52); 
+            box-shadow: 0 30px 65px rgba(0,0,0,0.4);
         }
 
         .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1300px; }
 
-        /* Shared Box Style - Shadows explicitly increased by 30% */
+        /* Shared Box Style */
         .box-style { 
             background-color: rgba(var(--box-base-rgb), var(--box-alpha));
             background-image: radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
@@ -46,40 +46,47 @@
             backdrop-filter: blur(5px); 
             border-radius: 25px; 
             border: 1px solid #000; 
-            box-shadow: 0 26px 58px rgba(0,0,0,0.195), 0 0 117px rgba(0,0,0,0.104); 
+            box-shadow: 0 20px 45px rgba(0,0,0,0.15), 0 0 100px rgba(0,0,0,0.08); 
             padding: 15px; 
             box-sizing: border-box; 
         }
 
-        /* Left Side Container */
-        .left-column { display: flex; flex-direction: column; gap: 20px; width: 150px; }
+        /* Left Side Container (Date & Music) */
+        .left-column { display: flex; flex-direction: column; gap: 20px; }
 
         /* Date Counter */
-        .date-box { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; padding: 20px 15px; }
+        .date-box {
+            width: 140px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            padding: 20px 15px;
+        }
         .date-number { font-size: 2.8em; font-weight: 700; color: #8a2be2; line-height: 1; text-shadow: 1px 1px 0px rgba(255,255,255,0.7); }
         .date-text { font-size: 0.9em; font-weight: 600; color: #333; line-height: 1.2; }
 
         /* Music Player */
-        .music-box { padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .song-title { font-size: 0.85em; font-weight: bold; color: #333; text-align: center; }
-        #playPauseBtn { background: #8a2be2; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 16px; transition: transform 0.2s, background 0.2s; }
+        .music-box {
+            width: 140px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .song-title { font-size: 0.85em; font-weight: bold; color: #333; }
+        #playPauseBtn { 
+            background: #8a2be2; color: white; border: none; border-radius: 50%; 
+            width: 40px; height: 40px; cursor: pointer; font-size: 16px; 
+            transition: transform 0.2s, background 0.2s;
+        }
         #playPauseBtn:hover { transform: scale(1.1); filter: brightness(1.1); }
         #musicSlider { width: 100%; cursor: pointer; accent-color: #8a2be2; }
 
-        /* Calendar Styles */
-        .calendar-box { padding: 12px 10px; display: flex; flex-direction: column; align-items: center; }
-        .calendar-header { display: flex; justify-content: space-between; width: 100%; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #333; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; width: 100%; }
-        .cal-day-label { font-size: 10px; font-weight: bold; text-align: center; color: #444; margin-bottom: 3px; }
-        .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; cursor: pointer; background: rgba(255,255,255,0.4); border-radius: 6px; position: relative; transition: 0.2s; color: #222; }
-        .cal-day:hover { background: rgba(255,255,255,0.8); transform: scale(1.05); }
-        .has-event { background: #8a2be2 !important; color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(138,43,226,0.4); }
-
-        /* Modals and Overlays */
-        .lightbox-overlay, .event-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; display:none; align-items:center; justify-content:center; }
-        .event-modal-content { background: white; padding: 20px; border-radius: 15px; width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-
-        /* Side Containers */
+        /* Side Containers (Gallery & Bucket List) */
         .side-container { width: 260px; height: 600px; display: flex; flex-direction: column; }
         .header-style { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; border-bottom: 2px solid rgba(255, 255, 255, 0.5); padding-bottom: 10px; font-size: 1.1em; }
 
@@ -94,66 +101,106 @@
         /* Bucket List */
         .bucket-list { flex-grow: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
         .bucket-item { background: rgba(255, 255, 255, 0.4); padding: 10px 12px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; word-break: break-word; animation: fadeIn 0.3s ease; }
+        .bucket-item.deleting { animation: fadeOut 0.3s forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: scale(0.9); } }
+        
         .delete-item-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
+        .delete-item-btn:hover { opacity: 1; transform: scale(1.2); }
 
         /* Chat */
         .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
         .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #333; font-size: 11px; cursor: pointer; text-decoration: underline; }
-        .color-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; z-index: 10; }
-        .color-menu { display: none; position: absolute; top: 45px; right: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 7px 20px rgba(0,0,0,0.26); z-index: 20; width: 180px; }
+        
+        /* Color Menu */
+        .color-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; z-index: 10; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .color-toggle:hover { transform: scale(1.2) rotate(15deg); }
+        .color-menu { display: none; position: absolute; top: 45px; right: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 20; width: 180px; }
         .color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
         .color-option { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 1px solid #ccc; transition: transform 0.2s; }
         .color-option:hover { transform: scale(1.15); }
+        .slider-label { font-size: 12px; color: #333; margin-bottom: 5px; font-weight: bold; }
+        input[type=range] { width: 100%; cursor: pointer; }
+
         .chat-header { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; padding-bottom: 10px; font-size: 1.3em; border-bottom: 2px solid rgba(255, 255, 255, 0.5); }
-        
-        .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.4); border-radius: 20px; padding: 4px; width: 180px; margin: 8px auto 10px auto; }
+        .user-selector { display: flex; justify-content: center; background: rgba(255,255,255,0.4); border-radius: 20px; padding: 4px; width: 180px; margin: 8px auto 0 auto; }
         .user-selector input { display: none; }
         .user-selector label { padding: 5px 15px; cursor: pointer; font-size: 13px; border-radius: 16px; color: #555; flex: 1; text-align: center; transition: 0.2s; }
         .user-selector input:checked + label { background: #8a2be2; color: white; font-weight: bold; }
         
-        .pinned-bar { background: rgba(255, 255, 255, 0.6); border-left: 4px solid #8a2be2; padding: 8px 10px; margin: 0 10px 10px 10px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 3px 8px rgba(0,0,0,0.13); }
+        /* Pinned Message Bar */
+        .pinned-bar { background: rgba(255, 255, 255, 0.6); border-left: 4px solid #8a2be2; padding: 8px 10px; margin: 0 10px 10px 10px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 3px 8px rgba(0,0,0,0.15); }
+        .pinned-content { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; color: #333; }
+        .unpin-btn { background: none; border: none; cursor: pointer; color: #666; font-weight: bold; font-size: 14px; transition: color 0.2s; }
+        .unpin-btn:hover { color: #ff4d4d; }
+
         .messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; }
         .message-row { display: flex; width: 100%; position: relative; }
         .message-row.mine { justify-content: flex-end; }
         .message-row.theirs { justify-content: flex-start; }
+        
         .msg-wrapper { display: flex; flex-direction: column; max-width: 75%; position: relative; }
         .msg-wrapper.mine { align-items: flex-end; }
         .msg-wrapper.theirs { align-items: flex-start; }
-        .bubble { padding: 10px 24px 10px 14px; border-radius: 20px; font-size: 15px; position: relative; word-wrap: break-word; cursor: pointer; white-space: pre-wrap; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
+        
+        .bubble { padding: 10px 24px 10px 14px; border-radius: 20px; font-size: 15px; position: relative; word-wrap: break-word; cursor: pointer; white-space: pre-wrap; transition: background-color 0.2s; }
         .bubble-mine { background-color: #8a2be2; color: white; border-bottom-right-radius: 4px; }
         .bubble-theirs { background-color: #ffffff; color: #333; border-bottom-left-radius: 4px; }
+        .bubble a { color: inherit; text-decoration: underline; font-weight: bold; }
+        
+        .msg-dropdown-container { position: absolute; top: 6px; right: 6px; z-index: 5; }
+        .msg-dropdown-btn { background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; line-height: 1; cursor: pointer; display: none; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.3); align-items: center; justify-content: center; transition: background 0.2s; }
+        .msg-dropdown-btn:hover { background: #e0e0e0; }
+        .bubble:hover .msg-dropdown-btn { display: flex; }
+        
+        .msg-dropdown-menu { display: none; position: absolute; top: 22px; right: 0; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); overflow: hidden; flex-direction: column; width: 110px; z-index: 100; border: 1px solid #eee; }
+        .msg-dropdown-menu button { padding: 10px 12px; border: none; background: none; text-align: left; cursor: pointer; font-family: 'Fredoka', sans-serif; font-size: 13px; color: #333; transition: background 0.2s; }
+        .msg-dropdown-menu button:hover { background: #f5f5f5; }
+        .msg-dropdown-menu button.delete-msg-btn:hover { color: #ff4d4d; }
+
+        .timestamp { font-size: 10px; color: #444; margin: 2px 5px 0 5px; opacity: 0.7; display: flex; align-items: center; }
+        .tick { margin-left: 4px; font-size: 11px; font-weight: bold; transition: color 0.3s ease; }
+        .tick.unread { color: #888; }
+        .tick.read { color: #00bfff; }
+
+        .quote-box { font-size: 0.75em; background: rgba(0,0,0,0.1); padding: 5px; border-radius: 8px; margin-bottom: 5px; border-left: 3px solid #888; opacity: 0.8; }
+        .bubble img { max-width: 200px; display: block; border-radius: 10px; cursor: pointer; margin-top: 5px; }
+        .save-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); color: white; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 12px; font-weight: bold; cursor: pointer; z-index: 10; }
+
+        .reply-bar { background: rgba(255,255,255,0.4); padding: 8px; border-radius: 15px; font-size: 12px; margin-bottom: 5px; display: none; position: relative; }
+        
         .chat-inputs { display: flex; flex-direction: row; gap: 8px; margin-top: 10px; align-items: center; }
         .input-wrapper { display: flex; flex-grow: 1; position: relative; align-items: center; }
-        .input-wrapper input { width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 25px; outline: none; font-family: 'Fredoka', sans-serif; box-sizing: border-box; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .chat-inputs button { padding: 10px 15px; border: none; border-radius: 25px; background: linear-gradient(135deg, #b19cd9, #8a2be2); color: white; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .input-wrapper input { width: 100%; padding: 12px 35px 12px 15px; border: none; border-radius: 25px; outline: none; font-family: 'Fredoka', sans-serif; box-sizing: border-box; }
+        .clear-btn { position: absolute; right: 10px; background: rgba(0,0,0,0.15); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 10px; cursor: pointer; display: none; align-items: center; justify-content: center; font-weight: bold; transition: 0.2s; }
+        .clear-btn:hover { background: #ff4d4d; }
+        
+        .chat-inputs button { 
+            padding: 10px 15px; 
+            border: none; 
+            border-radius: 25px; 
+            background: linear-gradient(135deg, #b19cd9, #8a2be2); 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4); 
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease; 
+        }
         .chat-inputs button:hover { transform: scale(1.1); filter: brightness(1.15); }
+        .chat-inputs button:active { transform: scale(0.95); }
     </style>
 </head>
 
 <body>
-    <!-- Lightbox -->
-    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
-        <span class="close-lightbox" style="position:absolute; top:30px; right:40px; font-size:40px; color:white; cursor:pointer;">&times;</span>
-        <img id="lightbox-img" style="max-width:90%; max-height:90%; border-radius:15px;" src="">
-    </div>
-
-    <!-- Event Modal -->
-    <div id="eventModal" class="event-modal">
-        <div class="event-modal-content">
-            <h3 id="modalDateTitle" style="margin-top:0; color:#333;">Add Event</h3>
-            <div id="eventsList" style="margin-bottom:15px; max-height:150px; overflow-y:auto; font-size:14px; color:#555;"></div>
-            <input type="text" id="eventInput" placeholder="What's happening?" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ccc; box-sizing:border-box; font-family:'Fredoka', sans-serif;">
-            <div style="margin-top:15px; display:flex; gap:10px;">
-                <button onclick="saveEvent()" style="flex:1; padding:10px; background:#8a2be2; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">Save</button>
-                <button onclick="closeEventModal()" style="flex:1; padding:10px; background:#ccc; color:#333; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">Close</button>
-            </div>
-        </div>
+    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center;">
+        <span class="close-lightbox" onclick="closeLightbox()" style="position:absolute; top:30px; right:40px; font-size:40px; color:white; cursor:pointer; font-weight:bold;">&times;</span>
+        <img id="lightbox-img" class="lightbox-img" style="max-width:90%; max-height:90%; border-radius:15px;" src="">
     </div>
 
     <div id="app-wrapper">
         <div class="main-app-container">
             
-            <!-- LEFT COLUMN: Date + Music + Calendar -->
+            <!-- LEFT COLUMN: Date + Music -->
             <div class="left-column">
                 <div class="date-box box-style">
                     <div class="date-text">It was official</div>
@@ -162,20 +209,10 @@
                 </div>
 
                 <div class="music-box box-style">
-                    <audio id="audioPlayer" src="Song.mp3"></audio>
+                    <audio id="audioPlayer" src="Song.mp3"></audio> <!-- REPLACE song.mp3 with your actual file -->
                     <div class="song-title">Play some vibes</div>
                     <button id="playPauseBtn" onclick="togglePlay()">▶</button>
                     <input type="range" id="musicSlider" value="0" min="0" max="100" oninput="seekAudio()">
-                </div>
-
-                <!-- Calendar UI -->
-                <div class="calendar-box box-style" id="calendar">
-                    <div class="calendar-header">
-                        <span onclick="prevMonth()" style="cursor:pointer; padding:0 5px;">&lt;</span>
-                        <span id="monthDisplay">Month</span>
-                        <span onclick="nextMonth()" style="cursor:pointer; padding:0 5px;">&gt;</span>
-                    </div>
-                    <div class="calendar-grid" id="calendarGrid"></div>
                 </div>
             </div>
 
@@ -193,34 +230,40 @@
                     <div class="color-grid">
                         <div class="color-option" style="background: linear-gradient(135deg, #d8c6f2, #b49cd9);" onclick="changeBaseColor('190, 160, 230')"></div>
                         <div class="color-option" style="background: linear-gradient(135deg, #ffcce0, #ffb6c1);" onclick="changeBaseColor('255, 182, 193')"></div>
-                        <div class="color-option" style="background: linear-gradient(135deg, #a0c4ff, #8bb4f6);" onclick="changeBaseColor('160, 196, 255')"></div>
-                        <div class="color-option" style="background: linear-gradient(135deg, #9bf6ff, #8ae5f0);" onclick="changeBaseColor('155, 246, 255')"></div>
-                        <div class="color-option" style="background: linear-gradient(135deg, #caffbf, #b9f0b0);" onclick="changeBaseColor('202, 255, 191')"></div>
-                        <div class="color-option" style="background: linear-gradient(135deg, #fdffb6, #ecf0a5);" onclick="changeBaseColor('253, 255, 182')"></div>
-                        <div class="color-option" style="background: linear-gradient(135deg, #ffd6a5, #f0c594);" onclick="changeBaseColor('255, 214, 165')"></div>
-                        <div class="color-option" style="background: linear-gradient(135deg, #ffadad, #f09c9c);" onclick="changeBaseColor('255, 173, 173')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #e0f7fa, #add8e6);" onclick="changeBaseColor('173, 216, 230')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ccffcc, #90ee90);" onclick="changeBaseColor('144, 238, 144')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffdb99, #ffa500);" onclick="changeBaseColor('255, 165, 0')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffb3a7, #ff6347);" onclick="changeBaseColor('255, 99, 71')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffff99, #ffff00);" onclick="changeBaseColor('255, 255, 0')"></div>
                     </div>
-                    <input type="range" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)" style="width: 100%;">
+                    <div class="slider-label">Transparency/Darkness</div>
+                    <input type="range" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
                 </div>
 
-                <div class="chat-header">The Yap Box</div>
+                <div class="chat-header">
+                    The Yap Box
+                    <div class="user-selector">
+                        <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
+                        <label for="userShanky">Shanky</label>
+                        <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
+                        <label for="userReece">Reece</label>
+                    </div>
+                </div>
+
+                <div id="pinnedBar" class="pinned-bar" style="display: none;">
+                    <div class="pinned-content" id="pinnedContent"></div>
+                    <button class="unpin-btn" onclick="unpinMessage()" title="Unpin message">✕</button>
+                </div>
                 
-                <!-- RESTORED: User Selector -->
-                <div class="user-selector">
-                    <input type="radio" id="userMe" name="chatUser" value="me" checked onchange="updateChatUser()">
-                    <label for="userMe">Me</label>
-                    <input type="radio" id="userThem" name="chatUser" value="them" onchange="updateChatUser()">
-                    <label for="userThem">Them</label>
-                </div>
-
-                <div id="pinnedBar" class="pinned-bar" style="display: none;"></div>
                 <div class="messages" id="messages"></div>
                 
+                <div id="replyBar" class="reply-bar"></div>
                 <div class="chat-inputs">
-                    <button onclick="document.getElementById('fileInput').click()">📷</button>
                     <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                    <button onclick="document.getElementById('fileInput').click()" title="Upload Image">📷</button>
                     <div class="input-wrapper">
-                        <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)">
+                        <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)" oninput="toggleClearBtn()">
+                        <div id="clearBtn" class="clear-btn" onclick="clearInput()" title="Clear text">✕</div>
                     </div>
                     <button onclick="sendMessage()">Send</button>
                 </div>
@@ -231,7 +274,7 @@
                 <div class="header-style">Bucket List</div>
                 <ul id="bucketList" class="bucket-list"></ul>
                 <div class="chat-inputs">
-                    <input type="text" id="bucketInput" placeholder="New adventure...">
+                    <input type="text" id="bucketInput" placeholder="New adventure..." onkeypress="handleBucketKeyPress(event)" style="flex-grow:1; border-radius:25px; padding:12px 15px; border:none; outline:none; font-family:'Fredoka',sans-serif;">
                     <button onclick="addBucketItem()">Add</button>
                 </div>
             </div>
@@ -240,9 +283,47 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // Firebase Config 
+        // --- Music Player Logic ---
+        const audio = document.getElementById('audioPlayer');
+        const playBtn = document.getElementById('playPauseBtn');
+        const slider = document.getElementById('musicSlider');
+
+        window.togglePlay = () => {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerText = '⏸';
+            } else {
+                audio.pause();
+                playBtn.innerText = '▶';
+            }
+        };
+
+        audio.ontimeupdate = () => {
+            if (audio.duration) {
+                const percentage = (audio.currentTime / audio.duration) * 100;
+                slider.value = percentage;
+            }
+        };
+
+        window.seekAudio = () => {
+            const time = (slider.value / 100) * audio.duration;
+            audio.currentTime = time;
+        };
+
+        // --- 3D Tilt Script ---
+        const wrapper = document.getElementById('app-wrapper');
+        window.addEventListener('mousemove', (e) => {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const x = (e.clientX - centerX) / 80;
+            const y = (e.clientY - centerY) / 80;
+            wrapper.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+            wrapper.style.boxShadow = `${-x}px ${y+30}px 65px rgba(0,0,0,0.4)`;
+        });
+
+        // --- Firebase & App Logic ---
         const firebaseConfig = { 
             apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
             authDomain: "jayabeth-fdaad.firebaseapp.com", 
@@ -254,199 +335,307 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        
-        // Database References
-        const eventsRef = ref(db, "events");
-        const messagesRef = ref(db, "messages");
-        const bucketRef = ref(db, "bucket");
+        const messagesRef = ref(db, "chatroom");
         const galleryRef = ref(db, "gallery");
+        const bucketListRef = ref(db, "bucketlist");
+        const pinnedRef = ref(db, "pinned");
+        
+        let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
+        let otherUserLastSeen = 0;
 
-        // --- Date Counter ---
-        const startDate = new Date("2024-01-01"); // <-- Change this to your real official date
-        const today = new Date();
-        const diffDays = Math.max(0, Math.floor((today - startDate) / (1000 * 60 * 60 * 24)));
-        document.getElementById("days-count").innerText = diffDays;
-
-        // --- Theme / Color Options ---
-        window.toggleColorMenu = () => {
-            const menu = document.getElementById("colorMenu");
-            menu.style.display = menu.style.display === "block" ? "none" : "block";
-        };
-        window.changeBaseColor = (rgb) => { document.documentElement.style.setProperty('--box-base-rgb', rgb); };
-        window.changeAlpha = (val) => { document.documentElement.style.setProperty('--box-alpha', val); };
-
-        // --- Music Player Logic ---
-        const audio = document.getElementById("audioPlayer");
-        window.togglePlay = () => {
-            const btn = document.getElementById("playPauseBtn");
-            if (audio.paused) { audio.play(); btn.innerText = "⏸"; } 
-            else { audio.pause(); btn.innerText = "▶"; }
-        };
-        audio.ontimeupdate = () => {
-            const slider = document.getElementById("musicSlider");
-            slider.value = (audio.currentTime / audio.duration) * 100 || 0;
-        };
-        window.seekAudio = () => {
-            const slider = document.getElementById("musicSlider");
-            audio.currentTime = (slider.value / 100) * audio.duration;
-        };
-
-        // --- Calendar Logic ---
-        let date = new Date();
-        let selectedDate = "";
-        let events = {};
-
-        const renderCalendar = () => {
-            const year = date.getFullYear();
-            const month = date.getMonth();
-            document.getElementById("monthDisplay").innerText = date.toLocaleString('default', { month: 'short' }) + " " + year;
-            
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const grid = document.getElementById("calendarGrid");
-            
-            grid.innerHTML = `
-                <div class="cal-day-label">S</div><div class="cal-day-label">M</div>
-                <div class="cal-day-label">T</div><div class="cal-day-label">W</div>
-                <div class="cal-day-label">T</div><div class="cal-day-label">F</div>
-                <div class="cal-day-label">S</div>
-            `;
-
-            for(let i=0; i<firstDay; i++) grid.innerHTML += `<div></div>`;
-            for(let i=1; i<=daysInMonth; i++) {
-                const dateStr = `${year}-${month+1}-${i}`;
-                const hasEvent = events[dateStr] ? "has-event" : "";
-                grid.innerHTML += `<div class="cal-day ${hasEvent}" onclick="openEventModal('${dateStr}')">${i}</div>`;
-            }
-        };
-
-        window.prevMonth = () => { date.setMonth(date.getMonth() - 1); renderCalendar(); };
-        window.nextMonth = () => { date.setMonth(date.getMonth() + 1); renderCalendar(); };
-
-        window.openEventModal = (d) => {
-            selectedDate = d;
-            document.getElementById("modalDateTitle").innerText = "Events for " + d;
-            document.getElementById("eventModal").style.display = "flex";
-            const list = document.getElementById("eventsList");
-            list.innerHTML = "";
-            if(events[d]) {
-                Object.keys(events[d]).forEach(k => {
-                    list.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; background:#f0f0f0; padding:5px 8px; border-radius:5px;"><span>${events[d][k].text}</span> <button onclick="deleteEvent('${k}')" style="border:none; background:none; color:red; cursor:pointer; font-weight:bold;">✕</button></div>`;
-                });
-            }
-        };
-
-        window.closeEventModal = () => document.getElementById("eventModal").style.display = "none";
-
-        window.saveEvent = () => {
-            const txt = document.getElementById("eventInput").value;
-            if(!txt) return;
-            push(child(eventsRef, selectedDate), { text: txt });
-            document.getElementById("eventInput").value = "";
-            closeEventModal();
-        };
-
-        window.deleteEvent = (key) => { remove(child(eventsRef, `${selectedDate}/${key}`)); closeEventModal(); };
-
-        onValue(eventsRef, (snapshot) => {
-            events = snapshot.val() || {};
-            renderCalendar();
-        });
-
-        renderCalendar();
-
-        // --- Chat Logic ---
-        let currentUser = "me";
-        window.updateChatUser = () => {
-            currentUser = document.querySelector('input[name="chatUser"]:checked').value;
-        };
-
-        window.sendMessage = () => {
-            const input = document.getElementById("messageInput");
-            if (input.value.trim() === "") return;
-            push(messagesRef, { text: input.value, sender: currentUser, timestamp: Date.now() });
-            input.value = "";
-        };
-
-        window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
-        window.resetChat = () => { remove(messagesRef); };
-
-        onValue(messagesRef, (snapshot) => {
-            const messages = snapshot.val() || {};
-            const container = document.getElementById("messages");
-            container.innerHTML = "";
-            Object.values(messages).forEach(msg => {
-                const isMine = msg.sender === "me";
-                container.innerHTML += `
-                    <div class="message-row ${isMine ? 'mine' : 'theirs'}">
-                        <div class="msg-wrapper ${isMine ? 'mine' : 'theirs'}">
-                            <div class="bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}">${msg.text}</div>
-                        </div>
-                    </div>`;
+        const enforceMessageLimit = () => {
+            get(messagesRef).then((snapshot) => {
+                if (snapshot.size > 50) {
+                    const messages = [];
+                    snapshot.forEach((childNode) => {
+                        messages.push({ key: childNode.key, timestamp: childNode.val().timestamp });
+                    });
+                    messages.sort((a, b) => a.timestamp - b.timestamp);
+                    remove(child(messagesRef, messages[0].key));
+                }
             });
-            container.scrollTop = container.scrollHeight;
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const startDate = new Date("2026-04-12T00:00:00");
+            const today = new Date();
+            const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            document.getElementById("days-count").innerText = diffDays;
         });
 
-        // --- Bucket List Logic ---
+        const updateMyStatus = () => {
+            set(ref(db, `status/${currentUser}`), { lastSeen: Date.now() });
+        };
+        window.addEventListener('focus', updateMyStatus);
+        document.addEventListener('click', updateMyStatus);
+        setTimeout(updateMyStatus, 1000);
+
+        const listenToOtherUserStatus = () => {
+            const otherUser = currentUser === 'Shanky' ? 'Reece' : 'Shanky';
+            onValue(ref(db, `status/${otherUser}`), (snapshot) => {
+                if (snapshot.exists()) {
+                    otherUserLastSeen = snapshot.val().lastSeen;
+                    document.querySelectorAll('.tick').forEach(tickEl => {
+                        const ts = parseInt(tickEl.getAttribute('data-timestamp'));
+                        if (ts <= otherUserLastSeen) {
+                            tickEl.classList.remove('unread');
+                            tickEl.classList.add('read');
+                        }
+                    });
+                }
+            });
+        };
+        listenToOtherUserStatus();
+
+        const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230';
+        const savedAlpha = localStorage.getItem('yapboxAlpha') || '0.85';
+        document.documentElement.style.setProperty('--box-base-rgb', savedRGB);
+        document.documentElement.style.setProperty('--box-alpha', savedAlpha);
+        document.getElementById('opacitySlider').value = savedAlpha;
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.msg-dropdown-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+        });
+
+        window.toggleClearBtn = () => {
+            const input = document.getElementById("messageInput");
+            const btn = document.getElementById("clearBtn");
+            btn.style.display = input.value.length > 0 ? "flex" : "none";
+        };
+
+        window.clearInput = () => {
+            const input = document.getElementById("messageInput");
+            input.value = "";
+            toggleClearBtn();
+            input.focus();
+        };
+
         window.addBucketItem = () => {
             const input = document.getElementById("bucketInput");
             if (input.value.trim() === "") return;
-            push(bucketRef, { text: input.value });
+            push(bucketListRef, { 
+                text: input.value, 
+                timestamp: Date.now(),
+                creator: currentUser 
+            });
             input.value = "";
         };
 
-        window.deleteBucketItem = (key) => { remove(child(bucketRef, key)); };
+        window.handleBucketKeyPress = (e) => { if (e.key === 'Enter') addBucketItem(); };
 
-        onValue(bucketRef, (snapshot) => {
-            const items = snapshot.val() || {};
-            const list = document.getElementById("bucketList");
-            list.innerHTML = "";
-            Object.keys(items).forEach(k => {
-                list.innerHTML += `
-                    <li class="bucket-item">
-                        ${items[k].text} 
-                        <button class="delete-item-btn" onclick="deleteBucketItem('${k}')">✕</button>
-                    </li>`;
+        window.deleteBucketItem = (key, btn) => {
+            const li = btn.closest('.bucket-item');
+            li.classList.add('deleting');
+            setTimeout(() => { remove(child(bucketListRef, key)); }, 300);
+        };
+
+        onValue(bucketListRef, (snapshot) => {
+            const listDiv = document.getElementById("bucketList");
+            listDiv.innerHTML = "";
+            if (!snapshot.exists()) return;
+            snapshot.forEach((child) => {
+                const data = child.val();
+                const key = child.key;
+                const li = document.createElement('li');
+                li.className = 'bucket-item';
+                li.innerHTML = `<span>${data.text}</span><button class="delete-item-btn" onclick="deleteBucketItem('${key}', this)">✕</button>`;
+                listDiv.appendChild(li);
             });
+            listDiv.scrollTop = listDiv.scrollHeight;
         });
 
-        // --- Gallery & Lightbox Logic ---
+        window.toggleColorMenu = (e) => {
+            if(e) e.stopPropagation();
+            const menu = document.getElementById('colorMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        };
+
+        window.changeBaseColor = (rgb) => {
+            document.documentElement.style.setProperty('--box-base-rgb', rgb);
+            localStorage.setItem('yapboxRGB', rgb);
+        };
+
+        window.changeAlpha = (val) => {
+            document.documentElement.style.setProperty('--box-alpha', val);
+            localStorage.setItem('yapboxAlpha', val);
+        };
+
+        const formatTime = (ts) => {
+            const date = new Date(ts);
+            return date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+        };
+
+        const formatMessageLinks = (text) => {
+            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+        };
+
+        let holdTimer = null;
+        let replyingTo = null; 
+
+        window.openLightbox = (src) => {
+            const lightbox = document.getElementById('lightbox');
+            document.getElementById('lightbox-img').src = src;
+            lightbox.style.display = 'flex';
+        };
+
+        window.closeLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
+
+        window.startReply = (text, user) => {
+            replyingTo = { text: text || "[Image]", user: user };
+            const bar = document.getElementById('replyBar');
+            bar.style.display = 'block';
+            bar.innerHTML = `<strong>Replying to ${user}:</strong> ${text || "[Image]"} <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>`;
+        };
+
+        window.cancelReply = () => { replyingTo = null; document.getElementById('replyBar').style.display = 'none'; };
+
+        window.pinMessage = (msgData) => { set(pinnedRef, msgData); };
+        
+        window.unpinMessage = () => { remove(pinnedRef); };
+
+        window.deleteMessage = (key) => { if(confirm("Delete this message?")) remove(child(messagesRef, key)); };
+
+        onValue(pinnedRef, (snapshot) => {
+            const bar = document.getElementById('pinnedBar');
+            const content = document.getElementById('pinnedContent');
+            if(snapshot.exists()) {
+                const data = snapshot.val();
+                let displayTxt = data.text ? data.text : '[Image]';
+                content.innerHTML = `<strong>📌 Pinned</strong> - ${data.name}: ${displayTxt}`;
+                bar.style.display = 'flex';
+            } else { bar.style.display = 'none'; }
+        });
+
+        window.startHold = (event, imgData) => {
+            holdTimer = setTimeout(() => {
+                const target = event.target;
+                if(target.parentElement.querySelector('.save-overlay')) return;
+                const overlay = document.createElement('div');
+                overlay.className = 'save-overlay';
+                overlay.innerText = 'Save to Gallery';
+                overlay.onclick = (e) => {
+                    e.stopPropagation();
+                    push(galleryRef, { image: imgData, timestamp: Date.now() });
+                    overlay.innerText = 'Saved!';
+                    setTimeout(() => overlay.remove(), 1000);
+                };
+                target.parentElement.appendChild(overlay);
+                setTimeout(() => { if(overlay) overlay.remove(); }, 3000);
+            }, 1000); 
+        };
+
+        window.endHold = () => clearTimeout(holdTimer);
+
         window.handleImageUpload = (e) => {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (event) => {
-                push(galleryRef, { img: event.target.result });
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const scale = 400 / img.width;
+                    canvas.width = 400;
+                    canvas.height = img.height * scale;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now(), replyTo: replyingTo });
+                    cancelReply();
+                    updateMyStatus();
+                    enforceMessageLimit();
+                };
+                img.src = event.target.result;
             };
             reader.readAsDataURL(file);
+            e.target.value = '';
         };
 
-        window.deleteImage = (key, event) => {
-            event.stopPropagation();
-            remove(child(galleryRef, key));
+        window.sendMessage = () => {
+            const input = document.getElementById("messageInput");
+            if (input.value.trim() === "") return;
+            push(messagesRef, { name: currentUser, text: input.value, timestamp: Date.now(), replyTo: replyingTo });
+            input.value = "";
+            toggleClearBtn();
+            cancelReply();
+            updateMyStatus();
+            enforceMessageLimit();
         };
 
-        window.openLightbox = (src) => {
-            document.getElementById("lightbox-img").src = src;
-            document.getElementById("lightbox").style.display = "flex";
-        };
+        window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
+        window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
+        window.resetChat = () => { if (confirm("Clear Chat?")) remove(messagesRef); };
+        window.deleteGalleryItem = (event, key) => { event.stopPropagation(); remove(child(galleryRef, key)); };
 
-        window.closeLightbox = () => {
-            document.getElementById("lightbox").style.display = "none";
-        };
+        onValue(messagesRef, (snapshot) => {
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML = "";
+            if (!snapshot.exists()) return;
+            snapshot.forEach((childNode) => {
+                const data = childNode.val();
+                const key = childNode.key;
+                const isMine = data.name === currentUser;
+                const row = document.createElement('div');
+                row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
+                const wrapper = document.createElement('div');
+                wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
+                const bubble = document.createElement('div');
+                bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
+                bubble.onclick = (e) => { if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) { startReply(data.text || "[Image]", data.name); } };
+                const dropdownContainer = document.createElement('div');
+                dropdownContainer.className = 'msg-dropdown-container';
+                const dropBtn = document.createElement('button');
+                dropBtn.className = 'msg-dropdown-btn';
+                dropBtn.innerHTML = '&#8964;'; 
+                const dropMenu = document.createElement('div');
+                dropMenu.className = 'msg-dropdown-menu';
+                const pinBtn = document.createElement('button');
+                pinBtn.innerText = '📌 Pin';
+                pinBtn.onclick = (e) => { e.stopPropagation(); pinMessage(data); dropMenu.style.display = 'none'; };
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-msg-btn';
+                deleteBtn.innerText = '🗑️ Delete';
+                deleteBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(key); dropMenu.style.display = 'none'; };
+                dropMenu.appendChild(pinBtn);
+                dropMenu.appendChild(deleteBtn);
+                dropBtn.onclick = (e) => { e.stopPropagation(); const isOpen = dropMenu.style.display === 'flex'; document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none'); dropMenu.style.display = isOpen ? 'none' : 'flex'; };
+                dropdownContainer.appendChild(dropBtn);
+                dropdownContainer.appendChild(dropMenu);
+                bubble.appendChild(dropdownContainer);
+                if (data.replyTo) { const quote = document.createElement('div'); quote.className = 'quote-box'; quote.innerText = `${data.replyTo.user}: ${data.replyTo.text.length > 20 ? data.replyTo.text.substring(0,20) + '...' : data.replyTo.text}`; bubble.appendChild(quote); }
+                if (data.image) { const img = document.createElement('img'); img.src = data.image; img.onmousedown = (e) => startHold(e, data.image); img.onmouseup = endHold; img.onmouseleave = endHold; img.ontouchstart = (e) => startHold(e, data.image); img.ontouchend = endHold; img.onclick = (e) => { e.stopPropagation(); openLightbox(data.image); }; bubble.appendChild(img); } else { const textSpan = document.createElement('span'); textSpan.innerHTML = formatMessageLinks(data.text); bubble.appendChild(textSpan); }
+                const time = document.createElement('div'); time.className = 'timestamp'; time.innerText = formatTime(data.timestamp);
+                if(isMine) { const tickSpan = document.createElement('span'); tickSpan.className = 'tick ' + (data.timestamp <= otherUserLastSeen ? 'read' : 'unread'); tickSpan.setAttribute('data-timestamp', data.timestamp); tickSpan.innerText = '✓✓'; time.appendChild(tickSpan); }
+                wrapper.appendChild(bubble); wrapper.appendChild(time); row.appendChild(wrapper); messagesDiv.appendChild(row);
+            });
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
 
         onValue(galleryRef, (snapshot) => {
-            const images = snapshot.val() || {};
-            const gallery = document.getElementById("gallery");
-            gallery.innerHTML = "";
-            Object.keys(images).forEach(k => {
-                gallery.innerHTML += `
-                    <div class="gallery-item" onclick="openLightbox('${images[k].img}')">
-                        <img src="${images[k].img}">
-                        <button class="delete-btn" onclick="deleteImage('${k}', event)">✕</button>
-                    </div>`;
+            const galleryDiv = document.getElementById("gallery");
+            galleryDiv.innerHTML = "";
+            if (!snapshot.exists()) return;
+            snapshot.forEach((child) => {
+                const data = child.val();
+                const key = child.key;
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                const img = document.createElement('img');
+                img.src = data.image;
+                img.onclick = () => openLightbox(data.image);
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-btn';
+                delBtn.innerText = '✕';
+                delBtn.onclick = (e) => deleteGalleryItem(e, key);
+                item.appendChild(img);
+                item.appendChild(delBtn);
+                galleryDiv.appendChild(item);
             });
         });
+
+        if(currentUser === 'Reece') document.getElementById('userReece').checked = true; 
+        else document.getElementById('userShanky').checked = true;
     </script>
 </body>
 </html>

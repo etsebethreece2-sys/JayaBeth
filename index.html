@@ -8,44 +8,44 @@
             margin: 0;
             padding: 0;
             height: 100vh;
+            /* Needed for the 3D effect */
             perspective: 1000px; 
-            display: flex; /* Centering for better demo */
-            justify-content: center;
-            align-items: center;
         }
 
         .container {
+            /* Positioned back in the top-left */
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            
             text-align: center;
             background: rgba(255, 182, 193, 0.7); 
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            
             transition: transform 0.1s ease-out;
             cursor: pointer;
             user-select: none;
-            /* Keeps the content strictly inside the box */
             transform-style: preserve-3d;
         }
 
         h1 { color: #333; margin-top: 0; }
 
-        /* The Glow Effect Styling */
         .glow-text {
-            /* Fallback color */
             color: #666; 
             font-weight: bold;
             
-            /* Gradient that moves: Dark Grey -> White -> Dark Grey */
+            /* Gradient for the glow */
             background: linear-gradient(90deg, #666, #fff, #666);
             background-size: 200% 100%;
             
-            /* Clips background to the text and makes text transparent to show background */
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             
-            /* The animation: 3 seconds duration, runs infinitely */
-            animation: shine 3s linear infinite;
+            /* Changed from 3s to 6s to make it slower */
+            animation: shine 6s linear infinite;
         }
 
         @keyframes shine {
@@ -59,7 +59,6 @@
 
     <div class="container" id="tilt-box">
         <h1>JayaBeth</h1>
-        <!-- Added the class here -->
         <p class="glow-text">Shanky and Reece est. 2024</p>
     </div>
 

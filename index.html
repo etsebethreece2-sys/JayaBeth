@@ -198,6 +198,22 @@
     padding: 10px;
     overflow-y: auto;
 }
+
+        .sticker-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 stickers per row */
+    gap: 10px;
+    padding: 5px;
+}
+.sticker-grid img {
+    width: 100%;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+.sticker-grid img:hover {
+    transform: scale(1.1);
+}
 /* Ensure dark mode support */
 body.dark-mode .sticker-menu {
     background: #333;
@@ -350,10 +366,12 @@ body.dark-mode .sticker-menu {
                     <input type="range" class="custom-slider" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
                 </div>
 
-                <!-- New Sticker Menu -->
-    <div id="stickerMenu" class="sticker-menu">
-        <div style="text-align: center; color: #888; margin-top: 50px;">Empty (Add stickers here soon!)</div>
+    <!-- Sticker Menu -->
+<div id="stickerMenu" class="sticker-menu">
+    <div class="sticker-grid">
+        <img src="cry.png" onclick="sendSticker('cry.png')">
     </div>
+</div>
 
                 <div class="chat-header">
                     The Yap Box
@@ -428,6 +446,20 @@ body.dark-mode .sticker-menu {
         window.toggleStickerMenu = () => {
     const menu = document.getElementById('stickerMenu');
     menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+};
+
+        window.sendSticker = (stickerSrc) => {
+    // This pushes the sticker to your Firebase messages
+    push(messagesRef, {
+        name: currentUser,
+        image: stickerSrc, // Storing the filename/path as the image
+        timestamp: Date.now(),
+        replyTo: replyingTo // Keeps your reply feature working
+    });
+    
+    // Cleanup
+    cancelReply();
+    toggleStickerMenu(); // Close the menu after clicking
 };
 
         // --- Music Player Logic ---

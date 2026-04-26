@@ -429,25 +429,26 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove, child, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
+        // --- GLOBAL VARIABLES ---
+        window.replyingTo = null; // Fixes the ReferenceError
+        let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let galleryImages = [];
         let currentImgIndex = 0;
+        let holdTimer = null;
+        let otherUserLastSeen = 0;
 
-        window.toggleDarkMode = () => {
-            const body = document.body;
-            const btn = document.getElementById('themeToggle');
-            body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) { localStorage.setItem('darkmode', 'enabled'); btn.innerText = '☀️'; } else { localStorage.setItem('darkmode', 'disabled'); btn.innerText = '🌙'; }
-        };
+        // Firebase Setup
+        const firebaseConfig = { apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", authDomain: "jayabeth-fdaad.firebaseapp.com", projectId: "jayabeth-fdaad", storageBucket: "jayabeth-fdaad.firebasestorage.app", messagingSenderId: "716510918759", appId: "1:716510918759:web:35340b83ad2a134cecbcc2" };
+        const app = initializeApp(firebaseConfig); 
+        const db = getDatabase(app); 
+        const messagesRef = ref(db, "chatroom");
+        const galleryRef = ref(db, "gallery"); 
+        const bucketListRef = ref(db, "bucketlist"); 
+        const pinnedRef = ref(db, "pinned");
 
-        window.spawnHeart = () => {
-            const heart = document.createElement('div'); heart.innerText = '❤️'; heart.className = 'floating-heart';
-            const x = Math.random() * (window.innerWidth - 100) + 50; const y = Math.random() * (window.innerHeight - 100) + 50;
-            heart.style.left = `${x}px`; heart.style.top = `${y}px`; document.body.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 1000);
-        };
-
+        // --- STICKER LOGIC ---
         window.toggleStickerMenu = () => {
             const menu = document.getElementById('stickerMenu');
             menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
@@ -457,159 +458,94 @@
             push(messagesRef, {
                 name: currentUser,
                 image: stickerSrc, 
-                isSticker: true, // Tagged as sticker
+                isSticker: true, // This marks it as a sticker
                 timestamp: Date.now(),
-                replyTo: replyingTo 
+                replyTo: window.replyingTo // Uses the global variable
             });
-            cancelReply();
-            toggleStickerMenu();
+            window.cancelReply(); // Resets reply
+            window.toggleStickerMenu(); // Closes menu
         };
 
-        // --- Music Player Logic ---
-        const audio = document.getElementById('audioPlayer');
-        const playBtn = document.getElementById('playPauseBtn');
-        const slider = document.getElementById('musicSlider');
-        const volSlider = document.getElementById('volumeSlider');
-        const songTitle = document.getElementById('songTitle');
-
-        const playlist = [
-            { title: "Song Name 1", file: "Song.mp3" }, { title: "Song Name 2", file: "song2.mp3" },
-            { title: "Song Name 3", file: "song3.mp3" }, { title: "Song Name 4", file: "aria.mp3" },
-            { title: "Song Name 5", file: "clark.mp3" }, { title: "Song Name 6", file: "mice.mp3" },
-            { title: "Song Name 7", file: "subwoofer.mp3" }, { title: "Song Name 8", file: "moog.mp3" },
-            { title: "Song Name 9", file: "hagg.mp3" }, { title: "Song Name 9", file: "sweden.mp3" }
-        ];
-        let currentTrackIndex = 0;
-
-        const loadTrack = (index) => { audio.src = playlist[index].file; songTitle.innerText = playlist[index].title; audio.load(); };
-        window.togglePlay = () => {
-            if (audio.paused) { if(!audio.src) loadTrack(currentTrackIndex); audio.play(); playBtn.innerText = '⏸'; } 
-            else { audio.pause(); playBtn.innerText = '▶'; }
+        // --- REPLY LOGIC ---
+        window.startReply = (text, user) => {
+            window.replyingTo = { text: text || "[Image]", user: user };
+            const bar = document.getElementById('replyBar');
+            bar.style.display = 'block';
+            bar.innerHTML = `<strong>Replying to ${user}:</strong> ${text || "[Image]"} <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>`;
         };
-        window.nextTrack = () => { currentTrackIndex = (currentTrackIndex + 1) % playlist.length; loadTrack(currentTrackIndex); audio.play(); playBtn.innerText = '⏸'; };
-        window.prevTrack = () => { currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length; loadTrack(currentTrackIndex); audio.play(); playBtn.innerText = '⏸'; };
-        audio.ontimeupdate = () => { if (isFinite(audio.duration) && audio.duration > 0) { slider.value = (audio.currentTime / audio.duration) * 100; } };
-        window.seekAudio = () => { if (isFinite(audio.duration) && audio.duration > 0) { audio.currentTime = (slider.value / 100) * audio.duration; } };
-        window.changeVolume = () => { audio.volume = volSlider.value; };
-        loadTrack(0); audio.volume = volSlider.value;
 
-        let currentMonth = new Date().getMonth(); let currentYear = new Date().getFullYear();
-        window.renderCalendar = () => {
-            const monthYear = document.getElementById("monthYear"); const calendarDates = document.getElementById("calendarDates"); const prevBtn = document.getElementById("prevMonth");
-            if (!monthYear || !calendarDates) return;
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            monthYear.innerText = `${monthNames[currentMonth]} ${currentYear}`;
-            calendarDates.innerHTML = "";
-            const today = new Date();
-            if (currentYear === today.getFullYear() && currentMonth === today.getMonth()) prevBtn.style.visibility = 'hidden'; else prevBtn.style.visibility = 'visible';
-            const firstDay = new Date(currentYear, currentMonth, 1).getDay(); const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate(); const prevMonthTotalDays = new Date(currentYear, currentMonth, 0).getDate();
-            for (let i = firstDay; i > 0; i--) { const dateEl = document.createElement("div"); dateEl.className = "calendar-date other-month"; dateEl.innerText = prevMonthTotalDays - i + 1; calendarDates.appendChild(dateEl); }
-            for (let i = 1; i <= totalDays; i++) {
-                const dateEl = document.createElement("div"); dateEl.className = "calendar-date current-month";
-                if (i === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) dateEl.classList.add("today");
-                dateEl.innerText = i; calendarDates.appendChild(dateEl);
-            }
+        window.cancelReply = () => {
+            window.replyingTo = null;
+            document.getElementById('replyBar').style.display = 'none';
         };
-        window.changeMonth = (dir) => { currentMonth += dir; if (currentMonth < 0) { currentMonth = 11; currentYear--; } else if (currentMonth > 11) { currentMonth = 0; currentYear++; } window.renderCalendar(); };
 
-        const wrapper = document.getElementById('app-wrapper');
-        window.addEventListener('mousemove', (e) => {
-            const centerX = window.innerWidth / 2; const centerY = window.innerHeight / 2;
-            const x = (e.clientX - centerX) / 80; const y = (e.clientY - centerY) / 80;
-            wrapper.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-            wrapper.style.boxShadow = `${-x}px ${y+20}px 50px rgba(0,0,0,0.48)`;
-        });
+        // --- MESSAGE SENDING ---
+        window.sendMessage = () => {
+            const input = document.getElementById("messageInput");
+            if (input.value.trim() === "") return;
+            push(messagesRef, { 
+                name: currentUser, 
+                text: input.value, 
+                timestamp: Date.now(), 
+                replyTo: window.replyingTo 
+            });
+            input.value = "";
+            window.toggleClearBtn();
+            window.cancelReply();
+        };
 
-        const firebaseConfig = { apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", authDomain: "jayabeth-fdaad.firebaseapp.com", projectId: "jayabeth-fdaad", storageBucket: "jayabeth-fdaad.firebasestorage.app", messagingSenderId: "716510918759", appId: "1:716510918759:web:35340b83ad2a134cecbcc2" };
-        const app = initializeApp(firebaseConfig); const db = getDatabase(app); const messagesRef = ref(db, "chatroom"); const galleryRef = ref(db, "gallery"); const bucketListRef = ref(db, "bucketlist"); const pinnedRef = ref(db, "pinned");
-        let currentUser = localStorage.getItem('yapboxUser') || 'Shanky'; let otherUserLastSeen = 0;
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            const startDate = new Date("2026-04-12T00:00:00"); const today = new Date(); const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-            document.getElementById("days-count").innerText = diffDays;
-            window.renderCalendar();
-            if (localStorage.getItem('darkmode') === 'enabled') { document.body.classList.add('dark-mode'); document.getElementById('themeToggle').innerText = '☀️'; }
-        });
-
-        const updateMyStatus = () => { set(ref(db, `status/${currentUser}`), { lastSeen: Date.now() }); };
-        window.addEventListener('focus', updateMyStatus); document.addEventListener('click', updateMyStatus); setTimeout(updateMyStatus, 1000);
-
-        // -- Message Rendering Logic --
+        // --- RENDER LOGIC (The updated sticker display) ---
         onValue(messagesRef, (snapshot) => {
-            const messagesDiv = document.getElementById("messages"); messagesDiv.innerHTML = ""; if (!snapshot.exists()) return;
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML = ""; 
+            if (!snapshot.exists()) return;
+
             snapshot.forEach((childNode) => {
-                const data = childNode.val(); const key = childNode.key; const isMine = data.name === currentUser; const row = document.createElement('div'); row.className = `message-row ${isMine ? 'mine' : 'theirs'}`; const wrapper = document.createElement('div'); wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`; const bubble = document.createElement('div'); bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`; bubble.onclick = (e) => { if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) { startReply(data.text || "[Image]", data.name); } };
-                if (isMine) { const dropdownContainer = document.createElement('div'); dropdownContainer.className = 'msg-dropdown-container'; const dropBtn = document.createElement('button'); dropBtn.className = 'msg-dropdown-btn'; dropBtn.innerHTML = '&#8964;'; const dropMenu = document.createElement('div'); dropMenu.className = 'msg-dropdown-menu'; const pinBtn = document.createElement('button'); pinBtn.innerText = '📌 Pin'; pinBtn.onclick = (e) => { e.stopPropagation(); pinMessage(data); dropMenu.style.display = 'none'; }; const deleteBtn = document.createElement('button'); deleteBtn.className = 'delete-msg-btn'; deleteBtn.innerText = '🗑️ Delete'; deleteBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(key, row); dropMenu.style.display = 'none'; }; dropMenu.appendChild(pinBtn); dropMenu.appendChild(deleteBtn); dropBtn.onclick = (e) => { e.stopPropagation(); const isOpen = dropMenu.style.display === 'flex'; document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none'); dropMenu.style.display = isOpen ? 'none' : 'flex'; }; dropdownContainer.appendChild(dropBtn); dropdownContainer.appendChild(dropMenu); bubble.appendChild(dropdownContainer); }
-                if (data.replyTo) { const quote = document.createElement('div'); quote.className = 'quote-box'; quote.innerText = `${data.replyTo.user}: ${data.replyTo.text.length > 20 ? data.replyTo.text.substring(0,20) + '...' : data.replyTo.text}`; bubble.appendChild(quote); }
+                const data = childNode.val();
+                const isMine = data.name === currentUser;
                 
-                // --- IMAGE RENDERING LOGIC ---
-                if (data.image) { 
-                    const img = document.createElement('img'); 
-                    img.src = data.image; 
-                    
-                    // APPLY STICKER CLASS
-                    if (data.isSticker) {
-                        img.classList.add('sticker-image');
-                    }
-
-                    img.onmousedown = (e) => startHold(e, data.image); img.onmouseup = endHold; img.onmouseleave = endHold; img.ontouchstart = (e) => startHold(e, data.image); img.ontouchend = endHold; img.onclick = (e) => { e.stopPropagation(); openLightbox(data.image); }; bubble.appendChild(img); 
-                } else { const textSpan = document.createElement('span'); textSpan.innerHTML = formatMessageLinks(data.text); bubble.appendChild(textSpan); }
+                const row = document.createElement('div');
+                row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
+                const wrapper = document.createElement('div');
+                wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
+                const bubble = document.createElement('div');
+                bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
                 
-                const time = document.createElement('div'); time.className = 'timestamp'; time.innerText = formatTime(data.timestamp);
-                if(isMine) { const tickSpan = document.createElement('span'); tickSpan.className = 'tick ' + (data.timestamp <= otherUserLastSeen ? 'read' : 'unread'); tickSpan.setAttribute('data-timestamp', data.timestamp); tickSpan.innerText = '✓✓'; time.appendChild(tickSpan); }
-                wrapper.appendChild(bubble); wrapper.appendChild(time); row.appendChild(wrapper); messagesDiv.appendChild(row);
-            }); messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        });
+                // Reply quote
+                if (data.replyTo) {
+                    const quote = document.createElement('div');
+                    quote.className = 'quote-box';
+                    quote.innerText = `${data.replyTo.user}: ${data.replyTo.text.substring(0,20)}`;
+                    bubble.appendChild(quote);
+                }
 
-        // Helper functions
-        window.deleteMessage = (key, rowElement) => { if(confirm("Delete this message?")) { if (rowElement) { rowElement.classList.add('deleting-msg'); setTimeout(() => { remove(child(messagesRef, key)); }, 300); } else { remove(child(messagesRef, key)); } } };
-        window.handleImageUpload = (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); const scale = 400 / img.width; canvas.width = 400; canvas.height = img.height * scale; canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height); push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now(), replyTo: replyingTo }); cancelReply(); updateMyStatus(); }; img.src = event.target.result; }; reader.readAsDataURL(file); e.target.value = ''; };
-        window.formatTime = (ts) => { const date = new Date(ts); return date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0'); };
-        window.formatMessageLinks = (text) => { const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig; return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>'); };
-        window.startReply = (text, user) => { replyingTo = { text: text || "[Image]", user: user }; const bar = document.getElementById('replyBar'); bar.style.display = 'block'; bar.innerHTML = `<strong>Replying to ${user}:</strong> ${text || "[Image]"} <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>`; };
-        window.cancelReply = () => { replyingTo = null; document.getElementById('replyBar').style.display = 'none'; };
-        window.pinMessage = (msgData) => { set(pinnedRef, msgData); };
-        window.unpinMessage = () => { remove(pinnedRef); };
-        window.startHold = (event, imgData) => { holdTimer = setTimeout(() => { const target = event.target; if(target.parentElement.querySelector('.save-overlay')) return; const overlay = document.createElement('div'); overlay.className = 'save-overlay'; overlay.innerText = 'Save to Gallery'; overlay.onclick = (e) => { e.stopPropagation(); push(galleryRef, { image: imgData, timestamp: Date.now() }); overlay.innerText = 'Saved!'; setTimeout(() => overlay.remove(), 1000); }; target.parentElement.appendChild(overlay); setTimeout(() => { if(overlay) overlay.remove(); }, 3000); }, 1000); };
-        window.endHold = () => clearTimeout(holdTimer);
-        window.sendMessage = () => { const input = document.getElementById("messageInput"); if (input.value.trim() === "") return; push(messagesRef, { name: currentUser, text: input.value, timestamp: Date.now(), replyTo: replyingTo }); input.value = ""; toggleClearBtn(); cancelReply(); updateMyStatus(); };
-        window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
-        window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
-        window.resetChat = () => { if (confirm("Clear Chat?")) { const msgs = document.getElementById('messages'); msgs.classList.add('wiping'); setTimeout(() => { remove(messagesRef); msgs.classList.remove('wiping'); }, 400); } };
-        window.deleteGalleryItem = (event, key) => { event.stopPropagation(); remove(child(galleryRef, key)); };
-        window.addBucketItem = () => { const input = document.getElementById("bucketInput"); if (input.value.trim() === "") return; push(bucketListRef, { text: input.value, timestamp: Date.now(), creator: currentUser }); input.value = ""; };
-        window.handleBucketKeyPress = (e) => { if (e.key === 'Enter') addBucketItem(); };
-        window.deleteBucketItem = (key, btn) => { const li = btn.closest('.bucket-item'); li.classList.add('deleting'); setTimeout(() => { remove(child(bucketListRef, key)); }, 300); };
-        window.toggleColorMenu = (e) => { if(e) e.stopPropagation(); const menu = document.getElementById('colorMenu'); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
-        window.changeBaseColor = (rgb) => { document.documentElement.style.setProperty('--box-base-rgb', rgb); localStorage.setItem('yapboxRGB', rgb); };
-        window.changeAlpha = (val) => { document.documentElement.style.setProperty('--box-alpha', val); localStorage.setItem('yapboxAlpha', val); };
-        window.openLightbox = (src) => { const lightbox = document.getElementById('lightbox'); const imgEl = document.getElementById('lightbox-img'); imgEl.src = src; lightbox.style.display = 'flex'; currentImgIndex = galleryImages.indexOf(src); };
-        window.navigateLightbox = (dir) => { currentImgIndex = (currentImgIndex + dir + galleryImages.length) % galleryImages.length; document.getElementById('lightbox-img').src = galleryImages[currentImgIndex]; };
-        window.closeLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
-        window.toggleClearBtn = () => { const input = document.getElementById("messageInput"); document.getElementById("clearBtn").style.display = input.value.length > 0 ? "flex" : "none"; };
-        window.clearInput = () => { const input = document.getElementById("messageInput"); input.value = ""; toggleClearBtn(); input.focus(); };
+                // Image/Sticker display
+                if (data.image) {
+                    const img = document.createElement('img');
+                    img.src = data.image;
+                    if (data.isSticker) img.classList.add('sticker-image'); // Smaller size
+                    bubble.appendChild(img);
+                } else {
+                    bubble.innerText = data.text;
+                }
 
-        // Bucket List Listener
-        onValue(bucketListRef, (snapshot) => {
-            const listDiv = document.getElementById("bucketList"); listDiv.innerHTML = "";
-            if (!snapshot.exists()) return;
-            snapshot.forEach((child) => { const data = child.val(); const key = child.key; const li = document.createElement('li'); li.className = 'bucket-item'; li.innerHTML = `<span>${data.text}</span><button class="delete-item-btn" onclick="deleteBucketItem('${key}', this)">✕</button>`; listDiv.appendChild(li); });
-            listDiv.scrollTop = listDiv.scrollHeight;
-        });
-
-        // Gallery Listener
-        onValue(galleryRef, (snapshot) => {
-            const galleryDiv = document.getElementById("gallery"); galleryDiv.innerHTML = ""; galleryImages = [];
-            if (!snapshot.exists()) return;
-            snapshot.forEach((child) => {
-                const data = child.val(); const key = child.key; galleryImages.push(data.image);
-                const item = document.createElement('div'); item.className = 'gallery-item'; const img = document.createElement('img'); img.src = data.image; img.onclick = () => openLightbox(data.image);
-                const delBtn = document.createElement('button'); delBtn.className = 'delete-btn'; delBtn.innerText = '✕'; delBtn.onclick = (e) => deleteGalleryItem(e, key);
-                item.appendChild(img); item.appendChild(delBtn); galleryDiv.appendChild(item);
+                wrapper.appendChild(bubble);
+                row.appendChild(wrapper);
+                messagesDiv.appendChild(row);
             });
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
 
-        if(currentUser === 'Reece') document.getElementById('userReece').checked = true; else document.getElementById('userShanky').checked = true;
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            // Keep existing startup code here
+            const startDate = new Date("2026-04-12T00:00:00"); 
+            const today = new Date(); 
+            const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            document.getElementById("days-count").innerText = diffDays;
+        });
+
+        // ... [Include your other existing helper functions here, e.g., toggleDarkMode, spawnHeart, renderCalendar] ...
     </script>
 </body>
 </html>

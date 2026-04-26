@@ -362,12 +362,59 @@
             setTimeout(() => { heart.remove(); }, 1000);
         };
 
-        const audio = document.getElementById('audioPlayer'); const playBtn = document.getElementById('playPauseBtn'); const slider = document.getElementById('musicSlider'); const volSlider = document.getElementById('volumeSlider');
-        audio.volume = volSlider.value;
-        window.togglePlay = () => { if (audio.paused) { audio.play(); playBtn.innerText = '⏸'; } else { audio.pause(); playBtn.innerText = '▶'; } };
+        // --- Music Player Logic ---
+        const audio = document.getElementById('audioPlayer');
+        const playBtn = document.getElementById('playPauseBtn');
+        const slider = document.getElementById('musicSlider');
+        const volSlider = document.getElementById('volumeSlider');
+        const songTitle = document.getElementById('songTitle');
+
+        // ADD YOUR SONGS HERE
+        const playlist = [
+            { title: "Song Name 1", file: "Song1.mp3" },
+            { title: "Song Name 2", file: "Song2.mp3" },
+            { title: "Song Name 3", file: "Song3.mp3" }
+        ];
+        let currentTrackIndex = 0;
+
+        const loadTrack = (index) => {
+            audio.src = playlist[index].file;
+            songTitle.innerText = playlist[index].title;
+            audio.load();
+        };
+
+        window.togglePlay = () => {
+            if (audio.paused) { 
+                if(!audio.src) loadTrack(currentTrackIndex);
+                audio.play(); 
+                playBtn.innerText = '⏸'; 
+            } else { 
+                audio.pause(); 
+                playBtn.innerText = '▶'; 
+            }
+        };
+
+        window.nextTrack = () => {
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            loadTrack(currentTrackIndex);
+            audio.play();
+            playBtn.innerText = '⏸';
+        };
+
+        window.prevTrack = () => {
+            currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+            loadTrack(currentTrackIndex);
+            audio.play();
+            playBtn.innerText = '⏸';
+        };
+
         audio.ontimeupdate = () => { if (audio.duration) { slider.value = (audio.currentTime / audio.duration) * 100; } };
         window.seekAudio = () => { audio.currentTime = (slider.value / 100) * audio.duration; };
         window.changeVolume = () => { audio.volume = volSlider.value; };
+        
+        // Initialize player
+        loadTrack(0);
+        audio.volume = volSlider.value;
 
         let currentMonth = new Date().getMonth(); let currentYear = new Date().getFullYear();
 

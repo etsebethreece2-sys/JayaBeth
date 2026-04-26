@@ -55,14 +55,23 @@
         .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1300px; }
 
         /* Shared Box Style */
+        /* Shared Box Style - 3D "Sticker" Look */
         .box-style { 
             background-color: rgba(var(--box-base-rgb), var(--box-alpha));
-            background-image: radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+            background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
             background-size: 20px 20px;
-            backdrop-filter: blur(5px); 
-            border-radius: 25px; 
-            border: 1px solid #000; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.16), 0 0 80px rgba(0,0,0,0.08); 
+            
+            /* Remove backdrop-filter to keep the "solid block" look */
+            
+            border-radius: 20px; 
+            
+            /* 1. Border defines the edge of the sticker */
+            border: 2px solid #4a3554; 
+            
+            /* 2. box-shadow: x-offset y-offset blur spread color */
+            /* 6px to the right, 6px down, 0 blur, 0 spread */
+            box-shadow: 6px 6px 0px 0px #4a3554; 
+            
             padding: 15px; 
             box-sizing: border-box; 
         }

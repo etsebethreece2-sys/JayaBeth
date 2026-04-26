@@ -284,6 +284,12 @@
         .delete-item-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
         .delete-item-btn:hover { opacity: 1; transform: scale(1.2); }
 
+        /* --- Deletion Animations --- */
+        @keyframes messageFadeOut { 0% { opacity: 1; transform: scale(1) translateY(0); } 100% { opacity: 0; transform: scale(0.8) translateY(10px); } }
+        .message-row.deleting-msg { animation: messageFadeOut 0.3s forwards ease-in; pointer-events: none; }
+        @keyframes chatWipe { to { opacity: 0; transform: translateY(20px); } }
+        .messages.wiping { animation: chatWipe 0.4s forwards ease-in; }
+
         /* Chat */
         .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
         .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #333; font-size: 11px; cursor: pointer; text-decoration: underline; }
@@ -788,7 +794,16 @@
         
         window.unpinMessage = () => { remove(pinnedRef); };
 
-        window.deleteMessage = (key) => { if(confirm("Delete this message?")) remove(child(messagesRef, key)); };
+        window.deleteMessage = (key, rowElement) => { 
+            if(confirm("Delete this message?")) {
+                if (rowElement) {
+                    rowElement.classList.add('deleting-msg');
+                    setTimeout(() => { remove(child(messagesRef, key)); }, 300);
+                } else {
+                    remove(child(messagesRef, key));
+                }
+            } 
+        };
 
         onValue(pinnedRef, (snapshot) => {
             const bar = document.getElementById('pinnedBar');
@@ -857,7 +872,16 @@
 
         window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
         window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
-        window.resetChat = () => { if (confirm("Clear Chat?")) remove(messagesRef); };
+        window.resetChat = () => { 
+            if (confirm("Clear Chat?")) {
+                const msgs = document.getElementById('messages');
+                msgs.classList.add('wiping');
+                setTimeout(() => {
+                    remove(messagesRef);
+                    msgs.classList.remove('wiping');
+                }, 400);
+            } 
+        };
         window.deleteGalleryItem = (event, key) => { event.stopPropagation(); remove(child(galleryRef, key)); };
 
         onValue(messagesRef, (snapshot) => {
@@ -890,7 +914,7 @@
                     const deleteBtn = document.createElement('button');
                     deleteBtn.className = 'delete-msg-btn';
                     deleteBtn.innerText = '🗑️ Delete';
-                    deleteBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(key); dropMenu.style.display = 'none'; };
+                    deleteBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(key, row); dropMenu.style.display = 'none'; };
                     dropMenu.appendChild(pinBtn);
                     dropMenu.appendChild(deleteBtn);
                     dropBtn.onclick = (e) => { e.stopPropagation(); const isOpen = dropMenu.style.display === 'flex'; document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none'); dropMenu.style.display = isOpen ? 'none' : 'flex'; };

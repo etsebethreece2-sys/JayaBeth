@@ -237,10 +237,22 @@
         .chat-inputs button { padding: 10px 15px; border: none; border-radius: 25px; background: linear-gradient(135deg, #b19cd9, #8a2be2); color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(138, 43, 226, 0.64); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease; }
         .chat-inputs button:hover { transform: scale(1.1); filter: brightness(1.15); }
         .chat-inputs button:active { transform: scale(0.95); }
+
+        /* --- New Dark Mode Styles --- */
+        body.dark-mode { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), #121212 url('lilacavo.jpg'); color: #e0e0e0; }
+        body.dark-mode .box-style { filter: brightness(0.6); border: 1px solid #444; }
+        body.dark-mode .song-title, body.dark-mode .date-text, body.dark-mode .calendar-header, body.dark-mode .header-style, body.dark-mode .chat-header { color: #ffffff; }
+        body.dark-mode .bubble-theirs { background: #333; color: #ffffff; }
+        body.dark-mode .msg-dropdown-menu { background: #333; border: 1px solid #555; }
+        body.dark-mode .msg-dropdown-menu button { color: #eee; }
+        body.dark-mode .msg-dropdown-menu button:hover { background: #444; }
+        #themeToggle { position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.2); border: none; padding: 10px; border-radius: 50%; cursor: pointer; font-size: 20px; z-index: 10000; }
     </style>
 </head>
 
 <body>
+    <button id="themeToggle" onclick="toggleDarkMode()">🌙</button>
+
     <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center;">
         <span class="close-lightbox" onclick="closeLightbox()" style="position:absolute; top:30px; right:40px; font-size:40px; color:white; cursor:pointer; font-weight:bold;">&times;</span>
         <button class="lightbox-nav prev" onclick="event.stopPropagation(); navigateLightbox(-1)">&#10094;</button>
@@ -359,6 +371,21 @@
         let galleryImages = [];
         let currentImgIndex = 0;
 
+        // Dark Mode Toggle Logic
+        window.toggleDarkMode = () => {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkmode', 'enabled');
+                btn.innerText = '☀️';
+            } else {
+                localStorage.setItem('darkmode', 'disabled');
+                btn.innerText = '🌙';
+            }
+        };
+
         window.spawnHeart = () => {
             const heart = document.createElement('div'); heart.innerText = '❤️'; heart.className = 'floating-heart';
             const x = Math.random() * (window.innerWidth - 100) + 50; const y = Math.random() * (window.innerHeight - 100) + 50;
@@ -419,8 +446,8 @@
             playBtn.innerText = '⏸';
         };
 
-        audio.ontimeupdate = () => { if (audio.duration) { slider.value = (audio.currentTime / audio.duration) * 100; } };
-        window.seekAudio = () => { audio.currentTime = (slider.value / 100) * audio.duration; };
+        audio.ontimeupdate = () => { if (isFinite(audio.duration) && audio.duration > 0) { slider.value = (audio.currentTime / audio.duration) * 100; } };
+        window.seekAudio = () => { if (isFinite(audio.duration) && audio.duration > 0) { audio.currentTime = (slider.value / 100) * audio.duration; } };
         window.changeVolume = () => { audio.volume = volSlider.value; };
         
         // Initialize player
@@ -482,6 +509,12 @@
             const startDate = new Date("2026-04-12T00:00:00"); const today = new Date(); const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
             document.getElementById("days-count").innerText = diffDays;
             window.renderCalendar();
+            
+            // Check saved dark mode preference
+            if (localStorage.getItem('darkmode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeToggle').innerText = '☀️';
+            }
         });
 
         const updateMyStatus = () => { set(ref(db, `status/${currentUser}`), { lastSeen: Date.now() }); };

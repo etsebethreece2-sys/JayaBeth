@@ -8,41 +8,27 @@
 
     <style>
         :root {
-            --box-base-rgb: 190, 160, 230; 
+            --box-base-rgb: 190, 160, 230;
             --box-alpha: 0.85;
         }
 
-        /* --- Lilac Theme Scrollbars --- */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #b19cd9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8a2be2; }
 
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #b19cd9;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #8a2be2;
-        }
-
-        body { 
-            font-family: 'Fredoka', sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            min-height: 100vh; 
-            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), #fff9fa url('lilacavo.jpg'); 
-            background-size: 650px; 
-            animation: moveBackground 144s linear infinite; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            perspective: 1000px; 
+        body {
+            font-family: 'Fredoka', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), #fff9fa url('lilacavo.jpg');
+            background-size: 650px;
+            animation: moveBackground 144s linear infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
             overflow: hidden;
         }
 
@@ -65,7 +51,6 @@
             to { background-position: 1000px 1000px; }
         }
 
-        /* 3D Wrapper */
         #app-wrapper {
             position: relative;
             z-index: 1;
@@ -82,16 +67,15 @@
             max-width: 1300px;
         }
 
-        /* Shared Box Style */
-        .box-style { 
+        .box-style {
             background-color: rgba(var(--box-base-rgb), var(--box-alpha));
             background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
             background-size: 20px 20px;
-            border-radius: 30px; 
-            border: 3px solid #4a3554; 
-            box-shadow: 2px 2px 0px 0px #4a3554; 
-            padding: 15px; 
-            box-sizing: border-box; 
+            border-radius: 30px;
+            border: 3px solid #4a3554;
+            box-shadow: 2px 2px 0px 0px #4a3554;
+            padding: 15px;
+            box-sizing: border-box;
         }
 
         .left-column {
@@ -105,7 +89,6 @@
             z-index: 30;
         }
 
-        /* Mini Apps */
         .mini-app {
             width: 72px;
             min-height: 72px;
@@ -140,9 +123,7 @@
             z-index: 40;
         }
 
-        .mini-app.calendar-app.active {
-            min-height: 300px;
-        }
+        .mini-app.calendar-app.active { min-height: 300px; }
 
         .app-icon-button {
             width: 100%;
@@ -164,9 +145,7 @@
                 flex-basis 0.25s ease;
         }
 
-        .app-icon-button:hover {
-            transform: scale(1.12) rotate(-4deg);
-        }
+        .app-icon-button:hover { transform: scale(1.12) rotate(-4deg); }
 
         .mini-app.active .app-icon-button {
             width: 50px;
@@ -232,7 +211,6 @@
             background: rgba(255,255,255,0.85);
         }
 
-        /* Date App */
         .date-box {
             width: 100%;
             text-align: center;
@@ -259,7 +237,6 @@
             line-height: 1.2;
         }
 
-        /* Music App */
         .music-box {
             width: 100%;
             display: flex;
@@ -295,15 +272,15 @@
             filter: brightness(1.1);
         }
 
-        #playPauseBtn { 
+        #playPauseBtn {
             background: #8a2be2;
             color: white;
             border: none;
-            border-radius: 50%; 
+            border-radius: 50%;
             width: 42px;
             height: 42px;
             cursor: pointer;
-            font-size: 16px; 
+            font-size: 16px;
             transition: transform 0.2s, background 0.2s;
         }
 
@@ -327,9 +304,7 @@
             background: transparent;
         }
 
-        .custom-slider:focus {
-            outline: none;
-        }
+        .custom-slider:focus { outline: none; }
 
         .custom-slider::-webkit-slider-runnable-track {
             width: 100%;
@@ -356,7 +331,6 @@
             transform: scale(1.6);
         }
 
-        /* Calendar */
         .calendar-box {
             width: 100%;
             display: flex;
@@ -388,9 +362,7 @@
             transition: transform 0.2s;
         }
 
-        .calendar-header button:hover {
-            transform: scale(1.18);
-        }
+        .calendar-header button:hover { transform: scale(1.18); }
 
         .calendar-days {
             display: grid;
@@ -423,14 +395,8 @@
             transition: background 0.2s, transform 0.2s;
         }
 
-        .calendar-date.current-month {
-            color: #333;
-        }
-
-        .calendar-date.other-month {
-            color: #999;
-            opacity: 0.6;
-        }
+        .calendar-date.current-month { color: #333; }
+        .calendar-date.other-month { color: #999; opacity: 0.6; }
 
         .calendar-date.today {
             background: #8a2be2;
@@ -444,7 +410,6 @@
             transform: scale(1.1);
         }
 
-        /* Gallery */
         .side-container {
             width: 260px;
             height: 600px;
@@ -484,9 +449,7 @@
             transition: transform 0.2s;
         }
 
-        .gallery-item:hover {
-            transform: scale(1.03);
-        }
+        .gallery-item:hover { transform: scale(1.03); }
 
         .gallery-item img {
             width: 100%;
@@ -495,27 +458,24 @@
             display: block;
         }
 
-        .delete-btn { 
+        .delete-btn {
             position: absolute;
             top: 5px;
-            right: 5px; 
+            right: 5px;
             background: rgba(255, 0, 0, 0.8);
             color: white;
             border: none;
-            border-radius: 50%; 
+            border-radius: 50%;
             width: 12px;
             height: 12px;
             cursor: pointer;
             z-index: 2;
             font-size: 8px;
-            transition: transform 0.2s; 
+            transition: transform 0.2s;
         }
 
-        .delete-btn:hover {
-            transform: scale(1.2);
-        }
+        .delete-btn:hover { transform: scale(1.2); }
 
-        /* Lightbox */
         .lightbox-overlay {
             display: none;
             position: fixed;
@@ -555,9 +515,7 @@
             transition: transform 0.2s ease;
         }
 
-        .close-lightbox:hover {
-            transform: scale(1.14) rotate(6deg);
-        }
+        .close-lightbox:hover { transform: scale(1.14) rotate(6deg); }
 
         .lightbox-img {
             max-width: 90%;
@@ -567,47 +525,45 @@
             transform-origin: center;
         }
 
-        .lightbox-img.opening {
-            animation: imageExpand 0.42s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .lightbox-img.switching {
-            animation: imageSwitch 0.25s ease;
-        }
+        .lightbox-img.opening { animation: imageExpand 0.42s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .lightbox-img.switching { animation: imageSwitch 0.25s ease; }
 
         @keyframes imageExpand {
-            0% {
-                opacity: 0;
-                transform: translateY(22px) scale(0.72) rotate(-1deg);
-                filter: blur(8px);
-            }
-
-            60% {
-                opacity: 1;
-                transform: translateY(-4px) scale(1.03);
-                filter: blur(0);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1) rotate(0);
-                filter: blur(0);
-            }
+            0% { opacity: 0; transform: translateY(22px) scale(0.72) rotate(-1deg); filter: blur(8px); }
+            60% { opacity: 1; transform: translateY(-4px) scale(1.03); filter: blur(0); }
+            100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); filter: blur(0); }
         }
 
         @keyframes imageSwitch {
-            0% {
-                opacity: 0.25;
-                transform: scale(0.96);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+            0% { opacity: 0.25; transform: scale(0.96); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
-        /* Prettier Lightbox Arrows */
+        .image-counter {
+            position: absolute;
+            bottom: 34px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.22);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.35);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+            z-index: 10002;
+            opacity: 0;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .lightbox-overlay.active .image-counter {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
         .lightbox-nav {
             position: absolute;
             top: 50%;
@@ -651,59 +607,24 @@
                 inset 0 1px 0 rgba(255,255,255,0.65);
         }
 
-        .lightbox-nav:active {
-            transform: translateY(-50%) scale(0.94);
-        }
-
-        .prev {
-            left: 34px;
-        }
-
-        .next {
-            right: 34px;
-        }
-
-        .prev:hover {
-            transform: translateY(-50%) translateX(-5px) scale(1.1);
-        }
-
-        .next:hover {
-            transform: translateY(-50%) translateX(5px) scale(1.1);
-        }
-
-        .lightbox-overlay.active .prev {
-            animation: arrowSlideInLeft 0.38s ease both;
-        }
-
-        .lightbox-overlay.active .next {
-            animation: arrowSlideInRight 0.38s ease both;
-        }
+        .lightbox-nav:active { transform: translateY(-50%) scale(0.94); }
+        .prev { left: 34px; }
+        .next { right: 34px; }
+        .prev:hover { transform: translateY(-50%) translateX(-5px) scale(1.1); }
+        .next:hover { transform: translateY(-50%) translateX(5px) scale(1.1); }
+        .lightbox-overlay.active .prev { animation: arrowSlideInLeft 0.38s ease both; }
+        .lightbox-overlay.active .next { animation: arrowSlideInRight 0.38s ease both; }
 
         @keyframes arrowSlideInLeft {
-            from {
-                opacity: 0;
-                transform: translateY(-50%) translateX(-18px) scale(0.85);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(-50%) translateX(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(-50%) translateX(-18px) scale(0.85); }
+            to { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); }
         }
 
         @keyframes arrowSlideInRight {
-            from {
-                opacity: 0;
-                transform: translateY(-50%) translateX(18px) scale(0.85);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(-50%) translateX(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(-50%) translateX(18px) scale(0.85); }
+            to { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); }
         }
 
-        /* Bucket List */
         .bucket-list {
             flex-grow: 1;
             overflow-y: auto;
@@ -728,27 +649,15 @@
             animation: fadeIn 0.3s ease;
         }
 
-        .bucket-item.deleting {
-            animation: fadeOut 0.3s forwards;
-        }
+        .bucket-item.deleting { animation: fadeOut 0.3s forwards; }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeOut {
-            to {
-                opacity: 0;
-                transform: scale(0.9);
-            }
+            to { opacity: 0; transform: scale(0.9); }
         }
 
         .delete-item-btn {
@@ -768,17 +677,9 @@
             transform: scale(1.2);
         }
 
-        /* Deletions */
         @keyframes messageFadeOut {
-            0% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-
-            100% {
-                opacity: 0;
-                transform: scale(0.8) translateY(10px);
-            }
+            0% { opacity: 1; transform: scale(1) translateY(0); }
+            100% { opacity: 0; transform: scale(0.8) translateY(10px); }
         }
 
         .message-row.deleting-msg {
@@ -787,17 +688,11 @@
         }
 
         @keyframes chatWipe {
-            to {
-                opacity: 0;
-                transform: translateY(20px);
-            }
+            to { opacity: 0; transform: translateY(20px); }
         }
 
-        .messages.wiping {
-            animation: chatWipe 0.4s forwards ease-in;
-        }
+        .messages.wiping { animation: chatWipe 0.4s forwards ease-in; }
 
-        /* Chat */
         .sticker-menu {
             display: block;
             position: absolute;
@@ -850,14 +745,7 @@
             transition: transform 0.2s;
         }
 
-        .sticker-grid img:hover {
-            transform: scale(1.1) rotate(-2deg);
-        }
-
-        body.dark-mode .sticker-menu {
-            background: #333;
-            border: 1px solid #555;
-        }
+        .sticker-grid img:hover { transform: scale(1.1) rotate(-2deg); }
 
         .chat-container {
             width: 400px;
@@ -889,9 +777,7 @@
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .color-toggle:hover {
-            transform: scale(1.2) rotate(15deg);
-        }
+        .color-toggle:hover { transform: scale(1.2) rotate(15deg); }
 
         .color-menu {
             display: none;
@@ -922,9 +808,7 @@
             transition: transform 0.2s;
         }
 
-        .color-option:hover {
-            transform: scale(1.15);
-        }
+        .color-option:hover { transform: scale(1.15); }
 
         .slider-label {
             font-size: 12px;
@@ -953,9 +837,7 @@
             margin: 8px auto 0 auto;
         }
 
-        .user-selector input {
-            display: none;
-        }
+        .user-selector input { display: none; }
 
         .user-selector label {
             padding: 5px 15px;
@@ -1006,9 +888,7 @@
             transition: color 0.2s;
         }
 
-        .unpin-btn:hover {
-            color: #ff4d4d;
-        }
+        .unpin-btn:hover { color: #ff4d4d; }
 
         .messages {
             flex-grow: 1;
@@ -1026,12 +906,27 @@
             position: relative;
         }
 
-        .message-row.mine {
-            justify-content: flex-end;
+        .message-row.mine { justify-content: flex-end; }
+        .message-row.theirs { justify-content: flex-start; }
+
+        .message-row.message-animate.mine {
+            animation: messageSendPop 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .message-row.theirs {
-            justify-content: flex-start;
+        .message-row.message-animate.theirs {
+            animation: messageReceivePop 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes messageSendPop {
+            0% { opacity: 0; transform: translateX(28px) translateY(12px) scale(0.88); filter: blur(4px); }
+            70% { opacity: 1; transform: translateX(-3px) translateY(-2px) scale(1.03); filter: blur(0); }
+            100% { opacity: 1; transform: translateX(0) translateY(0) scale(1); filter: blur(0); }
+        }
+
+        @keyframes messageReceivePop {
+            0% { opacity: 0; transform: translateX(-28px) translateY(12px) scale(0.88); filter: blur(4px); }
+            70% { opacity: 1; transform: translateX(3px) translateY(-2px) scale(1.03); filter: blur(0); }
+            100% { opacity: 1; transform: translateX(0) translateY(0) scale(1); filter: blur(0); }
         }
 
         .msg-wrapper {
@@ -1041,13 +936,8 @@
             position: relative;
         }
 
-        .msg-wrapper.mine {
-            align-items: flex-end;
-        }
-
-        .msg-wrapper.theirs {
-            align-items: flex-start;
-        }
+        .msg-wrapper.mine { align-items: flex-end; }
+        .msg-wrapper.theirs { align-items: flex-start; }
 
         .bubble {
             padding: 10px 24px 10px 14px;
@@ -1122,9 +1012,7 @@
             transform: scale(1.08);
         }
 
-        .bubble:hover .msg-dropdown-btn {
-            display: flex;
-        }
+        .bubble:hover .msg-dropdown-btn { display: flex; }
 
         .msg-dropdown-menu {
             display: none;
@@ -1160,35 +1048,14 @@
         }
 
         @keyframes dropdownPop {
-            0% {
-                opacity: 0;
-                transform: translateY(-8px) scale(0.88);
-                filter: blur(4px);
-            }
-
-            70% {
-                opacity: 1;
-                transform: translateY(2px) scale(1.03);
-                filter: blur(0);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                filter: blur(0);
-            }
+            0% { opacity: 0; transform: translateY(-8px) scale(0.88); filter: blur(4px); }
+            70% { opacity: 1; transform: translateY(2px) scale(1.03); filter: blur(0); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
 
         @keyframes dropdownClose {
-            from {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-
-            to {
-                opacity: 0;
-                transform: translateY(-8px) scale(0.92);
-            }
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(-8px) scale(0.92); }
         }
 
         .msg-dropdown-menu button {
@@ -1203,13 +1070,8 @@
             transition: background 0.2s;
         }
 
-        .msg-dropdown-menu button:hover {
-            background: #f5f5f5;
-        }
-
-        .msg-dropdown-menu button.delete-msg-btn:hover {
-            color: #ff4d4d;
-        }
+        .msg-dropdown-menu button:hover { background: #f5f5f5; }
+        .msg-dropdown-menu button.delete-msg-btn:hover { color: #ff4d4d; }
 
         .timestamp {
             font-size: 10px;
@@ -1227,13 +1089,8 @@
             transition: color 0.3s ease;
         }
 
-        .tick.unread {
-            color: #888;
-        }
-
-        .tick.read {
-            color: #00bfff;
-        }
+        .tick.unread { color: #888; }
+        .tick.read { color: #00bfff; }
 
         .quote-box {
             font-size: 0.75em;
@@ -1265,20 +1122,9 @@
         }
 
         @keyframes stickerPopIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.55) rotate(-5deg);
-            }
-
-            70% {
-                opacity: 1;
-                transform: scale(1.08) rotate(2deg);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1) rotate(0);
-            }
+            0% { opacity: 0; transform: scale(0.55) rotate(-5deg); }
+            70% { opacity: 1; transform: scale(1.08) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0); }
         }
 
         .save-overlay {
@@ -1307,6 +1153,41 @@
             margin-bottom: 5px;
             display: none;
             position: relative;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            margin: 0 12px 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .typing-indicator.show {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #8a2be2;
+            animation: typingBounce 0.8s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.12s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.24s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: translateY(0); opacity: 0.45; }
+            40% { transform: translateY(-5px); opacity: 1; }
         }
 
         .chat-inputs {
@@ -1352,9 +1233,7 @@
             transition: 0.2s;
         }
 
-        .clear-btn:hover {
-            background: #ff4d4d;
-        }
+        .clear-btn:hover { background: #ff4d4d; }
 
         .chat-inputs button {
             padding: 10px 15px;
@@ -1373,11 +1252,8 @@
             filter: brightness(1.15);
         }
 
-        .chat-inputs button:active {
-            transform: scale(0.95);
-        }
+        .chat-inputs button:active { transform: scale(0.95); }
 
-        /* Dark Mode */
         body.dark-mode {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), #121212 url('lilacavo.jpg');
             color: #e0e0e0;
@@ -1391,10 +1267,13 @@
         body.dark-mode .song-title,
         body.dark-mode .date-text,
         body.dark-mode .calendar-header,
-        body.dark-mode .header-style,
-        body.dark-mode .chat-header,
         body.dark-mode .app-panel-header {
             color: #ffffff;
+        }
+
+        body.dark-mode .chat-header,
+        body.dark-mode .header-style {
+            color: #333 !important;
         }
 
         body.dark-mode .bubble-theirs {
@@ -1424,6 +1303,15 @@
             color: #ddd;
         }
 
+        body.dark-mode .sticker-menu {
+            background: #333;
+            border: 1px solid #555;
+        }
+
+        body.dark-mode .typing-indicator {
+            color: #333;
+        }
+
         #themeToggle {
             position: absolute;
             top: 15px;
@@ -1444,30 +1332,26 @@
 
 <body>
 
-    <!-- LIGHTBOX -->
     <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
         <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
         <button class="lightbox-nav prev" onclick="event.stopPropagation(); navigateLightbox(-1)">&#10094;</button>
         <img id="lightbox-img" class="lightbox-img" src="" onclick="event.stopPropagation()">
+        <div id="imageCounter" class="image-counter">1 / 1</div>
         <button class="lightbox-nav next" onclick="event.stopPropagation(); navigateLightbox(1)">&#10095;</button>
     </div>
 
     <div id="app-wrapper">
         <div class="main-app-container">
 
-            <!-- LEFT COLUMN APPS -->
             <div class="left-column">
 
-                <!-- DATE APP -->
                 <div class="mini-app box-style" id="dateApp" onclick="toggleApp('dateApp')">
                     <button class="app-icon-button"><span class="app-icon">💜</span></button>
-
                     <div class="app-panel">
                         <div class="app-panel-header">
                             <span>It was official</span>
                             <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('dateApp')">✕</button>
                         </div>
-
                         <div class="date-box">
                             <div class="date-number" id="days-count">0</div>
                             <div class="date-text">days ago</div>
@@ -1475,28 +1359,22 @@
                     </div>
                 </div>
 
-                <!-- MUSIC APP -->
                 <div class="mini-app box-style" id="musicApp" onclick="toggleApp('musicApp')">
                     <button class="app-icon-button"><span class="app-icon">🎵</span></button>
-
                     <div class="app-panel">
                         <div class="app-panel-header">
                             <span>Music</span>
                             <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('musicApp')">✕</button>
                         </div>
-
                         <div class="music-box">
                             <audio id="audioPlayer"></audio>
                             <div class="song-title" id="songTitle">Select a song</div>
-
                             <div class="track-controls">
                                 <button onclick="event.stopPropagation(); prevTrack()">⏮</button>
                                 <button id="playPauseBtn" onclick="event.stopPropagation(); togglePlay()">▶</button>
                                 <button onclick="event.stopPropagation(); nextTrack()">⏭</button>
                             </div>
-
                             <input type="range" id="musicSlider" class="custom-slider" value="0" min="0" max="100" oninput="seekAudio()">
-
                             <div class="volume-control">
                                 🔊
                                 <input type="range" id="volumeSlider" class="custom-slider" value="1" min="0" max="1" step="0.01" oninput="changeVolume()">
@@ -1505,27 +1383,22 @@
                     </div>
                 </div>
 
-                <!-- CALENDAR APP -->
                 <div class="mini-app box-style calendar-app" id="calendarApp" onclick="toggleApp('calendarApp')">
                     <button class="app-icon-button"><span class="app-icon">📅</span></button>
-
                     <div class="app-panel">
                         <div class="app-panel-header">
                             <span>Calendar</span>
                             <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('calendarApp')">✕</button>
                         </div>
-
                         <div class="calendar-box">
                             <div class="calendar-header">
                                 <button onclick="event.stopPropagation(); changeMonth(-1)">&#9664;</button>
                                 <span id="monthYear"></span>
                                 <button onclick="event.stopPropagation(); changeMonth(1)">&#9654;</button>
                             </div>
-
                             <div class="calendar-days">
                                 <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
                             </div>
-
                             <div class="calendar-dates" id="calendarDates"></div>
                         </div>
                     </div>
@@ -1533,13 +1406,11 @@
 
             </div>
 
-            <!-- GALLERY -->
             <div class="side-container box-style">
                 <div class="header-style">Our Gallery</div>
                 <div id="gallery"></div>
             </div>
 
-            <!-- CHAT -->
             <div class="chat-container box-style">
                 <button id="themeToggle" onclick="toggleDarkMode()">🌙</button>
                 <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
@@ -1557,12 +1428,10 @@
                         <div class="color-option" style="background: linear-gradient(135deg, #ffff99, #ffff00);" onclick="changeBaseColor('255, 255, 0')"></div>
                         <div class="color-option" style="background: linear-gradient(135deg, #333, #000);" onclick="changeBaseColor('0, 0, 0')"></div>
                     </div>
-
                     <div class="slider-label">Transparency</div>
                     <input type="range" class="custom-slider" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
                 </div>
 
-                <!-- Sticker Menu -->
                 <div id="stickerMenu" class="sticker-menu">
                     <div class="sticker-grid">
                         <img src="cry.png" onclick="sendSticker('cry.png')">
@@ -1576,7 +1445,6 @@
 
                 <div class="chat-header">
                     The Yap Box
-
                     <div class="user-selector">
                         <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
                         <label for="userShanky">Shanky</label>
@@ -1593,16 +1461,22 @@
 
                 <div class="messages" id="messages"></div>
 
+                <div id="typingIndicator" class="typing-indicator">
+                    <span id="typingText">typing</span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                </div>
+
                 <div id="replyBar" class="reply-bar"></div>
 
                 <div class="chat-inputs">
                     <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-
                     <button onclick="document.getElementById('fileInput').click()" title="Upload Image">📷</button>
                     <button onclick="toggleStickerMenu()" title="Stickers">😊</button>
 
                     <div class="input-wrapper">
-                        <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)" oninput="toggleClearBtn()">
+                        <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)" oninput="handleTyping(); toggleClearBtn()">
                         <div id="clearBtn" class="clear-btn" onclick="clearInput()" title="Clear text">✕</div>
                     </div>
 
@@ -1610,7 +1484,6 @@
                 </div>
             </div>
 
-            <!-- BUCKET LIST -->
             <div class="side-container box-style">
                 <div class="header-style">Bucket List</div>
                 <ul id="bucketList" class="bucket-list"></ul>
@@ -1852,6 +1725,10 @@
         let otherUserLastSeen = 0;
         let holdTimer = null;
         let replyingTo = null;
+        let typingTimeout = null;
+        let renderedMessageKeys = new Set();
+
+        const typingRef = (name) => ref(db, `typing/${name}`);
 
         const stickerFiles = [
             "cry.png",
@@ -1932,6 +1809,49 @@
 
         listenToOtherUserStatus();
 
+        window.handleTyping = () => {
+            set(typingRef(currentUser), {
+                isTyping: true,
+                timestamp: Date.now()
+            });
+
+            clearTimeout(typingTimeout);
+
+            typingTimeout = setTimeout(() => {
+                set(typingRef(currentUser), {
+                    isTyping: false,
+                    timestamp: Date.now()
+                });
+            }, 1200);
+        };
+
+        const listenToTypingStatus = () => {
+            const otherUser = currentUser === 'Shanky' ? 'Reece' : 'Shanky';
+            const indicator = document.getElementById('typingIndicator');
+            const typingText = document.getElementById('typingText');
+
+            onValue(typingRef(otherUser), (snapshot) => {
+                if (!indicator || !typingText) return;
+
+                if (!snapshot.exists()) {
+                    indicator.classList.remove('show');
+                    return;
+                }
+
+                const data = snapshot.val();
+                const isFresh = Date.now() - data.timestamp < 2500;
+
+                if (data.isTyping && isFresh) {
+                    typingText.innerText = `${otherUser} is typing`;
+                    indicator.classList.add('show');
+                } else {
+                    indicator.classList.remove('show');
+                }
+            });
+        };
+
+        listenToTypingStatus();
+
         const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230';
         const savedAlpha = localStorage.getItem('yapboxAlpha') || '0.85';
 
@@ -1961,7 +1881,6 @@
 
         window.openMessageDropdown = (menu) => {
             closeAllMessageDropdowns(menu);
-
             menu.style.display = 'flex';
             menu.classList.remove('dropdown-closing');
 
@@ -2065,6 +1984,19 @@
             return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
         };
 
+        const updateImageCounter = () => {
+            const counter = document.getElementById('imageCounter');
+
+            if (!counter) return;
+
+            if (galleryImages.length > 0 && currentImgIndex >= 0) {
+                counter.innerText = `${currentImgIndex + 1} / ${galleryImages.length}`;
+                counter.style.display = 'block';
+            } else {
+                counter.style.display = 'none';
+            }
+        };
+
         window.openLightbox = (src) => {
             const lightbox = document.getElementById('lightbox');
             const imgEl = document.getElementById('lightbox-img');
@@ -2080,6 +2012,7 @@
             });
 
             currentImgIndex = galleryImages.indexOf(src);
+            updateImageCounter();
         };
 
         window.navigateLightbox = (dir) => {
@@ -2093,10 +2026,15 @@
             imgEl.classList.remove('switching');
             void imgEl.offsetWidth;
             imgEl.classList.add('switching');
+
+            updateImageCounter();
         };
 
         window.closeLightbox = () => {
             const lightbox = document.getElementById('lightbox');
+            const counter = document.getElementById('imageCounter');
+
+            if (counter) counter.style.display = 'none';
 
             lightbox.classList.remove('active');
             lightbox.classList.add('closing');
@@ -2237,6 +2175,11 @@
         };
 
         window.sendSticker = (stickerSrc) => {
+            set(typingRef(currentUser), {
+                isTyping: false,
+                timestamp: Date.now()
+            });
+
             push(messagesRef, {
                 name: currentUser,
                 image: stickerSrc,
@@ -2255,6 +2198,11 @@
             const input = document.getElementById("messageInput");
 
             if (input.value.trim() === "") return;
+
+            set(typingRef(currentUser), {
+                isTyping: false,
+                timestamp: Date.now()
+            });
 
             push(messagesRef, {
                 name: currentUser,
@@ -2311,6 +2259,10 @@
 
                 const row = document.createElement('div');
                 row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
+
+                if (!renderedMessageKeys.has(key)) {
+                    row.classList.add('message-animate');
+                }
 
                 const wrapper = document.createElement('div');
                 wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
@@ -2432,6 +2384,8 @@
 
                 row.appendChild(wrapper);
                 messagesDiv.appendChild(row);
+
+                renderedMessageKeys.add(key);
             });
 
             messagesDiv.scrollTop = messagesDiv.scrollHeight;

@@ -46,6 +46,20 @@
             overflow: hidden;
         }
 
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(circle at top left, rgba(74, 53, 84, 0.28), transparent 34%),
+                radial-gradient(circle at top right, rgba(74, 53, 84, 0.24), transparent 34%),
+                radial-gradient(circle at bottom left, rgba(74, 53, 84, 0.26), transparent 36%),
+                radial-gradient(circle at bottom right, rgba(74, 53, 84, 0.30), transparent 36%),
+                radial-gradient(ellipse at center, transparent 48%, rgba(0,0,0,0.24) 100%);
+        }
+
         @keyframes moveBackground {
             from { background-position: 0 0; }
             to { background-position: 1000px 1000px; }
@@ -53,6 +67,8 @@
 
         /* 3D Wrapper */
         #app-wrapper {
+            position: relative;
+            z-index: 1;
             transition: transform 0.1s ease-out, box-shadow 0.3s ease;
             transform-style: preserve-3d;
             border-radius: 25px;
@@ -783,18 +799,41 @@
 
         /* Chat */
         .sticker-menu {
-            display: none;
+            display: block;
             position: absolute;
             bottom: 75px;
             left: 10px;
             right: 10px;
             height: 150px;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+            border-radius: 18px;
+            box-shadow: 0 -5px 18px rgba(0,0,0,0.22);
             z-index: 20;
             padding: 10px;
             overflow-y: auto;
+            opacity: 0;
+            transform: translateY(18px) scale(0.96);
+            transform-origin: bottom center;
+            pointer-events: none;
+            visibility: hidden;
+            transition:
+                opacity 0.22s ease,
+                transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                visibility 0.22s ease;
+        }
+
+        .sticker-menu.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        .sticker-menu.closing {
+            opacity: 0;
+            transform: translateY(18px) scale(0.96);
+            pointer-events: none;
+            visibility: visible;
         }
 
         .sticker-grid {
@@ -812,7 +851,7 @@
         }
 
         .sticker-grid img:hover {
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(-2deg);
         }
 
         body.dark-mode .sticker-menu {
@@ -1033,6 +1072,21 @@
             border-bottom-left-radius: 4px;
         }
 
+        .bubble.sticker-bubble {
+            padding: 0;
+            background: transparent;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        .bubble.sticker-bubble.bubble-mine,
+        .bubble.sticker-bubble.bubble-theirs {
+            background: transparent;
+            color: inherit;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
         .bubble a {
             color: inherit;
             text-decoration: underline;
@@ -1199,6 +1253,34 @@
             margin-top: 5px;
         }
 
+        .bubble.sticker-bubble img {
+            max-width: 100px;
+            width: 100px;
+            height: auto;
+            border-radius: 0;
+            margin-top: 0;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 8px rgba(0,0,0,0.22));
+            animation: stickerPopIn 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes stickerPopIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.55) rotate(-5deg);
+            }
+
+            70% {
+                opacity: 1;
+                transform: scale(1.08) rotate(2deg);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0);
+            }
+        }
+
         .save-overlay {
             position: absolute;
             top: 0;
@@ -1318,6 +1400,10 @@
         body.dark-mode .bubble-theirs {
             background: #333;
             color: #ffffff;
+        }
+
+        body.dark-mode .bubble.sticker-bubble {
+            background: transparent;
         }
 
         body.dark-mode .msg-dropdown-menu {
@@ -1549,11 +1635,6 @@
             const app = document.getElementById(id);
             const isOpen = app.classList.contains('active');
 
-            /*
-                Calendar should only close when pressing its X.
-                So clicking inside it, clicking the calendar icon again,
-                or opening another mini app will not close it.
-            */
             if (id === 'calendarApp' && isOpen) return;
 
             document.querySelectorAll('.mini-app').forEach(a => {
@@ -1584,9 +1665,33 @@
             }
         };
 
+        window.openStickerMenu = () => {
+            const menu = document.getElementById('stickerMenu');
+            menu.classList.remove('closing');
+            menu.classList.add('open');
+        };
+
+        window.closeStickerMenu = () => {
+            const menu = document.getElementById('stickerMenu');
+
+            if (!menu.classList.contains('open')) return;
+
+            menu.classList.remove('open');
+            menu.classList.add('closing');
+
+            setTimeout(() => {
+                menu.classList.remove('closing');
+            }, 280);
+        };
+
         window.toggleStickerMenu = () => {
             const menu = document.getElementById('stickerMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+
+            if (menu.classList.contains('open')) {
+                closeStickerMenu();
+            } else {
+                openStickerMenu();
+            }
         };
 
         const audio = document.getElementById('audioPlayer');
@@ -1747,6 +1852,20 @@
         let otherUserLastSeen = 0;
         let holdTimer = null;
         let replyingTo = null;
+
+        const stickerFiles = [
+            "cry.png",
+            "dissapointed.png",
+            "hungry.png",
+            "kiss.png",
+            "shocked.png",
+            "thinking.png"
+        ];
+
+        const isStickerImage = (src) => {
+            if (!src || src.startsWith('data:')) return false;
+            return stickerFiles.some(file => src.endsWith(file));
+        };
 
         const enforceMessageLimit = () => {
             get(messagesRef).then((snapshot) => {
@@ -2121,6 +2240,7 @@
             push(messagesRef, {
                 name: currentUser,
                 image: stickerSrc,
+                isSticker: true,
                 timestamp: Date.now(),
                 replyTo: replyingTo
             });
@@ -2128,9 +2248,7 @@
             cancelReply();
             updateMyStatus();
             enforceMessageLimit();
-
-            const menu = document.getElementById('stickerMenu');
-            if (menu) menu.style.display = 'none';
+            closeStickerMenu();
         };
 
         window.sendMessage = () => {
@@ -2189,6 +2307,7 @@
                 const data = childNode.val();
                 const key = childNode.key;
                 const isMine = data.name === currentUser;
+                const isSticker = data.isSticker || isStickerImage(data.image);
 
                 const row = document.createElement('div');
                 row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
@@ -2197,7 +2316,7 @@
                 wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
 
                 const bubble = document.createElement('div');
-                bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
+                bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'} ${isSticker ? 'sticker-bubble' : ''}`;
 
                 bubble.onclick = (e) => {
                     if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) {
@@ -2272,16 +2391,20 @@
                     const img = document.createElement('img');
                     img.src = data.image;
 
-                    img.onmousedown = (e) => startHold(e, data.image);
-                    img.onmouseup = endHold;
-                    img.onmouseleave = endHold;
-                    img.ontouchstart = (e) => startHold(e, data.image);
-                    img.ontouchend = endHold;
+                    if (!isSticker) {
+                        img.onmousedown = (e) => startHold(e, data.image);
+                        img.onmouseup = endHold;
+                        img.onmouseleave = endHold;
+                        img.ontouchstart = (e) => startHold(e, data.image);
+                        img.ontouchend = endHold;
 
-                    img.onclick = (e) => {
-                        e.stopPropagation();
-                        openLightbox(data.image);
-                    };
+                        img.onclick = (e) => {
+                            e.stopPropagation();
+                            openLightbox(data.image);
+                        };
+                    } else {
+                        img.onclick = (e) => e.stopPropagation();
+                    }
 
                     bubble.appendChild(img);
                 } else {

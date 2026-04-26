@@ -124,7 +124,7 @@
         .custom-slider:hover::-webkit-slider-thumb, .custom-slider:active::-webkit-slider-thumb { transform: scale(1.6); }
         
         /* Calendar */
-        .calendar-box { width: 140px; padding: 12px 10px; display: flex; flex-direction: column; gap: 8px; align-items: center; cursor: pointer; transition: transform 0.2s; }
+        .calendar-box { width: 140px; padding: 12px 10px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
         .calendar-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-weight: 600; font-size: 0.9em; color: #333; }
         .calendar-header button { background: none; border: none; cursor: pointer; color: #8a2be2; font-size: 12px; font-weight: bold; padding: 0 5px; transition: transform 0.2s; }
         .calendar-header button:hover { transform: scale(1.3); }
@@ -135,72 +135,6 @@
         .calendar-date.other-month { color: #999; opacity: 0.6; }
         .calendar-date.today { background: #8a2be2; color: white; font-weight: bold; box-shadow: 0 2px 4px rgba(138,43,226,0.4); }
         .calendar-date:hover { background: rgba(138, 43, 226, 0.2); transform: scale(1.1); }
-
-        /* --- Calendar Expansion Styles --- */
-        .calendar-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            z-index: 9997;
-        }
-        
-        .calendar-box.expanded {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50vw; 
-            height: 50vh;
-            z-index: 9998;
-            cursor: default;
-            /* Override blur and set solid background */
-            background-color: rgb(var(--box-base-rgb)) !important; 
-            backdrop-filter: none !important;
-            padding: 30px;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-
-        .calendar-box.expanded .calendar-header {
-            font-size: 1.6em;
-            margin-bottom: 20px;
-        }
-
-        .calendar-box.expanded .calendar-header button {
-            font-size: 1.4em;
-            padding: 10px;
-        }
-
-        .calendar-box.expanded .calendar-days {
-            font-size: 1.2em;
-            margin-bottom: 15px;
-        }
-
-        .calendar-box.expanded .calendar-dates {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 1.5vh;
-            justify-items: center;
-            align-items: center;
-        }
-
-        .calendar-box.expanded .calendar-date {
-            width: 80%;
-            max-width: 50px;
-            aspect-ratio: 1 / 1;
-            line-height: normal;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: clamp(14px, 1.5vw, 24px);
-            margin: 0; /* Remove auto-margin to allow flex alignment */
-        }
 
         /* Heart */
         .heart-box { width: 140px; display: flex; justify-content: center; align-items: center; padding: 10px; cursor: pointer; transition: 0.2s; }
@@ -218,11 +152,12 @@
         .gallery-item:hover { transform: scale(1.03); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
         
+        /* Updated Delete Button */
         .delete-btn { 
             position: absolute; top: 5px; right: 5px; 
-            background: rgba(255, 0, 0, 0.8); 
+            background: rgba(255, 0, 0, 0.8); /* 20% transparent */
             color: white; border: none; border-radius: 50%; 
-            width: 12px; height: 12px; 
+            width: 12px; height: 12px; /* 40% smaller */
             cursor: pointer; z-index: 2; font-size: 8px; transition: transform 0.2s; 
         }
         .delete-btn:hover { transform: scale(1.2); }
@@ -324,16 +259,12 @@
 </head>
 
 <body>
-    <!-- Lightbox -->
     <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center;">
         <span class="close-lightbox" onclick="closeLightbox()" style="position:absolute; top:30px; right:40px; font-size:40px; color:white; cursor:pointer; font-weight:bold;">&times;</span>
         <button class="lightbox-nav prev" onclick="event.stopPropagation(); navigateLightbox(-1)">&#10094;</button>
         <img id="lightbox-img" class="lightbox-img" style="max-width:90%; max-height:90%; border-radius:15px;" src="" onclick="event.stopPropagation()">
         <button class="lightbox-nav next" onclick="event.stopPropagation(); navigateLightbox(1)">&#10095;</button>
     </div>
-
-    <!-- Calendar Expander Overlay -->
-    <div id="calendarOverlay" class="calendar-overlay" onclick="closeCalendarExpanded()"></div>
 
     <div id="app-wrapper">
         <div class="main-app-container">
@@ -345,22 +276,21 @@
                 </div>
 
                 <div class="music-box box-style">
-                    <audio id="audioPlayer"></audio>
-                    <div class="song-title" id="songTitle">Select a song</div>
-                    <div style="display: flex; gap: 5px; align-items: center;">
-                        <button onclick="prevTrack()" style="background:none; border:none; cursor:pointer; font-size:16px;">⏮</button>
-                        <button id="playPauseBtn" onclick="togglePlay()">▶</button>
-                        <button onclick="nextTrack()" style="background:none; border:none; cursor:pointer; font-size:16px;">⏭</button>
-                    </div>
-                    <input type="range" id="musicSlider" class="custom-slider" value="0" min="0" max="100" oninput="seekAudio()">
-                    <div class="volume-control">
-                        <span>🔊</span>
-                        <input type="range" id="volumeSlider" class="custom-slider" value="1" min="0" max="1" step="0.01" oninput="changeVolume()">
-                    </div>
-                </div>
+    <audio id="audioPlayer"></audio>
+    <div class="song-title" id="songTitle">Select a song</div>
+    <div style="display: flex; gap: 5px; align-items: center;">
+        <button onclick="prevTrack()" style="background:none; border:none; cursor:pointer; font-size:16px;">⏮</button>
+        <button id="playPauseBtn" onclick="togglePlay()">▶</button>
+        <button onclick="nextTrack()" style="background:none; border:none; cursor:pointer; font-size:16px;">⏭</button>
+    </div>
+    <input type="range" id="musicSlider" class="custom-slider" value="0" min="0" max="100" oninput="seekAudio()">
+    <div class="volume-control">
+        <span>🔊</span>
+        <input type="range" id="volumeSlider" class="custom-slider" value="1" min="0" max="1" step="0.01" oninput="changeVolume()">
+    </div>
+</div>
 
-                <!-- Calendar -->
-                <div id="calendarBox" class="calendar-box box-style" onclick="openCalendarExpanded(event)">
+                <div class="calendar-box box-style">
                     <div class="calendar-header">
                         <button id="prevMonth" onclick="changeMonth(-1)">&#9664;</button>
                         <span id="monthYear"></span>
@@ -477,6 +407,7 @@
         const volSlider = document.getElementById('volumeSlider');
         const songTitle = document.getElementById('songTitle');
 
+        // ADD YOUR SONGS HERE
         const playlist = [
             { title: "Song Name 1", file: "Song.mp3" },
             { title: "Song Name 2", file: "song2.mp3" },
@@ -526,10 +457,10 @@
         window.seekAudio = () => { if (isFinite(audio.duration) && audio.duration > 0) { audio.currentTime = (slider.value / 100) * audio.duration; } };
         window.changeVolume = () => { audio.volume = volSlider.value; };
         
+        // Initialize player
         loadTrack(0);
         audio.volume = volSlider.value;
 
-        // --- Calendar Logic ---
         let currentMonth = new Date().getMonth(); let currentYear = new Date().getFullYear();
 
         window.renderCalendar = () => {
@@ -539,7 +470,7 @@
             monthYear.innerText = `${monthNames[currentMonth]} ${currentYear}`;
             calendarDates.innerHTML = "";
             const today = new Date();
-            
+            // Restrict back navigation
             if (currentYear === today.getFullYear() && currentMonth === today.getMonth()) prevBtn.style.visibility = 'hidden';
             else prevBtn.style.visibility = 'visible';
 
@@ -561,38 +492,6 @@
             window.renderCalendar();
         };
 
-        // --- Calendar Expand / Collapse Interactions ---
-        window.openCalendarExpanded = (e) => {
-            // Prevent expansion if they are just trying to click on the next/prev month buttons
-            if (e && (e.target.tagName === 'BUTTON' || e.target.closest('button'))) return;
-            
-            const calBox = document.getElementById('calendarBox');
-            if (calBox.classList.contains('expanded')) return;
-            
-            // Create a silent placeholder to prevent layout shifting
-            const placeholder = document.createElement('div');
-            placeholder.id = 'cal-placeholder';
-            const rect = calBox.getBoundingClientRect();
-            placeholder.style.width = rect.width + 'px';
-            placeholder.style.height = rect.height + 'px';
-            calBox.parentNode.insertBefore(placeholder, calBox);
-            
-            // Execute expansion
-            calBox.classList.add('expanded');
-            document.getElementById('calendarOverlay').style.display = 'block';
-        };
-
-        window.closeCalendarExpanded = () => {
-            const calBox = document.getElementById('calendarBox');
-            calBox.classList.remove('expanded');
-            document.getElementById('calendarOverlay').style.display = 'none';
-            
-            // Remove our silent placeholder
-            const placeholder = document.getElementById('cal-placeholder');
-            if (placeholder) placeholder.remove();
-        };
-
-        // --- Background & Setup ---
         const wrapper = document.getElementById('app-wrapper');
         window.addEventListener('mousemove', (e) => {
             const centerX = window.innerWidth / 2; const centerY = window.innerHeight / 2;
@@ -604,7 +503,6 @@
         const firebaseConfig = { apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", authDomain: "jayabeth-fdaad.firebaseapp.com", projectId: "jayabeth-fdaad", storageBucket: "jayabeth-fdaad.firebasestorage.app", messagingSenderId: "716510918759", appId: "1:716510918759:web:35340b83ad2a134cecbcc2" };
         const app = initializeApp(firebaseConfig); const db = getDatabase(app); const messagesRef = ref(db, "chatroom"); const galleryRef = ref(db, "gallery"); const bucketListRef = ref(db, "bucketlist"); const pinnedRef = ref(db, "pinned");
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky'; let otherUserLastSeen = 0;
-        
         const enforceMessageLimit = () => {
             get(messagesRef).then((snapshot) => {
                 if (snapshot.size > 50) {
@@ -619,6 +517,7 @@
             document.getElementById("days-count").innerText = diffDays;
             window.renderCalendar();
             
+            // Check saved dark mode preference
             if (localStorage.getItem('darkmode') === 'enabled') {
                 document.body.classList.add('dark-mode');
                 document.getElementById('themeToggle').innerText = '☀️';
@@ -627,7 +526,6 @@
 
         const updateMyStatus = () => { set(ref(db, `status/${currentUser}`), { lastSeen: Date.now() }); };
         window.addEventListener('focus', updateMyStatus); document.addEventListener('click', updateMyStatus); setTimeout(updateMyStatus, 1000);
-        
         const listenToOtherUserStatus = () => {
             const otherUser = currentUser === 'Shanky' ? 'Reece' : 'Shanky';
             onValue(ref(db, `status/${otherUser}`), (snapshot) => {
@@ -641,31 +539,25 @@
             });
         };
         listenToOtherUserStatus();
-        
         const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230'; const savedAlpha = localStorage.getItem('yapboxAlpha') || '0.85';
         document.documentElement.style.setProperty('--box-base-rgb', savedRGB); document.documentElement.style.setProperty('--box-alpha', savedAlpha); document.getElementById('opacitySlider').value = savedAlpha;
         document.addEventListener('click', () => { document.querySelectorAll('.msg-dropdown-menu').forEach(menu => { menu.style.display = 'none'; }); });
-        
         window.toggleClearBtn = () => { const input = document.getElementById("messageInput"); document.getElementById("clearBtn").style.display = input.value.length > 0 ? "flex" : "none"; };
         window.clearInput = () => { const input = document.getElementById("messageInput"); input.value = ""; toggleClearBtn(); input.focus(); };
         window.addBucketItem = () => { const input = document.getElementById("bucketInput"); if (input.value.trim() === "") return; push(bucketListRef, { text: input.value, timestamp: Date.now(), creator: currentUser }); input.value = ""; };
         window.handleBucketKeyPress = (e) => { if (e.key === 'Enter') addBucketItem(); };
         window.deleteBucketItem = (key, btn) => { const li = btn.closest('.bucket-item'); li.classList.add('deleting'); setTimeout(() => { remove(child(bucketListRef, key)); }, 300); };
-        
         onValue(bucketListRef, (snapshot) => {
             const listDiv = document.getElementById("bucketList"); listDiv.innerHTML = "";
             if (!snapshot.exists()) return;
             snapshot.forEach((child) => { const data = child.val(); const key = child.key; const li = document.createElement('li'); li.className = 'bucket-item'; li.innerHTML = `<span>${data.text}</span><button class="delete-item-btn" onclick="deleteBucketItem('${key}', this)">✕</button>`; listDiv.appendChild(li); });
             listDiv.scrollTop = listDiv.scrollHeight;
         });
-        
         window.toggleColorMenu = (e) => { if(e) e.stopPropagation(); const menu = document.getElementById('colorMenu'); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
         window.changeBaseColor = (rgb) => { document.documentElement.style.setProperty('--box-base-rgb', rgb); localStorage.setItem('yapboxRGB', rgb); };
         window.changeAlpha = (val) => { document.documentElement.style.setProperty('--box-alpha', val); localStorage.setItem('yapboxAlpha', val); };
-        
         const formatTime = (ts) => { const date = new Date(ts); return date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0'); };
         const formatMessageLinks = (text) => { const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig; return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>'); };
-        
         let holdTimer = null; let replyingTo = null; 
         window.openLightbox = (src) => { const lightbox = document.getElementById('lightbox'); const imgEl = document.getElementById('lightbox-img'); imgEl.src = src; lightbox.style.display = 'flex'; currentImgIndex = galleryImages.indexOf(src); };
         window.navigateLightbox = (dir) => { currentImgIndex = (currentImgIndex + dir + galleryImages.length) % galleryImages.length; document.getElementById('lightbox-img').src = galleryImages[currentImgIndex]; };
@@ -675,18 +567,15 @@
         window.pinMessage = (msgData) => { set(pinnedRef, msgData); };
         window.unpinMessage = () => { remove(pinnedRef); };
         window.deleteMessage = (key, rowElement) => { if(confirm("Delete this message?")) { if (rowElement) { rowElement.classList.add('deleting-msg'); setTimeout(() => { remove(child(messagesRef, key)); }, 300); } else { remove(child(messagesRef, key)); } } };
-        
         onValue(pinnedRef, (snapshot) => { const bar = document.getElementById('pinnedBar'); const content = document.getElementById('pinnedContent'); if(snapshot.exists()) { const data = snapshot.val(); content.innerHTML = `<strong>📌 Pinned</strong> - ${data.name}: ${data.text ? data.text : '[Image]'}`; bar.style.display = 'flex'; } else { bar.style.display = 'none'; } });
         window.startHold = (event, imgData) => { holdTimer = setTimeout(() => { const target = event.target; if(target.parentElement.querySelector('.save-overlay')) return; const overlay = document.createElement('div'); overlay.className = 'save-overlay'; overlay.innerText = 'Save to Gallery'; overlay.onclick = (e) => { e.stopPropagation(); push(galleryRef, { image: imgData, timestamp: Date.now() }); overlay.innerText = 'Saved!'; setTimeout(() => overlay.remove(), 1000); }; target.parentElement.appendChild(overlay); setTimeout(() => { if(overlay) overlay.remove(); }, 3000); }, 1000); };
         window.endHold = () => clearTimeout(holdTimer);
-        
         window.handleImageUpload = (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); const scale = 400 / img.width; canvas.width = 400; canvas.height = img.height * scale; canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height); push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now(), replyTo: replyingTo }); cancelReply(); updateMyStatus(); enforceMessageLimit(); }; img.src = event.target.result; }; reader.readAsDataURL(file); e.target.value = ''; };
         window.sendMessage = () => { const input = document.getElementById("messageInput"); if (input.value.trim() === "") return; push(messagesRef, { name: currentUser, text: input.value, timestamp: Date.now(), replyTo: replyingTo }); input.value = ""; toggleClearBtn(); cancelReply(); updateMyStatus(); enforceMessageLimit(); };
         window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
         window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
         window.resetChat = () => { if (confirm("Clear Chat?")) { const msgs = document.getElementById('messages'); msgs.classList.add('wiping'); setTimeout(() => { remove(messagesRef); msgs.classList.remove('wiping'); }, 400); } };
         window.deleteGalleryItem = (event, key) => { event.stopPropagation(); remove(child(galleryRef, key)); };
-        
         onValue(messagesRef, (snapshot) => {
             const messagesDiv = document.getElementById("messages"); messagesDiv.innerHTML = ""; if (!snapshot.exists()) return;
             snapshot.forEach((childNode) => {
@@ -699,7 +588,6 @@
                 wrapper.appendChild(bubble); wrapper.appendChild(time); row.appendChild(wrapper); messagesDiv.appendChild(row);
             }); messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
-        
         onValue(galleryRef, (snapshot) => {
             const galleryDiv = document.getElementById("gallery"); galleryDiv.innerHTML = ""; galleryImages = [];
             if (!snapshot.exists()) return;
@@ -710,7 +598,6 @@
                 item.appendChild(img); item.appendChild(delBtn); galleryDiv.appendChild(item);
             });
         });
-        
         if(currentUser === 'Reece') document.getElementById('userReece').checked = true; else document.getElementById('userShanky').checked = true;
     </script>
 </body>

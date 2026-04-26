@@ -70,7 +70,6 @@
         }
 
         /* Left Side Container (Date & Music) */
-        /* Gap slightly reduced to accommodate volume slider while keeping overall height balanced */
         .left-column { display: flex; flex-direction: column; gap: 15px; }
 
         /* Date Counter */
@@ -167,7 +166,7 @@
             transform: scale(1.6);
         }
 
-        /* Calendar - adjusted padding to seamlessly fit the taller music player */
+        /* Calendar */
         .calendar-box {
             width: 140px;
             padding: 12px 10px;
@@ -274,6 +273,25 @@
         .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; z-index: 2; font-size: 10px; transition: transform 0.2s; }
         .delete-btn:hover { transform: scale(1.2); }
 
+        /* Lightbox Navigation */
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            font-size: 30px;
+            padding: 20px;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 10000;
+            transition: background 0.2s;
+        }
+        .lightbox-nav:hover { background: rgba(255, 255, 255, 0.5); }
+        .prev { left: 40px; }
+        .next { right: 40px; }
+
         /* Bucket List */
         .bucket-list { flex-grow: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; }
         .bucket-item { background: rgba(255, 255, 255, 0.4); padding: 10px 12px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; word-break: break-word; animation: fadeIn 0.3s ease; }
@@ -284,7 +302,7 @@
         .delete-item-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
         .delete-item-btn:hover { opacity: 1; transform: scale(1.2); }
 
-        /* --- Deletion Animations --- */
+        /* Deletion Animations */
         @keyframes messageFadeOut { 0% { opacity: 1; transform: scale(1) translateY(0); } 100% { opacity: 0; transform: scale(0.8) translateY(10px); } }
         .message-row.deleting-msg { animation: messageFadeOut 0.3s forwards ease-in; pointer-events: none; }
         @keyframes chatWipe { to { opacity: 0; transform: translateY(20px); } }
@@ -297,7 +315,6 @@
         /* Color Menu */
         .color-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; z-index: 10; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .color-toggle:hover { transform: scale(1.2) rotate(15deg); }
-        /* Shadow opacity increased */
         .color-menu { display: none; position: absolute; top: 45px; right: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.32); z-index: 20; width: 180px; }
         .color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
         .color-option { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 1px solid #ccc; transition: transform 0.2s; }
@@ -310,8 +327,6 @@
         .user-selector label { padding: 5px 15px; cursor: pointer; font-size: 13px; border-radius: 16px; color: #555; flex: 1; text-align: center; transition: 0.2s; }
         .user-selector input:checked + label { background: #8a2be2; color: white; font-weight: bold; }
         
-        /* Pinned Message Bar */
-        /* Shadow opacity increased */
         .pinned-bar { background: rgba(255, 255, 255, 0.6); border-left: 4px solid #8a2be2; padding: 8px 10px; margin: 0 10px 10px 10px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.16); }
         .pinned-content { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; color: #333; }
         .unpin-btn { background: none; border: none; cursor: pointer; color: #666; font-weight: bold; font-size: 14px; transition: color 0.2s; }
@@ -332,12 +347,10 @@
         .bubble a { color: inherit; text-decoration: underline; font-weight: bold; }
         
         .msg-dropdown-container { position: absolute; top: 6px; right: 6px; z-index: 5; }
-        /* Shadow opacity increased */
         .msg-dropdown-btn { background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; line-height: 1; cursor: pointer; display: none; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.48); align-items: center; justify-content: center; transition: background 0.2s; }
         .msg-dropdown-btn:hover { background: #e0e0e0; }
         .bubble:hover .msg-dropdown-btn { display: flex; }
         
-        /* Shadow opacity increased */
         .msg-dropdown-menu { display: none; position: absolute; top: 22px; right: 0; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.32); overflow: hidden; flex-direction: column; width: 110px; z-index: 100; border: 1px solid #eee; }
         .msg-dropdown-menu button { padding: 10px 12px; border: none; background: none; text-align: left; cursor: pointer; font-family: 'Fredoka', sans-serif; font-size: 13px; color: #333; transition: background 0.2s; }
         .msg-dropdown-menu button:hover { background: #f5f5f5; }
@@ -360,7 +373,6 @@
         .clear-btn { position: absolute; right: 10px; background: rgba(0,0,0,0.15); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 10px; cursor: pointer; display: none; align-items: center; justify-content: center; font-weight: bold; transition: 0.2s; }
         .clear-btn:hover { background: #ff4d4d; }
         
-        /* Shadow opacity increased */
         .chat-inputs button { 
             padding: 10px 15px; 
             border: none; 
@@ -380,13 +392,15 @@
 <body>
     <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center;">
         <span class="close-lightbox" onclick="closeLightbox()" style="position:absolute; top:30px; right:40px; font-size:40px; color:white; cursor:pointer; font-weight:bold;">&times;</span>
-        <img id="lightbox-img" class="lightbox-img" style="max-width:90%; max-height:90%; border-radius:15px;" src="">
+        <button class="lightbox-nav prev" onclick="event.stopPropagation(); navigateLightbox(-1)">&#10094;</button>
+        <img id="lightbox-img" class="lightbox-img" style="max-width:90%; max-height:90%; border-radius:15px;" src="" onclick="event.stopPropagation()">
+        <button class="lightbox-nav next" onclick="event.stopPropagation(); navigateLightbox(1)">&#10095;</button>
     </div>
 
     <div id="app-wrapper">
         <div class="main-app-container">
             
-            <!-- LEFT COLUMN: Date + Music + Calendar -->
+            <!-- LEFT COLUMN -->
             <div class="left-column">
                 <div class="date-box box-style">
                     <div class="date-text">It was official</div>
@@ -395,20 +409,16 @@
                 </div>
 
                 <div class="music-box box-style">
-                    <audio id="audioPlayer" src="Song.mp3"></audio> <!-- REPLACE song.mp3 with your actual file -->
+                    <audio id="audioPlayer" src="Song.mp3"></audio> 
                     <div class="song-title">Play some vibes</div>
                     <button id="playPauseBtn" onclick="togglePlay()">▶</button>
-                    <!-- Enhanced music progress slider -->
                     <input type="range" id="musicSlider" class="custom-slider" value="0" min="0" max="100" oninput="seekAudio()">
-                    
-                    <!-- Added Volume Control -->
                     <div class="volume-control">
                         <span>🔊</span>
                         <input type="range" id="volumeSlider" class="custom-slider" value="1" min="0" max="1" step="0.01" oninput="changeVolume()">
                     </div>
                 </div>
 
-                <!-- Calendar UI -->
                 <div class="calendar-box box-style">
                     <div class="calendar-header">
                         <button id="prevMonth" onclick="changeMonth(-1)">&#9664;</button>
@@ -421,7 +431,6 @@
                     <div class="calendar-dates" id="calendarDates"></div>
                 </div>
 
-                <!-- Heart UI -->
                 <div class="heart-box box-style" onclick="spawnHeart()">
                     <button class="heart-btn">❤️</button>
                 </div>
@@ -497,7 +506,10 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // --- Heart Spawn Logic ---
+        // Gallery tracking
+        let galleryImages = [];
+        let currentImgIndex = 0;
+
         window.spawnHeart = () => {
             const heart = document.createElement('div');
             heart.innerText = '❤️';
@@ -510,103 +522,59 @@
             setTimeout(() => { heart.remove(); }, 1000);
         };
 
-        // --- Music Player Logic ---
         const audio = document.getElementById('audioPlayer');
         const playBtn = document.getElementById('playPauseBtn');
         const slider = document.getElementById('musicSlider');
         const volSlider = document.getElementById('volumeSlider');
-
-        // Set initial volume
         audio.volume = volSlider.value;
 
         window.togglePlay = () => {
-            if (audio.paused) {
-                audio.play();
-                playBtn.innerText = '⏸';
-            } else {
-                audio.pause();
-                playBtn.innerText = '▶';
-            }
+            if (audio.paused) { audio.play(); playBtn.innerText = '⏸'; } 
+            else { audio.pause(); playBtn.innerText = '▶'; }
         };
 
         audio.ontimeupdate = () => {
-            if (audio.duration) {
-                const percentage = (audio.currentTime / audio.duration) * 100;
-                slider.value = percentage;
-            }
+            if (audio.duration) { slider.value = (audio.currentTime / audio.duration) * 100; }
         };
 
-        window.seekAudio = () => {
-            const time = (slider.value / 100) * audio.duration;
-            audio.currentTime = time;
-        };
+        window.seekAudio = () => { audio.currentTime = (slider.value / 100) * audio.duration; };
+        window.changeVolume = () => { audio.volume = volSlider.value; };
 
-        window.changeVolume = () => {
-            audio.volume = volSlider.value;
-        };
-
-        // --- Calendar Logic ---
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
 
         window.renderCalendar = () => {
             const monthYear = document.getElementById("monthYear");
             const calendarDates = document.getElementById("calendarDates");
-            
             if (!monthYear || !calendarDates) return;
-
             const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             monthYear.innerText = `${monthNames[currentMonth]} ${currentYear}`;
-            
             calendarDates.innerHTML = "";
-            
             const firstDay = new Date(currentYear, currentMonth, 1).getDay();
             const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
             const prevMonthTotalDays = new Date(currentYear, currentMonth, 0).getDate();
-            
-            // Previous month
             for (let i = firstDay; i > 0; i--) {
-                const dateEl = document.createElement("div");
-                dateEl.className = "calendar-date other-month";
-                dateEl.innerText = prevMonthTotalDays - i + 1;
-                calendarDates.appendChild(dateEl);
+                const dateEl = document.createElement("div"); dateEl.className = "calendar-date other-month"; dateEl.innerText = prevMonthTotalDays - i + 1; calendarDates.appendChild(dateEl);
             }
-            
-            // Current month
             const today = new Date();
             for (let i = 1; i <= totalDays; i++) {
-                const dateEl = document.createElement("div");
-                dateEl.className = "calendar-date current-month";
-                if (i === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
-                    dateEl.classList.add("today");
-                }
-                dateEl.innerText = i;
-                calendarDates.appendChild(dateEl);
+                const dateEl = document.createElement("div"); dateEl.className = "calendar-date current-month";
+                if (i === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) dateEl.classList.add("today");
+                dateEl.innerText = i; calendarDates.appendChild(dateEl);
             }
-            
-            // Next month
             const remainingCells = 42 - (firstDay + totalDays);
             for (let i = 1; i <= remainingCells; i++) {
-                const dateEl = document.createElement("div");
-                dateEl.className = "calendar-date other-month";
-                dateEl.innerText = i;
-                calendarDates.appendChild(dateEl);
+                const dateEl = document.createElement("div"); dateEl.className = "calendar-date other-month"; dateEl.innerText = i; calendarDates.appendChild(dateEl);
             }
         };
 
         window.changeMonth = (dir) => {
             currentMonth += dir;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            } else if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; } 
+            else if (currentMonth > 11) { currentMonth = 0; currentYear++; }
             window.renderCalendar();
         };
 
-        // --- 3D Tilt Script ---
         const wrapper = document.getElementById('app-wrapper');
         window.addEventListener('mousemove', (e) => {
             const centerX = window.innerWidth / 2;
@@ -614,11 +582,9 @@
             const x = (e.clientX - centerX) / 80;
             const y = (e.clientY - centerY) / 80;
             wrapper.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-            /* Shadow opacity mathematically increased by 60% (from 0.3 to 0.48) */
             wrapper.style.boxShadow = `${-x}px ${y+20}px 50px rgba(0,0,0,0.48)`;
         });
 
-        // --- Firebase & App Logic ---
         const firebaseConfig = { 
             apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY", 
             authDomain: "jayabeth-fdaad.firebaseapp.com", 
@@ -642,9 +608,7 @@
             get(messagesRef).then((snapshot) => {
                 if (snapshot.size > 50) {
                     const messages = [];
-                    snapshot.forEach((childNode) => {
-                        messages.push({ key: childNode.key, timestamp: childNode.val().timestamp });
-                    });
+                    snapshot.forEach((childNode) => { messages.push({ key: childNode.key, timestamp: childNode.val().timestamp }); });
                     messages.sort((a, b) => a.timestamp - b.timestamp);
                     remove(child(messagesRef, messages[0].key));
                 }
@@ -656,14 +620,10 @@
             const today = new Date();
             const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
             document.getElementById("days-count").innerText = diffDays;
-            
-            // Render the newly added Calendar
             window.renderCalendar();
         });
 
-        const updateMyStatus = () => {
-            set(ref(db, `status/${currentUser}`), { lastSeen: Date.now() });
-        };
+        const updateMyStatus = () => { set(ref(db, `status/${currentUser}`), { lastSeen: Date.now() }); };
         window.addEventListener('focus', updateMyStatus);
         document.addEventListener('click', updateMyStatus);
         setTimeout(updateMyStatus, 1000);
@@ -675,10 +635,7 @@
                     otherUserLastSeen = snapshot.val().lastSeen;
                     document.querySelectorAll('.tick').forEach(tickEl => {
                         const ts = parseInt(tickEl.getAttribute('data-timestamp'));
-                        if (ts <= otherUserLastSeen) {
-                            tickEl.classList.remove('unread');
-                            tickEl.classList.add('read');
-                        }
+                        if (ts <= otherUserLastSeen) { tickEl.classList.remove('unread'); tickEl.classList.add('read'); }
                     });
                 }
             });
@@ -691,238 +648,121 @@
         document.documentElement.style.setProperty('--box-alpha', savedAlpha);
         document.getElementById('opacitySlider').value = savedAlpha;
 
-        document.addEventListener('click', () => {
-            document.querySelectorAll('.msg-dropdown-menu').forEach(menu => {
-                menu.style.display = 'none';
-            });
-        });
-
-        window.toggleClearBtn = () => {
-            const input = document.getElementById("messageInput");
-            const btn = document.getElementById("clearBtn");
-            btn.style.display = input.value.length > 0 ? "flex" : "none";
-        };
-
-        window.clearInput = () => {
-            const input = document.getElementById("messageInput");
-            input.value = "";
-            toggleClearBtn();
-            input.focus();
-        };
-
-        window.addBucketItem = () => {
-            const input = document.getElementById("bucketInput");
-            if (input.value.trim() === "") return;
-            push(bucketListRef, { 
-                text: input.value, 
-                timestamp: Date.now(),
-                creator: currentUser 
-            });
-            input.value = "";
-        };
-
+        window.toggleClearBtn = () => { const input = document.getElementById("messageInput"); document.getElementById("clearBtn").style.display = input.value.length > 0 ? "flex" : "none"; };
+        window.clearInput = () => { const input = document.getElementById("messageInput"); input.value = ""; toggleClearBtn(); input.focus(); };
+        window.addBucketItem = () => { const input = document.getElementById("bucketInput"); if (input.value.trim() === "") return; push(bucketListRef, { text: input.value, timestamp: Date.now(), creator: currentUser }); input.value = ""; };
         window.handleBucketKeyPress = (e) => { if (e.key === 'Enter') addBucketItem(); };
-
-        window.deleteBucketItem = (key, btn) => {
-            const li = btn.closest('.bucket-item');
-            li.classList.add('deleting');
-            setTimeout(() => { remove(child(bucketListRef, key)); }, 300);
-        };
+        window.deleteBucketItem = (key, btn) => { const li = btn.closest('.bucket-item'); li.classList.add('deleting'); setTimeout(() => { remove(child(bucketListRef, key)); }, 300); };
 
         onValue(bucketListRef, (snapshot) => {
-            const listDiv = document.getElementById("bucketList");
-            listDiv.innerHTML = "";
+            const listDiv = document.getElementById("bucketList"); listDiv.innerHTML = "";
             if (!snapshot.exists()) return;
             snapshot.forEach((child) => {
-                const data = child.val();
-                const key = child.key;
-                const li = document.createElement('li');
-                li.className = 'bucket-item';
+                const data = child.val(); const key = child.key;
+                const li = document.createElement('li'); li.className = 'bucket-item';
                 li.innerHTML = `<span>${data.text}</span><button class="delete-item-btn" onclick="deleteBucketItem('${key}', this)">✕</button>`;
                 listDiv.appendChild(li);
             });
             listDiv.scrollTop = listDiv.scrollHeight;
         });
 
-        window.toggleColorMenu = (e) => {
-            if(e) e.stopPropagation();
-            const menu = document.getElementById('colorMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        };
+        window.toggleColorMenu = (e) => { if(e) e.stopPropagation(); const menu = document.getElementById('colorMenu'); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
+        window.changeBaseColor = (rgb) => { document.documentElement.style.setProperty('--box-base-rgb', rgb); localStorage.setItem('yapboxRGB', rgb); };
+        window.changeAlpha = (val) => { document.documentElement.style.setProperty('--box-alpha', val); localStorage.setItem('yapboxAlpha', val); };
+        const formatTime = (ts) => { const date = new Date(ts); return date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0'); };
+        const formatMessageLinks = (text) => { const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig; return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>'); };
 
-        window.changeBaseColor = (rgb) => {
-            document.documentElement.style.setProperty('--box-base-rgb', rgb);
-            localStorage.setItem('yapboxRGB', rgb);
-        };
-
-        window.changeAlpha = (val) => {
-            document.documentElement.style.setProperty('--box-alpha', val);
-            localStorage.setItem('yapboxAlpha', val);
-        };
-
-        const formatTime = (ts) => {
-            const date = new Date(ts);
-            return date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
-        };
-
-        const formatMessageLinks = (text) => {
-            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-            return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
-        };
-
-        let holdTimer = null;
-        let replyingTo = null; 
+        let holdTimer = null; let replyingTo = null; 
 
         window.openLightbox = (src) => {
             const lightbox = document.getElementById('lightbox');
-            document.getElementById('lightbox-img').src = src;
+            const imgEl = document.getElementById('lightbox-img');
+            imgEl.src = src;
             lightbox.style.display = 'flex';
+            currentImgIndex = galleryImages.indexOf(src);
+        };
+
+        window.navigateLightbox = (dir) => {
+            currentImgIndex = (currentImgIndex + dir + galleryImages.length) % galleryImages.length;
+            document.getElementById('lightbox-img').src = galleryImages[currentImgIndex];
         };
 
         window.closeLightbox = () => { document.getElementById('lightbox').style.display = 'none'; };
-
-        window.startReply = (text, user) => {
-            replyingTo = { text: text || "[Image]", user: user };
-            const bar = document.getElementById('replyBar');
-            bar.style.display = 'block';
-            bar.innerHTML = `<strong>Replying to ${user}:</strong> ${text || "[Image]"} <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>`;
-        };
-
+        window.startReply = (text, user) => { replyingTo = { text: text || "[Image]", user: user }; const bar = document.getElementById('replyBar'); bar.style.display = 'block'; bar.innerHTML = `<strong>Replying to ${user}:</strong> ${text || "[Image]"} <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>`; };
         window.cancelReply = () => { replyingTo = null; document.getElementById('replyBar').style.display = 'none'; };
-
         window.pinMessage = (msgData) => { set(pinnedRef, msgData); };
-        
         window.unpinMessage = () => { remove(pinnedRef); };
 
         window.deleteMessage = (key, rowElement) => { 
             if(confirm("Delete this message?")) {
-                if (rowElement) {
-                    rowElement.classList.add('deleting-msg');
-                    setTimeout(() => { remove(child(messagesRef, key)); }, 300);
-                } else {
-                    remove(child(messagesRef, key));
-                }
+                if (rowElement) { rowElement.classList.add('deleting-msg'); setTimeout(() => { remove(child(messagesRef, key)); }, 300); } 
+                else { remove(child(messagesRef, key)); }
             } 
         };
 
         onValue(pinnedRef, (snapshot) => {
-            const bar = document.getElementById('pinnedBar');
-            const content = document.getElementById('pinnedContent');
-            if(snapshot.exists()) {
-                const data = snapshot.val();
-                let displayTxt = data.text ? data.text : '[Image]';
-                content.innerHTML = `<strong>📌 Pinned</strong> - ${data.name}: ${displayTxt}`;
-                bar.style.display = 'flex';
-            } else { bar.style.display = 'none'; }
+            const bar = document.getElementById('pinnedBar'); const content = document.getElementById('pinnedContent');
+            if(snapshot.exists()) { const data = snapshot.val(); content.innerHTML = `<strong>📌 Pinned</strong> - ${data.name}: ${data.text ? data.text : '[Image]'}`; bar.style.display = 'flex'; } else { bar.style.display = 'none'; }
         });
 
         window.startHold = (event, imgData) => {
             holdTimer = setTimeout(() => {
                 const target = event.target;
                 if(target.parentElement.querySelector('.save-overlay')) return;
-                const overlay = document.createElement('div');
-                overlay.className = 'save-overlay';
-                overlay.innerText = 'Save to Gallery';
-                overlay.onclick = (e) => {
-                    e.stopPropagation();
-                    push(galleryRef, { image: imgData, timestamp: Date.now() });
-                    overlay.innerText = 'Saved!';
-                    setTimeout(() => overlay.remove(), 1000);
-                };
+                const overlay = document.createElement('div'); overlay.className = 'save-overlay'; overlay.innerText = 'Save to Gallery';
+                overlay.onclick = (e) => { e.stopPropagation(); push(galleryRef, { image: imgData, timestamp: Date.now() }); overlay.innerText = 'Saved!'; setTimeout(() => overlay.remove(), 1000); };
                 target.parentElement.appendChild(overlay);
                 setTimeout(() => { if(overlay) overlay.remove(); }, 3000);
             }, 1000); 
         };
-
         window.endHold = () => clearTimeout(holdTimer);
 
         window.handleImageUpload = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+            const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = (event) => {
                 const img = new Image();
                 img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const scale = 400 / img.width;
-                    canvas.width = 400;
-                    canvas.height = img.height * scale;
+                    const canvas = document.createElement('canvas'); const scale = 400 / img.width; canvas.width = 400; canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                     push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now(), replyTo: replyingTo });
-                    cancelReply();
-                    updateMyStatus();
-                    enforceMessageLimit();
+                    cancelReply(); updateMyStatus(); enforceMessageLimit();
                 };
                 img.src = event.target.result;
             };
-            reader.readAsDataURL(file);
-            e.target.value = '';
+            reader.readAsDataURL(file); e.target.value = '';
         };
 
-        window.sendMessage = () => {
-            const input = document.getElementById("messageInput");
-            if (input.value.trim() === "") return;
-            push(messagesRef, { name: currentUser, text: input.value, timestamp: Date.now(), replyTo: replyingTo });
-            input.value = "";
-            toggleClearBtn();
-            cancelReply();
-            updateMyStatus();
-            enforceMessageLimit();
-        };
-
+        window.sendMessage = () => { const input = document.getElementById("messageInput"); if (input.value.trim() === "") return; push(messagesRef, { name: currentUser, text: input.value, timestamp: Date.now(), replyTo: replyingTo }); input.value = ""; toggleClearBtn(); cancelReply(); updateMyStatus(); enforceMessageLimit(); };
         window.changeUser = (r) => { localStorage.setItem('yapboxUser', r.value); location.reload(); };
         window.handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
         window.resetChat = () => { 
             if (confirm("Clear Chat?")) {
-                const msgs = document.getElementById('messages');
-                msgs.classList.add('wiping');
-                setTimeout(() => {
-                    remove(messagesRef);
-                    msgs.classList.remove('wiping');
-                }, 400);
+                const msgs = document.getElementById('messages'); msgs.classList.add('wiping');
+                setTimeout(() => { remove(messagesRef); msgs.classList.remove('wiping'); }, 400);
             } 
         };
         window.deleteGalleryItem = (event, key) => { event.stopPropagation(); remove(child(galleryRef, key)); };
 
         onValue(messagesRef, (snapshot) => {
-            const messagesDiv = document.getElementById("messages");
-            messagesDiv.innerHTML = "";
+            const messagesDiv = document.getElementById("messages"); messagesDiv.innerHTML = "";
             if (!snapshot.exists()) return;
             snapshot.forEach((childNode) => {
-                const data = childNode.val();
-                const key = childNode.key;
-                const isMine = data.name === currentUser;
-                const row = document.createElement('div');
-                row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
-                const wrapper = document.createElement('div');
-                wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
-                const bubble = document.createElement('div');
-                bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
+                const data = childNode.val(); const key = childNode.key; const isMine = data.name === currentUser;
+                const row = document.createElement('div'); row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
+                const wrapper = document.createElement('div'); wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
+                const bubble = document.createElement('div'); bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
                 bubble.onclick = (e) => { if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) { startReply(data.text || "[Image]", data.name); } };
-                
                 if (isMine) {
-                    const dropdownContainer = document.createElement('div');
-                    dropdownContainer.className = 'msg-dropdown-container';
-                    const dropBtn = document.createElement('button');
-                    dropBtn.className = 'msg-dropdown-btn';
-                    dropBtn.innerHTML = '&#8964;'; 
-                    const dropMenu = document.createElement('div');
-                    dropMenu.className = 'msg-dropdown-menu';
-                    const pinBtn = document.createElement('button');
-                    pinBtn.innerText = '📌 Pin';
-                    pinBtn.onclick = (e) => { e.stopPropagation(); pinMessage(data); dropMenu.style.display = 'none'; };
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.className = 'delete-msg-btn';
-                    deleteBtn.innerText = '🗑️ Delete';
-                    deleteBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(key, row); dropMenu.style.display = 'none'; };
-                    dropMenu.appendChild(pinBtn);
-                    dropMenu.appendChild(deleteBtn);
+                    const dropdownContainer = document.createElement('div'); dropdownContainer.className = 'msg-dropdown-container';
+                    const dropBtn = document.createElement('button'); dropBtn.className = 'msg-dropdown-btn'; dropBtn.innerHTML = '&#8964;'; 
+                    const dropMenu = document.createElement('div'); dropMenu.className = 'msg-dropdown-menu';
+                    const pinBtn = document.createElement('button'); pinBtn.innerText = '📌 Pin'; pinBtn.onclick = (e) => { e.stopPropagation(); pinMessage(data); dropMenu.style.display = 'none'; };
+                    const deleteBtn = document.createElement('button'); deleteBtn.className = 'delete-msg-btn'; deleteBtn.innerText = '🗑️ Delete'; deleteBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(key, row); dropMenu.style.display = 'none'; };
+                    dropMenu.appendChild(pinBtn); dropMenu.appendChild(deleteBtn);
                     dropBtn.onclick = (e) => { e.stopPropagation(); const isOpen = dropMenu.style.display === 'flex'; document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none'); dropMenu.style.display = isOpen ? 'none' : 'flex'; };
-                    dropdownContainer.appendChild(dropBtn);
-                    dropdownContainer.appendChild(dropMenu);
-                    bubble.appendChild(dropdownContainer);
+                    dropdownContainer.appendChild(dropBtn); dropdownContainer.appendChild(dropMenu); bubble.appendChild(dropdownContainer);
                 }
-
                 if (data.replyTo) { const quote = document.createElement('div'); quote.className = 'quote-box'; quote.innerText = `${data.replyTo.user}: ${data.replyTo.text.length > 20 ? data.replyTo.text.substring(0,20) + '...' : data.replyTo.text}`; bubble.appendChild(quote); }
                 if (data.image) { const img = document.createElement('img'); img.src = data.image; img.onmousedown = (e) => startHold(e, data.image); img.onmouseup = endHold; img.onmouseleave = endHold; img.ontouchstart = (e) => startHold(e, data.image); img.ontouchend = endHold; img.onclick = (e) => { e.stopPropagation(); openLightbox(data.image); }; bubble.appendChild(img); } else { const textSpan = document.createElement('span'); textSpan.innerHTML = formatMessageLinks(data.text); bubble.appendChild(textSpan); }
                 const time = document.createElement('div'); time.className = 'timestamp'; time.innerText = formatTime(data.timestamp);
@@ -933,24 +773,16 @@
         });
 
         onValue(galleryRef, (snapshot) => {
-            const galleryDiv = document.getElementById("gallery");
-            galleryDiv.innerHTML = "";
+            const galleryDiv = document.getElementById("gallery"); galleryDiv.innerHTML = "";
+            galleryImages = []; // Clear array
             if (!snapshot.exists()) return;
             snapshot.forEach((child) => {
-                const data = child.val();
-                const key = child.key;
-                const item = document.createElement('div');
-                item.className = 'gallery-item';
-                const img = document.createElement('img');
-                img.src = data.image;
-                img.onclick = () => openLightbox(data.image);
-                const delBtn = document.createElement('button');
-                delBtn.className = 'delete-btn';
-                delBtn.innerText = '✕';
-                delBtn.onclick = (e) => deleteGalleryItem(e, key);
-                item.appendChild(img);
-                item.appendChild(delBtn);
-                galleryDiv.appendChild(item);
+                const data = child.val(); const key = child.key;
+                galleryImages.push(data.image); // Add to array
+                const item = document.createElement('div'); item.className = 'gallery-item';
+                const img = document.createElement('img'); img.src = data.image; img.onclick = () => openLightbox(data.image);
+                const delBtn = document.createElement('button'); delBtn.className = 'delete-btn'; delBtn.innerText = '✕'; delBtn.onclick = (e) => deleteGalleryItem(e, key);
+                item.appendChild(img); item.appendChild(delBtn); galleryDiv.appendChild(item);
             });
         });
 

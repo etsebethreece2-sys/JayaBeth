@@ -155,9 +155,9 @@
             height: 50vh;
             z-index: 9998;
             cursor: default;
-            /* Completely solid background so the calendar text is perfectly clear, no internal blur */
-            background-color: rgb(var(--box-base-rgb)); 
-            backdrop-filter: none;
+            /* Override blur and set solid background */
+            background-color: rgb(var(--box-base-rgb)) !important; 
+            backdrop-filter: none !important;
             padding: 30px;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
@@ -183,14 +183,23 @@
         }
 
         .calendar-box.expanded .calendar-dates {
-            gap: 1.5vh 0;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1.5vh;
+            justify-items: center;
+            align-items: center;
         }
 
         .calendar-box.expanded .calendar-date {
-            width: clamp(30px, 4vw, 60px);
-            height: clamp(30px, 4vw, 60px);
-            line-height: clamp(30px, 4vw, 60px);
+            width: 80%;
+            max-width: 50px;
+            aspect-ratio: 1 / 1;
+            line-height: normal;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: clamp(14px, 1.5vw, 24px);
+            margin: 0; /* Remove auto-margin to allow flex alignment */
         }
 
         /* Heart */

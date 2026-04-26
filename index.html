@@ -440,8 +440,9 @@
                         <div class="color-option" style="background: linear-gradient(135deg, #ffdb99, #ffa500);" onclick="changeBaseColor('255, 165, 0')"></div>
                         <div class="color-option" style="background: linear-gradient(135deg, #ffb3a7, #ff6347);" onclick="changeBaseColor('255, 99, 71')"></div>
                         <div class="color-option" style="background: linear-gradient(135deg, #ffff99, #ffff00);" onclick="changeBaseColor('255, 255, 0')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #333, #000);" onclick="changeBaseColor('0, 0, 0')"></div>
                     </div>
-                    <div class="slider-label">Transparency/Darkness</div>
+                    <div class="slider-label">Transparency</div>
                     <input type="range" class="custom-slider" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
                 </div>
 
@@ -828,11 +829,11 @@
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const scale = 800 / img.width;
-                    canvas.width = 800;
+                    const scale = 400 / img.width;
+                    canvas.width = 400;
                     canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                    push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 1.0), timestamp: Date.now(), replyTo: replyingTo });
+                    push(messagesRef, { name: currentUser, image: canvas.toDataURL('image/jpeg', 0.5), timestamp: Date.now(), replyTo: replyingTo });
                     cancelReply();
                     updateMyStatus();
                     enforceMessageLimit();
@@ -874,26 +875,30 @@
                 const bubble = document.createElement('div');
                 bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
                 bubble.onclick = (e) => { if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) { startReply(data.text || "[Image]", data.name); } };
-                const dropdownContainer = document.createElement('div');
-                dropdownContainer.className = 'msg-dropdown-container';
-                const dropBtn = document.createElement('button');
-                dropBtn.className = 'msg-dropdown-btn';
-                dropBtn.innerHTML = '&#8964;'; 
-                const dropMenu = document.createElement('div');
-                dropMenu.className = 'msg-dropdown-menu';
-                const pinBtn = document.createElement('button');
-                pinBtn.innerText = '📌 Pin';
-                pinBtn.onclick = (e) => { e.stopPropagation(); pinMessage(data); dropMenu.style.display = 'none'; };
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'delete-msg-btn';
-                deleteBtn.innerText = '🗑️ Delete';
-                deleteBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(key); dropMenu.style.display = 'none'; };
-                dropMenu.appendChild(pinBtn);
-                dropMenu.appendChild(deleteBtn);
-                dropBtn.onclick = (e) => { e.stopPropagation(); const isOpen = dropMenu.style.display === 'flex'; document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none'); dropMenu.style.display = isOpen ? 'none' : 'flex'; };
-                dropdownContainer.appendChild(dropBtn);
-                dropdownContainer.appendChild(dropMenu);
-                bubble.appendChild(dropdownContainer);
+                
+                if (isMine) {
+                    const dropdownContainer = document.createElement('div');
+                    dropdownContainer.className = 'msg-dropdown-container';
+                    const dropBtn = document.createElement('button');
+                    dropBtn.className = 'msg-dropdown-btn';
+                    dropBtn.innerHTML = '&#8964;'; 
+                    const dropMenu = document.createElement('div');
+                    dropMenu.className = 'msg-dropdown-menu';
+                    const pinBtn = document.createElement('button');
+                    pinBtn.innerText = '📌 Pin';
+                    pinBtn.onclick = (e) => { e.stopPropagation(); pinMessage(data); dropMenu.style.display = 'none'; };
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-msg-btn';
+                    deleteBtn.innerText = '🗑️ Delete';
+                    deleteBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(key); dropMenu.style.display = 'none'; };
+                    dropMenu.appendChild(pinBtn);
+                    dropMenu.appendChild(deleteBtn);
+                    dropBtn.onclick = (e) => { e.stopPropagation(); const isOpen = dropMenu.style.display === 'flex'; document.querySelectorAll('.msg-dropdown-menu').forEach(m => m.style.display = 'none'); dropMenu.style.display = isOpen ? 'none' : 'flex'; };
+                    dropdownContainer.appendChild(dropBtn);
+                    dropdownContainer.appendChild(dropMenu);
+                    bubble.appendChild(dropdownContainer);
+                }
+
                 if (data.replyTo) { const quote = document.createElement('div'); quote.className = 'quote-box'; quote.innerText = `${data.replyTo.user}: ${data.replyTo.text.length > 20 ? data.replyTo.text.substring(0,20) + '...' : data.replyTo.text}`; bubble.appendChild(quote); }
                 if (data.image) { const img = document.createElement('img'); img.src = data.image; img.onmousedown = (e) => startHold(e, data.image); img.onmouseup = endHold; img.onmouseleave = endHold; img.ontouchstart = (e) => startHold(e, data.image); img.ontouchend = endHold; img.onclick = (e) => { e.stopPropagation(); openLightbox(data.image); }; bubble.appendChild(img); } else { const textSpan = document.createElement('span'); textSpan.innerHTML = formatMessageLinks(data.text); bubble.appendChild(textSpan); }
                 const time = document.createElement('div'); time.className = 'timestamp'; time.innerText = formatTime(data.timestamp);

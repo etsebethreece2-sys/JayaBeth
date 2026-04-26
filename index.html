@@ -184,6 +184,25 @@
         .messages.wiping { animation: chatWipe 0.4s forwards ease-in; }
 
         /* Chat */
+        .sticker-menu {
+    display: none;
+    position: absolute;
+    bottom: 75px; /* Sits just above the input area */
+    left: 10px;
+    right: 10px;
+    height: 150px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+    z-index: 20;
+    padding: 10px;
+    overflow-y: auto;
+}
+/* Ensure dark mode support */
+body.dark-mode .sticker-menu {
+    background: #333;
+    border: 1px solid #555;
+}
         .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
         .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #333; font-size: 11px; cursor: pointer; text-decoration: underline; }
         .color-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; z-index: 10; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -331,6 +350,11 @@
                     <input type="range" class="custom-slider" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
                 </div>
 
+                <!-- New Sticker Menu -->
+    <div id="stickerMenu" class="sticker-menu">
+        <div style="text-align: center; color: #888; margin-top: 50px;">Empty (Add stickers here soon!)</div>
+    </div>
+
                 <div class="chat-header">
                     The Yap Box
                     <div class="user-selector">
@@ -400,6 +424,11 @@
             heart.style.left = `${x}px`; heart.style.top = `${y}px`; document.body.appendChild(heart);
             setTimeout(() => { heart.remove(); }, 1000);
         };
+
+        window.toggleStickerMenu = () => {
+    const menu = document.getElementById('stickerMenu');
+    menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+};
 
         // --- Music Player Logic ---
         const audio = document.getElementById('audioPlayer');

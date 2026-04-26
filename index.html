@@ -238,7 +238,7 @@
         .chat-inputs button:hover { transform: scale(1.1); filter: brightness(1.15); }
         .chat-inputs button:active { transform: scale(0.95); }
 
-        /* --- New Dark Mode Styles --- */
+        /* --- Dark Mode Styles --- */
         body.dark-mode { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), #121212 url('lilacavo.jpg'); color: #e0e0e0; }
         body.dark-mode .box-style { filter: brightness(0.6); border: 1px solid #444; }
         body.dark-mode .song-title, body.dark-mode .date-text, body.dark-mode .calendar-header, body.dark-mode .header-style, body.dark-mode .chat-header { color: #ffffff; }
@@ -246,13 +246,19 @@
         body.dark-mode .msg-dropdown-menu { background: #333; border: 1px solid #555; }
         body.dark-mode .msg-dropdown-menu button { color: #eee; }
         body.dark-mode .msg-dropdown-menu button:hover { background: #444; }
-        #themeToggle { position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.2); border: none; padding: 10px; border-radius: 50%; cursor: pointer; font-size: 20px; z-index: 10000; }
+        body.dark-mode .bucket-item { background: rgba(0, 0, 0, 0.3); color: #ddd; }
+        
+        #themeToggle { 
+            position: absolute; top: 15px; right: 45px; 
+            background: none; border: none; cursor: pointer; 
+            font-size: 20px; z-index: 10; 
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        #themeToggle:hover { transform: scale(1.2) rotate(15deg); }
     </style>
 </head>
 
 <body>
-    <button id="themeToggle" onclick="toggleDarkMode()">🌙</button>
-
     <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center;">
         <span class="close-lightbox" onclick="closeLightbox()" style="position:absolute; top:30px; right:40px; font-size:40px; color:white; cursor:pointer; font-weight:bold;">&times;</span>
         <button class="lightbox-nav prev" onclick="event.stopPropagation(); navigateLightbox(-1)">&#10094;</button>
@@ -307,6 +313,7 @@
             </div>
 
             <div class="chat-container box-style">
+                <button id="themeToggle" onclick="toggleDarkMode()">🌙</button>
                 <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
                 <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
                 <div id="colorMenu" class="color-menu">

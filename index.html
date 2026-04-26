@@ -16,16 +16,19 @@
         ::-webkit-scrollbar {
             width: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.3);
             border-radius: 10px;
         }
+
         ::-webkit-scrollbar-thumb {
-            background: #b19cd9; /* Light Lilac */
+            background: #b19cd9;
             border-radius: 10px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
-            background: #8a2be2; /* Deep Blue Violet */
+            background: #8a2be2;
         }
 
         body { 
@@ -42,7 +45,11 @@
             perspective: 1000px; 
             overflow: hidden;
         }
-        @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
+
+        @keyframes moveBackground {
+            from { background-position: 0 0; }
+            to { background-position: 1000px 1000px; }
+        }
 
         /* 3D Wrapper */
         #app-wrapper {
@@ -52,26 +59,21 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.48);
         }
 
-        .main-app-container { display: flex; gap: 20px; align-items: flex-start; max-width: 1300px; }
+        .main-app-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            max-width: 1300px;
+        }
 
         /* Shared Box Style */
-        /* Shared Box Style - 3D "Sticker" Look */
         .box-style { 
             background-color: rgba(var(--box-base-rgb), var(--box-alpha));
             background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
             background-size: 20px 20px;
-            
-            /* Remove backdrop-filter to keep the "solid block" look */
-            
             border-radius: 30px; 
-            
-            /* 1. Border defines the edge of the sticker */
             border: 3px solid #4a3554; 
-            
-            /* 2. box-shadow: x-offset y-offset blur spread color */
-            /* 6px to the right, 6px down, 0 blur, 0 spread */
             box-shadow: 2px 2px 0px 0px #4a3554; 
-            
             padding: 15px; 
             box-sizing: border-box; 
         }
@@ -99,14 +101,20 @@
             align-items: center;
             justify-content: flex-start;
             cursor: pointer;
-            transition: width 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                        height 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                        min-height 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                        padding 0.3s ease,
-                        transform 0.2s ease,
-                        box-shadow 0.2s ease;
+            transition:
+                width 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                height 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                min-height 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                padding 0.3s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
         }
-        .mini-app:hover { transform: translateY(-3px) scale(1.03); box-shadow: 4px 4px 0px 0px #4a3554; }
+
+        .mini-app:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 4px 4px 0px 0px #4a3554;
+        }
+
         .mini-app.active {
             width: 230px;
             height: auto;
@@ -115,7 +123,11 @@
             cursor: default;
             z-index: 40;
         }
-        .mini-app.calendar-app.active { min-height: 300px; }
+
+        .mini-app.calendar-app.active {
+            min-height: 300px;
+        }
+
         .app-icon-button {
             width: 100%;
             height: 72px;
@@ -128,9 +140,18 @@
             justify-content: center;
             font-size: 34px;
             font-family: 'Fredoka', sans-serif;
-            transition: transform 0.25s ease, background 0.25s ease, width 0.25s ease, height 0.25s ease, flex-basis 0.25s ease;
+            transition:
+                transform 0.25s ease,
+                background 0.25s ease,
+                width 0.25s ease,
+                height 0.25s ease,
+                flex-basis 0.25s ease;
         }
-        .app-icon-button:hover { transform: scale(1.12) rotate(-4deg); }
+
+        .app-icon-button:hover {
+            transform: scale(1.12) rotate(-4deg);
+        }
+
         .mini-app.active .app-icon-button {
             width: 50px;
             height: 50px;
@@ -139,21 +160,31 @@
             background: rgba(255,255,255,0.4);
             margin-bottom: 8px;
         }
-        .app-icon { display: block; filter: drop-shadow(1px 2px 0 rgba(74,53,84,0.25)); }
+
+        .app-icon {
+            display: block;
+            filter: drop-shadow(1px 2px 0 rgba(74,53,84,0.25));
+        }
+
         .app-panel {
             width: 100%;
             max-height: 0;
             opacity: 0;
             transform: translateY(-8px) scale(0.94);
             pointer-events: none;
-            transition: max-height 0.35s ease, opacity 0.25s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition:
+                max-height 0.35s ease,
+                opacity 0.25s ease,
+                transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
         .mini-app.active .app-panel {
             max-height: 380px;
             opacity: 1;
             transform: translateY(0) scale(1);
             pointer-events: auto;
         }
+
         .app-panel-header {
             display: flex;
             align-items: center;
@@ -167,6 +198,7 @@
             padding-bottom: 8px;
             margin-bottom: 10px;
         }
+
         .app-close-btn {
             width: 22px;
             height: 22px;
@@ -179,7 +211,10 @@
             transition: transform 0.2s, background 0.2s;
         }
 
-                .app-close-btn:hover { transform: scale(1.12); background: rgba(255,255,255,0.85); }
+        .app-close-btn:hover {
+            transform: scale(1.12);
+            background: rgba(255,255,255,0.85);
+        }
 
         /* Date App */
         .date-box {
@@ -192,8 +227,21 @@
             gap: 5px;
             padding: 4px 0 2px 0;
         }
-        .date-number { font-size: 3.1em; font-weight: 700; color: #8a2be2; line-height: 1; text-shadow: 1px 1px 0px rgba(255,255,255,0.7); }
-        .date-text { font-size: 0.95em; font-weight: 600; color: #333; line-height: 1.2; }
+
+        .date-number {
+            font-size: 3.1em;
+            font-weight: 700;
+            color: #8a2be2;
+            line-height: 1;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7);
+        }
+
+        .date-text {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #333;
+            line-height: 1.2;
+        }
 
         /* Music App */
         .music-box {
@@ -203,17 +251,50 @@
             align-items: center;
             gap: 10px;
         }
-        .song-title { font-size: 0.9em; font-weight: bold; color: #333; margin-bottom: -2px; text-align: center; }
-        .track-controls { display: flex; gap: 8px; align-items: center; }
-        .track-controls button { background:none; border:none; cursor:pointer; font-size:16px; transition: transform 0.2s, filter 0.2s; }
-        .track-controls button:hover { transform: scale(1.14); filter: brightness(1.1); }
+
+        .song-title {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: -2px;
+            text-align: center;
+        }
+
+        .track-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .track-controls button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .track-controls button:hover {
+            transform: scale(1.14);
+            filter: brightness(1.1);
+        }
 
         #playPauseBtn { 
-            background: #8a2be2; color: white; border: none; border-radius: 50%; 
-            width: 42px; height: 42px; cursor: pointer; font-size: 16px; 
+            background: #8a2be2;
+            color: white;
+            border: none;
+            border-radius: 50%; 
+            width: 42px;
+            height: 42px;
+            cursor: pointer;
+            font-size: 16px; 
             transition: transform 0.2s, background 0.2s;
         }
-        #playPauseBtn:hover { transform: scale(1.1); filter: brightness(1.1); }
+
+        #playPauseBtn:hover {
+            transform: scale(1.1);
+            filter: brightness(1.1);
+        }
 
         .volume-control {
             display: flex;
@@ -229,45 +310,194 @@
             width: 100%;
             background: transparent;
         }
-        .custom-slider:focus { outline: none; }
-        .custom-slider::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: rgba(138, 43, 226, 0.3); border-radius: 3px; }
+
+        .custom-slider:focus {
+            outline: none;
+        }
+
+        .custom-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: rgba(138, 43, 226, 0.3);
+            border-radius: 3px;
+        }
+
         .custom-slider::-webkit-slider-thumb {
-            height: 12px; width: 12px; border-radius: 50%; background: #8a2be2; cursor: pointer;
-            -webkit-appearance: none; margin-top: -3px; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: #8a2be2;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -3px;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
+
         .custom-slider:hover::-webkit-slider-thumb,
-        .custom-slider:active::-webkit-slider-thumb { transform: scale(1.6); }
+        .custom-slider:active::-webkit-slider-thumb {
+            transform: scale(1.6);
+        }
 
         /* Calendar */
-        .calendar-box { width: 100%; display: flex; flex-direction: column; gap: 8px; align-items: center; }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-weight: 600; font-size: 0.95em; color: #333; }
-        .calendar-header button { background: rgba(255,255,255,0.45); border: none; border-radius: 50%; cursor: pointer; color: #8a2be2; font-size: 12px; font-weight: bold; width: 24px; height: 24px; transition: transform 0.2s; }
-        .calendar-header button:hover { transform: scale(1.18); }
-        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); width: 100%; text-align: center; font-size: 10px; font-weight: bold; color: #666; margin-bottom: -3px; }
-        .calendar-dates { display: grid; grid-template-columns: repeat(7, 1fr); width: 100%; text-align: center; gap: 4px 0; }
-        .calendar-date { font-size: 11px; height: 22px; width: 22px; line-height: 22px; margin: 0 auto; border-radius: 50%; cursor: default; color: #333; transition: background 0.2s, transform 0.2s; }
-        .calendar-date.current-month { color: #333; }
-        .calendar-date.other-month { color: #999; opacity: 0.6; }
-        .calendar-date.today { background: #8a2be2; color: white; font-weight: bold; box-shadow: 0 2px 4px rgba(138,43,226,0.4); }
-        .calendar-date:hover { background: rgba(138, 43, 226, 0.2); transform: scale(1.1); }
+        .calendar-box {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            font-weight: 600;
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        .calendar-header button {
+            background: rgba(255,255,255,0.45);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #8a2be2;
+            font-size: 12px;
+            font-weight: bold;
+            width: 24px;
+            height: 24px;
+            transition: transform 0.2s;
+        }
+
+        .calendar-header button:hover {
+            transform: scale(1.18);
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: -3px;
+        }
+
+        .calendar-dates {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            width: 100%;
+            text-align: center;
+            gap: 4px 0;
+        }
+
+        .calendar-date {
+            font-size: 11px;
+            height: 22px;
+            width: 22px;
+            line-height: 22px;
+            margin: 0 auto;
+            border-radius: 50%;
+            cursor: default;
+            color: #333;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .calendar-date.current-month {
+            color: #333;
+        }
+
+        .calendar-date.other-month {
+            color: #999;
+            opacity: 0.6;
+        }
+
+        .calendar-date.today {
+            background: #8a2be2;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(138,43,226,0.4);
+        }
+
+        .calendar-date:hover {
+            background: rgba(138, 43, 226, 0.2);
+            transform: scale(1.1);
+        }
 
         /* Gallery */
-        .side-container { width: 260px; height: 600px; display: flex; flex-direction: column; }
-        .header-style { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; border-bottom: 2px solid rgba(255, 255, 255, 0.5); padding-bottom: 10px; font-size: 1.1em; }
-        #gallery { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; align-content: flex-start; padding-right: 5px; }
-        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #000; box-sizing: border-box; transition: transform 0.2s; }
-        .gallery-item:hover { transform: scale(1.03); }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .side-container {
+            width: 260px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-style {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            padding-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        #gallery {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            align-content: flex-start;
+            padding-right: 5px;
+        }
+
+        .gallery-item {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid #000;
+            box-sizing: border-box;
+            transition: transform 0.2s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
 
         .delete-btn { 
-            position: absolute; top: 5px; right: 5px; 
+            position: absolute;
+            top: 5px;
+            right: 5px; 
             background: rgba(255, 0, 0, 0.8);
-            color: white; border: none; border-radius: 50%; 
-            width: 12px; height: 12px;
-            cursor: pointer; z-index: 2; font-size: 8px; transition: transform 0.2s; 
+            color: white;
+            border: none;
+            border-radius: 50%; 
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 8px;
+            transition: transform 0.2s; 
         }
-        .delete-btn:hover { transform: scale(1.2); }
+
+        .delete-btn:hover {
+            transform: scale(1.2);
+        }
 
         /* Lightbox */
         .lightbox-overlay {
@@ -286,8 +516,16 @@
             pointer-events: none;
             transition: opacity 0.25s ease;
         }
-        .lightbox-overlay.active { opacity: 1; pointer-events: auto; }
-        .lightbox-overlay.closing { opacity: 0; pointer-events: none; }
+
+        .lightbox-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-overlay.closing {
+            opacity: 0;
+            pointer-events: none;
+        }
 
         .close-lightbox {
             position: absolute;
@@ -300,7 +538,10 @@
             z-index: 10001;
             transition: transform 0.2s ease;
         }
-        .close-lightbox:hover { transform: scale(1.14) rotate(6deg); }
+
+        .close-lightbox:hover {
+            transform: scale(1.14) rotate(6deg);
+        }
 
         .lightbox-img {
             max-width: 90%;
@@ -309,38 +550,236 @@
             box-shadow: 0 20px 70px rgba(0,0,0,0.55);
             transform-origin: center;
         }
-        .lightbox-img.opening { animation: imageExpand 0.42s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .lightbox-img.switching { animation: imageSwitch 0.25s ease; }
+
+        .lightbox-img.opening {
+            animation: imageExpand 0.42s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .lightbox-img.switching {
+            animation: imageSwitch 0.25s ease;
+        }
 
         @keyframes imageExpand {
-            0% { opacity: 0; transform: translateY(22px) scale(0.72) rotate(-1deg); filter: blur(8px); }
-            60% { opacity: 1; transform: translateY(-4px) scale(1.03); filter: blur(0); }
-            100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); filter: blur(0); }
+            0% {
+                opacity: 0;
+                transform: translateY(22px) scale(0.72) rotate(-1deg);
+                filter: blur(8px);
+            }
+
+            60% {
+                opacity: 1;
+                transform: translateY(-4px) scale(1.03);
+                filter: blur(0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(0);
+                filter: blur(0);
+            }
         }
+
         @keyframes imageSwitch {
-            0% { opacity: 0.25; transform: scale(0.96); }
-            100% { opacity: 1; transform: scale(1); }
+            0% {
+                opacity: 0.25;
+                transform: scale(0.96);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
-        .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.3); border: none; color: white; font-size: 30px; padding: 20px; cursor: pointer; border-radius: 50%; z-index: 10000; transition: background 0.2s, transform 0.2s; }
-        .lightbox-nav:hover { background: rgba(255, 255, 255, 0.5); transform: translateY(-50%) scale(1.08); }
-        .prev { left: 40px; }
-        .next { right: 40px; }
+        /* Prettier Lightbox Arrows */
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            width: 64px;
+            height: 64px;
+            padding: 0;
+            border: 2px solid rgba(255, 255, 255, 0.45);
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 30% 25%, rgba(255,255,255,0.55), transparent 28%),
+                linear-gradient(135deg, rgba(210, 180, 255, 0.45), rgba(138, 43, 226, 0.35));
+            backdrop-filter: blur(14px) saturate(160%);
+            color: white;
+            font-size: 34px;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.55);
+            box-shadow:
+                0 14px 35px rgba(0,0,0,0.35),
+                inset 0 1px 0 rgba(255,255,255,0.45),
+                inset 0 -10px 18px rgba(74, 53, 84, 0.22);
+            transition:
+                transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                background 0.25s ease,
+                border-color 0.25s ease,
+                box-shadow 0.25s ease;
+        }
 
-                /* Bucket List */
-        .bucket-list { flex-grow: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; }
-        .bucket-item { background: rgba(255, 255, 255, 0.4); padding: 10px 12px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; word-break: break-word; animation: fadeIn 0.3s ease; }
-        .bucket-item.deleting { animation: fadeOut 0.3s forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOut { to { opacity: 0; transform: scale(0.9); } }
-        .delete-item-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
-        .delete-item-btn:hover { opacity: 1; transform: scale(1.2); }
+        .lightbox-nav:hover {
+            background:
+                radial-gradient(circle at 30% 25%, rgba(255,255,255,0.72), transparent 30%),
+                linear-gradient(135deg, rgba(225, 205, 255, 0.62), rgba(138, 43, 226, 0.52));
+            border-color: rgba(255,255,255,0.8);
+            box-shadow:
+                0 18px 45px rgba(0,0,0,0.45),
+                0 0 22px rgba(210, 180, 255, 0.35),
+                inset 0 1px 0 rgba(255,255,255,0.65);
+        }
+
+        .lightbox-nav:active {
+            transform: translateY(-50%) scale(0.94);
+        }
+
+        .prev {
+            left: 34px;
+        }
+
+        .next {
+            right: 34px;
+        }
+
+        .prev:hover {
+            transform: translateY(-50%) translateX(-5px) scale(1.1);
+        }
+
+        .next:hover {
+            transform: translateY(-50%) translateX(5px) scale(1.1);
+        }
+
+        .lightbox-overlay.active .prev {
+            animation: arrowSlideInLeft 0.38s ease both;
+        }
+
+        .lightbox-overlay.active .next {
+            animation: arrowSlideInRight 0.38s ease both;
+        }
+
+        @keyframes arrowSlideInLeft {
+            from {
+                opacity: 0;
+                transform: translateY(-50%) translateX(-18px) scale(0.85);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(-50%) translateX(0) scale(1);
+            }
+        }
+
+        @keyframes arrowSlideInRight {
+            from {
+                opacity: 0;
+                transform: translateY(-50%) translateX(18px) scale(0.85);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(-50%) translateX(0) scale(1);
+            }
+        }
+
+        /* Bucket List */
+        .bucket-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 5px;
+        }
+
+        .bucket-item {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 10px 12px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            word-break: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .bucket-item.deleting {
+            animation: fadeOut 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+        }
+
+        .delete-item-btn {
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 0 5px;
+            font-size: 16px;
+            opacity: 0.7;
+            transition: 0.2s;
+        }
+
+        .delete-item-btn:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
 
         /* Deletions */
-        @keyframes messageFadeOut { 0% { opacity: 1; transform: scale(1) translateY(0); } 100% { opacity: 0; transform: scale(0.8) translateY(10px); } }
-        .message-row.deleting-msg { animation: messageFadeOut 0.3s forwards ease-in; pointer-events: none; }
-        @keyframes chatWipe { to { opacity: 0; transform: translateY(20px); } }
-        .messages.wiping { animation: chatWipe 0.4s forwards ease-in; }
+        @keyframes messageFadeOut {
+            0% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(0.8) translateY(10px);
+            }
+        }
+
+        .message-row.deleting-msg {
+            animation: messageFadeOut 0.3s forwards ease-in;
+            pointer-events: none;
+        }
+
+        @keyframes chatWipe {
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .messages.wiping {
+            animation: chatWipe 0.4s forwards ease-in;
+        }
 
         /* Chat */
         .sticker-menu {
@@ -381,10 +820,39 @@
             border: 1px solid #555;
         }
 
-        .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
-        .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #333; font-size: 11px; cursor: pointer; text-decoration: underline; }
-        .color-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; z-index: 10; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .color-toggle:hover { transform: scale(1.2) rotate(15deg); }
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .btn-reset {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 11px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .color-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .color-toggle:hover {
+            transform: scale(1.2) rotate(15deg);
+        }
 
         .color-menu {
             display: none;
@@ -399,10 +867,32 @@
             width: 180px;
         }
 
-        .color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-        .color-option { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 1px solid #ccc; transition: transform 0.2s; }
-        .color-option:hover { transform: scale(1.15); }
-        .slider-label { font-size: 12px; color: #333; margin-bottom: 5px; font-weight: bold; }
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .color-option {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            transition: transform 0.2s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.15);
+        }
+
+        .slider-label {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
 
         .chat-header {
             font-weight: bold;
@@ -424,7 +914,9 @@
             margin: 8px auto 0 auto;
         }
 
-        .user-selector input { display: none; }
+        .user-selector input {
+            display: none;
+        }
 
         .user-selector label {
             padding: 5px 15px;
@@ -475,7 +967,9 @@
             transition: color 0.2s;
         }
 
-        .unpin-btn:hover { color: #ff4d4d; }
+        .unpin-btn:hover {
+            color: #ff4d4d;
+        }
 
         .messages {
             flex-grow: 1;
@@ -487,9 +981,19 @@
             padding-right: 5px;
         }
 
-        .message-row { display: flex; width: 100%; position: relative; }
-        .message-row.mine { justify-content: flex-end; }
-        .message-row.theirs { justify-content: flex-start; }
+        .message-row {
+            display: flex;
+            width: 100%;
+            position: relative;
+        }
+
+        .message-row.mine {
+            justify-content: flex-end;
+        }
+
+        .message-row.theirs {
+            justify-content: flex-start;
+        }
 
         .msg-wrapper {
             display: flex;
@@ -498,8 +1002,13 @@
             position: relative;
         }
 
-        .msg-wrapper.mine { align-items: flex-end; }
-        .msg-wrapper.theirs { align-items: flex-start; }
+        .msg-wrapper.mine {
+            align-items: flex-end;
+        }
+
+        .msg-wrapper.theirs {
+            align-items: flex-start;
+        }
 
         .bubble {
             padding: 10px 24px 10px 14px;
@@ -551,11 +1060,17 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.48);
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.2s;
         }
 
-        .msg-dropdown-btn:hover { background: #e0e0e0; }
-        .bubble:hover .msg-dropdown-btn { display: flex; }
+        .msg-dropdown-btn:hover {
+            background: #e0e0e0;
+            transform: scale(1.08);
+        }
+
+        .bubble:hover .msg-dropdown-btn {
+            display: flex;
+        }
 
         .msg-dropdown-menu {
             display: none;
@@ -570,6 +1085,56 @@
             width: 110px;
             z-index: 100;
             border: 1px solid #eee;
+            opacity: 0;
+            transform: translateY(-8px) scale(0.92);
+            transform-origin: top right;
+            pointer-events: none;
+        }
+
+        .msg-dropdown-menu.dropdown-open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            animation: dropdownPop 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .msg-dropdown-menu.dropdown-closing {
+            opacity: 0;
+            transform: translateY(-8px) scale(0.92);
+            pointer-events: none;
+            animation: dropdownClose 0.16s ease forwards;
+        }
+
+        @keyframes dropdownPop {
+            0% {
+                opacity: 0;
+                transform: translateY(-8px) scale(0.88);
+                filter: blur(4px);
+            }
+
+            70% {
+                opacity: 1;
+                transform: translateY(2px) scale(1.03);
+                filter: blur(0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes dropdownClose {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-8px) scale(0.92);
+            }
         }
 
         .msg-dropdown-menu button {
@@ -608,8 +1173,13 @@
             transition: color 0.3s ease;
         }
 
-        .tick.unread { color: #888; }
-        .tick.read { color: #00bfff; }
+        .tick.unread {
+            color: #888;
+        }
+
+        .tick.read {
+            color: #00bfff;
+        }
 
         .quote-box {
             font-size: 0.75em;
@@ -631,7 +1201,10 @@
 
         .save-overlay {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: rgba(0,0,0,0.7);
             color: white;
             display: flex;
@@ -737,7 +1310,8 @@
         body.dark-mode .date-text,
         body.dark-mode .calendar-header,
         body.dark-mode .header-style,
-        body.dark-mode .chat-header {
+        body.dark-mode .chat-header,
+        body.dark-mode .app-panel-header {
             color: #ffffff;
         }
 
@@ -779,982 +1353,1018 @@
         #themeToggle:hover {
             transform: scale(1.2) rotate(15deg);
         }
-
     </style>
 </head>
 
 <body>
 
-<!-- LIGHTBOX -->
-<div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
-    <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
-    <button class="lightbox-nav prev" onclick="event.stopPropagation(); navigateLightbox(-1)">&#10094;</button>
-    <img id="lightbox-img" class="lightbox-img" src="">
-    <button class="lightbox-nav next" onclick="event.stopPropagation(); navigateLightbox(1)">&#10095;</button>
-</div>
-
-<div id="app-wrapper">
-<div class="main-app-container">
-
-<!-- LEFT COLUMN APPS -->
-<div class="left-column">
-
-<!-- DATE APP -->
-<div class="mini-app box-style" id="dateApp" onclick="toggleApp('dateApp')">
-    <button class="app-icon-button"><span class="app-icon">💜</span></button>
-
-    <div class="app-panel">
-        <div class="app-panel-header">
-            <span>It was official</span>
-            <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('dateApp')">✕</button>
-        </div>
-
-        <div class="date-box">
-            <div class="date-number" id="days-count">0</div>
-            <div class="date-text">days ago</div>
-        </div>
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <button class="lightbox-nav prev" onclick="event.stopPropagation(); navigateLightbox(-1)">&#10094;</button>
+        <img id="lightbox-img" class="lightbox-img" src="" onclick="event.stopPropagation()">
+        <button class="lightbox-nav next" onclick="event.stopPropagation(); navigateLightbox(1)">&#10095;</button>
     </div>
-</div>
 
-<!-- MUSIC APP -->
-<div class="mini-app box-style" id="musicApp" onclick="toggleApp('musicApp')">
-    <button class="app-icon-button"><span class="app-icon">🎵</span></button>
+    <div id="app-wrapper">
+        <div class="main-app-container">
 
-    <div class="app-panel">
-        <div class="app-panel-header">
-            <span>Music</span>
-            <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('musicApp')">✕</button>
-        </div>
+            <!-- LEFT COLUMN APPS -->
+            <div class="left-column">
 
-        <div class="music-box">
-            <audio id="audioPlayer"></audio>
-            <div class="song-title" id="songTitle">Select a song</div>
+                <!-- DATE APP -->
+                <div class="mini-app box-style" id="dateApp" onclick="toggleApp('dateApp')">
+                    <button class="app-icon-button"><span class="app-icon">💜</span></button>
 
-            <div class="track-controls">
-                <button onclick="event.stopPropagation(); prevTrack()">⏮</button>
-                <button id="playPauseBtn" onclick="event.stopPropagation(); togglePlay()">▶</button>
-                <button onclick="event.stopPropagation(); nextTrack()">⏭</button>
+                    <div class="app-panel">
+                        <div class="app-panel-header">
+                            <span>It was official</span>
+                            <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('dateApp')">✕</button>
+                        </div>
+
+                        <div class="date-box">
+                            <div class="date-number" id="days-count">0</div>
+                            <div class="date-text">days ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MUSIC APP -->
+                <div class="mini-app box-style" id="musicApp" onclick="toggleApp('musicApp')">
+                    <button class="app-icon-button"><span class="app-icon">🎵</span></button>
+
+                    <div class="app-panel">
+                        <div class="app-panel-header">
+                            <span>Music</span>
+                            <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('musicApp')">✕</button>
+                        </div>
+
+                        <div class="music-box">
+                            <audio id="audioPlayer"></audio>
+                            <div class="song-title" id="songTitle">Select a song</div>
+
+                            <div class="track-controls">
+                                <button onclick="event.stopPropagation(); prevTrack()">⏮</button>
+                                <button id="playPauseBtn" onclick="event.stopPropagation(); togglePlay()">▶</button>
+                                <button onclick="event.stopPropagation(); nextTrack()">⏭</button>
+                            </div>
+
+                            <input type="range" id="musicSlider" class="custom-slider" value="0" min="0" max="100" oninput="seekAudio()">
+
+                            <div class="volume-control">
+                                🔊
+                                <input type="range" id="volumeSlider" class="custom-slider" value="1" min="0" max="1" step="0.01" oninput="changeVolume()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CALENDAR APP -->
+                <div class="mini-app box-style calendar-app" id="calendarApp" onclick="toggleApp('calendarApp')">
+                    <button class="app-icon-button"><span class="app-icon">📅</span></button>
+
+                    <div class="app-panel">
+                        <div class="app-panel-header">
+                            <span>Calendar</span>
+                            <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('calendarApp')">✕</button>
+                        </div>
+
+                        <div class="calendar-box">
+                            <div class="calendar-header">
+                                <button onclick="event.stopPropagation(); changeMonth(-1)">&#9664;</button>
+                                <span id="monthYear"></span>
+                                <button onclick="event.stopPropagation(); changeMonth(1)">&#9654;</button>
+                            </div>
+
+                            <div class="calendar-days">
+                                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                            </div>
+
+                            <div class="calendar-dates" id="calendarDates"></div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <input type="range" id="musicSlider" class="custom-slider" value="0" min="0" max="100" oninput="seekAudio()">
-
-            <div class="volume-control">
-                🔊
-                <input type="range" id="volumeSlider" class="custom-slider" value="1" min="0" max="1" step="0.01" oninput="changeVolume()">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- CALENDAR APP -->
-<div class="mini-app box-style calendar-app" id="calendarApp" onclick="toggleApp('calendarApp')">
-    <button class="app-icon-button"><span class="app-icon">📅</span></button>
-
-    <div class="app-panel">
-        <div class="app-panel-header">
-            <span>Calendar</span>
-            <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('calendarApp')">✕</button>
-        </div>
-
-        <div class="calendar-box">
-            <div class="calendar-header">
-                <button onclick="event.stopPropagation(); changeMonth(-1)">&#9664;</button>
-                <span id="monthYear"></span>
-                <button onclick="event.stopPropagation(); changeMonth(1)">&#9654;</button>
+            <!-- GALLERY -->
+            <div class="side-container box-style">
+                <div class="header-style">Our Gallery</div>
+                <div id="gallery"></div>
             </div>
 
-            <div class="calendar-days">
-                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+            <!-- CHAT -->
+            <div class="chat-container box-style">
+                <button id="themeToggle" onclick="toggleDarkMode()">🌙</button>
+                <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
+
+                <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
+
+                <div id="colorMenu" class="color-menu">
+                    <div class="color-grid">
+                        <div class="color-option" style="background: linear-gradient(135deg, #d8c6f2, #b49cd9);" onclick="changeBaseColor('190, 160, 230')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffcce0, #ffb6c1);" onclick="changeBaseColor('255, 182, 193')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #e0f7fa, #add8e6);" onclick="changeBaseColor('173, 216, 230')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ccffcc, #90ee90);" onclick="changeBaseColor('144, 238, 144')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffdb99, #ffa500);" onclick="changeBaseColor('255, 165, 0')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffb3a7, #ff6347);" onclick="changeBaseColor('255, 99, 71')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #ffff99, #ffff00);" onclick="changeBaseColor('255, 255, 0')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #333, #000);" onclick="changeBaseColor('0, 0, 0')"></div>
+                    </div>
+
+                    <div class="slider-label">Transparency</div>
+                    <input type="range" class="custom-slider" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
+                </div>
+
+                <!-- Sticker Menu -->
+                <div id="stickerMenu" class="sticker-menu">
+                    <div class="sticker-grid">
+                        <img src="cry.png" onclick="sendSticker('cry.png')">
+                        <img src="dissapointed.png" onclick="sendSticker('dissapointed.png')">
+                        <img src="hungry.png" onclick="sendSticker('hungry.png')">
+                        <img src="kiss.png" onclick="sendSticker('kiss.png')">
+                        <img src="shocked.png" onclick="sendSticker('shocked.png')">
+                        <img src="thinking.png" onclick="sendSticker('thinking.png')">
+                    </div>
+                </div>
+
+                <div class="chat-header">
+                    The Yap Box
+
+                    <div class="user-selector">
+                        <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
+                        <label for="userShanky">Shanky</label>
+
+                        <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
+                        <label for="userReece">Reece</label>
+                    </div>
+                </div>
+
+                <div id="pinnedBar" class="pinned-bar" style="display: none;">
+                    <div class="pinned-content" id="pinnedContent"></div>
+                    <button class="unpin-btn" onclick="unpinMessage()">✕</button>
+                </div>
+
+                <div class="messages" id="messages"></div>
+
+                <div id="replyBar" class="reply-bar"></div>
+
+                <div class="chat-inputs">
+                    <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+
+                    <button onclick="document.getElementById('fileInput').click()" title="Upload Image">📷</button>
+                    <button onclick="toggleStickerMenu()" title="Stickers">😊</button>
+
+                    <div class="input-wrapper">
+                        <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)" oninput="toggleClearBtn()">
+                        <div id="clearBtn" class="clear-btn" onclick="clearInput()" title="Clear text">✕</div>
+                    </div>
+
+                    <button onclick="sendMessage()">Send</button>
+                </div>
             </div>
 
-            <div class="calendar-dates" id="calendarDates"></div>
-        </div>
-    </div>
-</div>
+            <!-- BUCKET LIST -->
+            <div class="side-container box-style">
+                <div class="header-style">Bucket List</div>
+                <ul id="bucketList" class="bucket-list"></ul>
 
-</div>
+                <div class="chat-inputs">
+                    <input type="text" id="bucketInput" placeholder="New adventure..." onkeypress="handleBucketKeyPress(event)" style="flex-grow:1; border-radius:25px; padding:12px 15px; border:none; outline:none; font-family:'Fredoka',sans-serif;">
+                    <button onclick="addBucketItem()">Add</button>
+                </div>
+            </div>
 
-<!-- GALLERY -->
-<div class="side-container box-style">
-    <div class="header-style">Our Gallery</div>
-    <div id="gallery"></div>
-</div>
-
-<!-- CHAT -->
-<div class="chat-container box-style">
-    <button id="themeToggle" onclick="toggleDarkMode()">🌙</button>
-    <button onclick="resetChat()" class="btn-reset">Reset Chat</button>
-
-    <div class="color-toggle" onclick="toggleColorMenu()">🎨</div>
-
-    <div id="colorMenu" class="color-menu">
-        <div class="color-grid">
-            <div class="color-option" style="background: linear-gradient(135deg, #d8c6f2, #b49cd9);" onclick="changeBaseColor('190, 160, 230')"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #ffcce0, #ffb6c1);" onclick="changeBaseColor('255, 182, 193')"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #e0f7fa, #add8e6);" onclick="changeBaseColor('173, 216, 230')"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #ccffcc, #90ee90);" onclick="changeBaseColor('144, 238, 144')"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #ffdb99, #ffa500);" onclick="changeBaseColor('255, 165, 0')"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #ffb3a7, #ff6347);" onclick="changeBaseColor('255, 99, 71')"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #ffff99, #ffff00);" onclick="changeBaseColor('255, 255, 0')"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #333, #000);" onclick="changeBaseColor('0, 0, 0')"></div>
-        </div>
-
-        <div class="slider-label">Transparency</div>
-        <input type="range" class="custom-slider" min="0.2" max="1" step="0.1" id="opacitySlider" oninput="changeAlpha(this.value)">
-    </div>
-
-    <!-- Sticker Menu -->
-    <div id="stickerMenu" class="sticker-menu">
-        <div class="sticker-grid">
-            <img src="cry.png" onclick="sendSticker('cry.png')">
-            <img src="dissapointed.png" onclick="sendSticker('dissapointed.png')">
-            <img src="hungry.png" onclick="sendSticker('hungry.png')">
-            <img src="kiss.png" onclick="sendSticker('kiss.png')">
-            <img src="shocked.png" onclick="sendSticker('shocked.png')">
-            <img src="thinking.png" onclick="sendSticker('thinking.png')">
         </div>
     </div>
 
-    <div class="chat-header">
-        The Yap Box
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        <div class="user-selector">
-            <input type="radio" id="userShanky" name="userName" value="Shanky" onchange="changeUser(this)">
-            <label for="userShanky">Shanky</label>
+        let galleryImages = [];
+        let currentImgIndex = 0;
 
-            <input type="radio" id="userReece" name="userName" value="Reece" onchange="changeUser(this)">
-            <label for="userReece">Reece</label>
-        </div>
-    </div>
+        window.toggleApp = (id) => {
+            const app = document.getElementById(id);
+            const isOpen = app.classList.contains('active');
 
-    <div id="pinnedBar" class="pinned-bar" style="display: none;">
-        <div class="pinned-content" id="pinnedContent"></div>
-        <button class="unpin-btn" onclick="unpinMessage()">✕</button>
-    </div>
+            /*
+                Calendar should only close when pressing its X.
+                So clicking inside it, clicking the calendar icon again,
+                or opening another mini app will not close it.
+            */
+            if (id === 'calendarApp' && isOpen) return;
 
-    <div class="messages" id="messages"></div>
+            document.querySelectorAll('.mini-app').forEach(a => {
+                if (a.id !== id && a.id !== 'calendarApp') {
+                    a.classList.remove('active');
+                }
+            });
 
-    <div id="replyBar" class="reply-bar"></div>
+            app.classList.toggle('active', !isOpen);
+        };
 
-    <div class="chat-inputs">
-        <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+        window.closeApp = (id) => {
+            document.getElementById(id).classList.remove('active');
+        };
 
-        <button onclick="document.getElementById('fileInput').click()">📷</button>
-        <button onclick="toggleStickerMenu()">😊</button>
+        window.toggleDarkMode = () => {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
 
-        <div class="input-wrapper">
-            <input type="text" id="messageInput" placeholder="Message..." onkeypress="handleKeyPress(event)" oninput="toggleClearBtn()">
-            <div id="clearBtn" class="clear-btn" onclick="clearInput()">✕</div>
-        </div>
+            body.classList.toggle('dark-mode');
 
-        <button onclick="sendMessage()">Send</button>
-    </div>
-</div>
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkmode', 'enabled');
+                btn.innerText = '☀️';
+            } else {
+                localStorage.setItem('darkmode', 'disabled');
+                btn.innerText = '🌙';
+            }
+        };
 
-<!-- BUCKET LIST -->
-<div class="side-container box-style">
-    <div class="header-style">Bucket List</div>
-    <ul id="bucketList" class="bucket-list"></ul>
+        window.toggleStickerMenu = () => {
+            const menu = document.getElementById('stickerMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        };
 
-    <div class="chat-inputs">
-        <input type="text" id="bucketInput" placeholder="New adventure..." onkeypress="handleBucketKeyPress(event)" style="flex-grow:1; border-radius:25px; padding:12px 15px; border:none;">
-        <button onclick="addBucketItem()">Add</button>
-    </div>
-</div>
+        const audio = document.getElementById('audioPlayer');
+        const playBtn = document.getElementById('playPauseBtn');
+        const slider = document.getElementById('musicSlider');
+        const volSlider = document.getElementById('volumeSlider');
+        const songTitle = document.getElementById('songTitle');
 
-</div>
-</div>
+        const playlist = [
+            { title: "Song Name 1", file: "Song.mp3" },
+            { title: "Song Name 2", file: "song2.mp3" },
+            { title: "Song Name 3", file: "song3.mp3" },
+            { title: "Song Name 4", file: "aria.mp3" },
+            { title: "Song Name 5", file: "clark.mp3" },
+            { title: "Song Name 6", file: "mice.mp3" },
+            { title: "Song Name 7", file: "subwoofer.mp3" },
+            { title: "Song Name 8", file: "moog.mp3" },
+            { title: "Song Name 9", file: "hagg.mp3" },
+            { title: "Song Name 10", file: "sweden.mp3" }
+        ];
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        let currentTrackIndex = 0;
 
-    let galleryImages = [];
-    let currentImgIndex = 0;
+        const loadTrack = (index) => {
+            audio.src = playlist[index].file;
+            songTitle.innerText = playlist[index].title;
+            audio.load();
+        };
 
-    window.toggleApp = (id) => {
-        const app = document.getElementById(id);
-        const isOpen = app.classList.contains('active');
+        window.togglePlay = () => {
+            if (audio.paused) {
+                if (!audio.src) loadTrack(currentTrackIndex);
+                audio.play();
+                playBtn.innerText = '⏸';
+            } else {
+                audio.pause();
+                playBtn.innerText = '▶';
+            }
+        };
 
-        document.querySelectorAll('.mini-app').forEach(a => {
-            if (a.id !== id) a.classList.remove('active');
-        });
-
-        app.classList.toggle('active', !isOpen);
-    };
-
-    window.closeApp = (id) => {
-        document.getElementById(id).classList.remove('active');
-    };
-
-    window.toggleDarkMode = () => {
-        const body = document.body;
-        const btn = document.getElementById('themeToggle');
-
-        body.classList.toggle('dark-mode');
-
-        if (body.classList.contains('dark-mode')) {
-            localStorage.setItem('darkmode', 'enabled');
-            btn.innerText = '☀️';
-        } else {
-            localStorage.setItem('darkmode', 'disabled');
-            btn.innerText = '🌙';
-        }
-    };
-
-    window.toggleStickerMenu = () => {
-        const menu = document.getElementById('stickerMenu');
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    };
-
-    const audio = document.getElementById('audioPlayer');
-    const playBtn = document.getElementById('playPauseBtn');
-    const slider = document.getElementById('musicSlider');
-    const volSlider = document.getElementById('volumeSlider');
-    const songTitle = document.getElementById('songTitle');
-
-    const playlist = [
-        { title: "Song Name 1", file: "Song.mp3" },
-        { title: "Song Name 2", file: "song2.mp3" },
-        { title: "Song Name 3", file: "song3.mp3" },
-        { title: "Song Name 4", file: "aria.mp3" },
-        { title: "Song Name 5", file: "clark.mp3" },
-        { title: "Song Name 6", file: "mice.mp3" },
-        { title: "Song Name 7", file: "subwoofer.mp3" },
-        { title: "Song Name 8", file: "moog.mp3" },
-        { title: "Song Name 9", file: "hagg.mp3" },
-        { title: "Song Name 10", file: "sweden.mp3" }
-    ];
-
-    let currentTrackIndex = 0;
-
-    const loadTrack = (index) => {
-        audio.src = playlist[index].file;
-        songTitle.innerText = playlist[index].title;
-        audio.load();
-    };
-
-    window.togglePlay = () => {
-        if (audio.paused) {
-            if (!audio.src) loadTrack(currentTrackIndex);
+        window.nextTrack = () => {
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            loadTrack(currentTrackIndex);
             audio.play();
             playBtn.innerText = '⏸';
-        } else {
-            audio.pause();
-            playBtn.innerText = '▶';
-        }
-    };
-
-    window.nextTrack = () => {
-        currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
-        loadTrack(currentTrackIndex);
-        audio.play();
-        playBtn.innerText = '⏸';
-    };
-
-    window.prevTrack = () => {
-        currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-        loadTrack(currentTrackIndex);
-        audio.play();
-        playBtn.innerText = '⏸';
-    };
-
-    audio.ontimeupdate = () => {
-        if (isFinite(audio.duration) && audio.duration > 0) {
-            slider.value = (audio.currentTime / audio.duration) * 100;
-        }
-    };
-
-    window.seekAudio = () => {
-        if (isFinite(audio.duration) && audio.duration > 0) {
-            audio.currentTime = (slider.value / 100) * audio.duration;
-        }
-    };
-
-    window.changeVolume = () => {
-        audio.volume = volSlider.value;
-    };
-
-    loadTrack(0);
-    audio.volume = volSlider.value;
-
-    let currentMonth = new Date().getMonth();
-    let currentYear = new Date().getFullYear();
-
-    window.renderCalendar = () => {
-        const monthYear = document.getElementById("monthYear");
-        const calendarDates = document.getElementById("calendarDates");
-
-        if (!monthYear || !calendarDates) return;
-
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-        monthYear.innerText = `${monthNames[currentMonth]} ${currentYear}`;
-        calendarDates.innerHTML = "";
-
-        const today = new Date();
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
-        const prevMonthTotalDays = new Date(currentYear, currentMonth, 0).getDate();
-
-        for (let i = firstDay; i > 0; i--) {
-            const dateEl = document.createElement("div");
-            dateEl.className = "calendar-date other-month";
-            dateEl.innerText = prevMonthTotalDays - i + 1;
-            calendarDates.appendChild(dateEl);
-        }
-
-        for (let i = 1; i <= totalDays; i++) {
-            const dateEl = document.createElement("div");
-            dateEl.className = "calendar-date current-month";
-
-            if (
-                i === today.getDate() &&
-                currentMonth === today.getMonth() &&
-                currentYear === today.getFullYear()
-            ) {
-                dateEl.classList.add("today");
-            }
-
-            dateEl.innerText = i;
-            calendarDates.appendChild(dateEl);
-        }
-
-        const remainingCells = 42 - (firstDay + totalDays);
-
-        for (let i = 1; i <= remainingCells; i++) {
-            const dateEl = document.createElement("div");
-            dateEl.className = "calendar-date other-month";
-            dateEl.innerText = i;
-            calendarDates.appendChild(dateEl);
-        }
-    };
-
-    window.changeMonth = (dir) => {
-        currentMonth += dir;
-
-        if (currentMonth < 0) {
-            currentMonth = 11;
-            currentYear--;
-        } else if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
-        }
-
-        window.renderCalendar();
-    };
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY",
-        authDomain: "jayabeth-fdaad.firebaseapp.com",
-        projectId: "jayabeth-fdaad",
-        storageBucket: "jayabeth-fdaad.firebasestorage.app",
-        messagingSenderId: "716510918759",
-        appId: "1:716510918759:web:35340b83ad2a134cecbcc2"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const messagesRef = ref(db, "chatroom");
-    const galleryRef = ref(db, "gallery");
-    const bucketListRef = ref(db, "bucketlist");
-    const pinnedRef = ref(db, "pinned");
-
-    let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
-    let otherUserLastSeen = 0;
-    let holdTimer = null;
-    let replyingTo = null;
-
-    const enforceMessageLimit = () => {
-        get(messagesRef).then((snapshot) => {
-            if (snapshot.size > 50) {
-                const messages = [];
-
-                snapshot.forEach((childNode) => {
-                    messages.push({
-                        key: childNode.key,
-                        timestamp: childNode.val().timestamp
-                    });
-                });
-
-                messages.sort((a, b) => a.timestamp - b.timestamp);
-                remove(child(messagesRef, messages[0].key));
-            }
-        });
-    };
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const startDate = new Date("2026-04-12T00:00:00");
-        const today = new Date();
-        const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-
-        document.getElementById("days-count").innerText = diffDays;
-        window.renderCalendar();
-
-        if (localStorage.getItem('darkmode') === 'enabled') {
-            document.body.classList.add('dark-mode');
-            document.getElementById('themeToggle').innerText = '☀️';
-        } else {
-            document.getElementById('themeToggle').innerText = '🌙';
-        }
-    });
-
-    const updateMyStatus = () => {
-        set(ref(db, `status/${currentUser}`), {
-            lastSeen: Date.now()
-        });
-    };
-
-    window.addEventListener('focus', updateMyStatus);
-    document.addEventListener('click', updateMyStatus);
-    setTimeout(updateMyStatus, 1000);
-
-    const listenToOtherUserStatus = () => {
-        const otherUser = currentUser === 'Shanky' ? 'Reece' : 'Shanky';
-
-        onValue(ref(db, `status/${otherUser}`), (snapshot) => {
-            if (snapshot.exists()) {
-                otherUserLastSeen = snapshot.val().lastSeen;
-
-                document.querySelectorAll('.tick').forEach(tickEl => {
-                    const ts = parseInt(tickEl.getAttribute('data-timestamp'));
-
-                    if (ts <= otherUserLastSeen) {
-                        tickEl.classList.remove('unread');
-                        tickEl.classList.add('read');
-                    }
-                });
-            }
-        });
-    };
-
-    listenToOtherUserStatus();
-
-    const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230';
-    const savedAlpha = localStorage.getItem('yapboxAlpha') || '0.85';
-
-    document.documentElement.style.setProperty('--box-base-rgb', savedRGB);
-    document.documentElement.style.setProperty('--box-alpha', savedAlpha);
-    document.getElementById('opacitySlider').value = savedAlpha;
-
-    document.addEventListener('click', () => {
-        document.querySelectorAll('.msg-dropdown-menu').forEach(menu => {
-            menu.style.display = 'none';
-        });
-    });
-
-    window.toggleClearBtn = () => {
-        const input = document.getElementById("messageInput");
-        document.getElementById("clearBtn").style.display = input.value.length > 0 ? "flex" : "none";
-    };
-
-    window.clearInput = () => {
-        const input = document.getElementById("messageInput");
-        input.value = "";
-        toggleClearBtn();
-        input.focus();
-    };
-
-    window.addBucketItem = () => {
-        const input = document.getElementById("bucketInput");
-        if (input.value.trim() === "") return;
-
-        push(bucketListRef, {
-            text: input.value,
-            timestamp: Date.now(),
-            creator: currentUser
-        });
-
-        input.value = "";
-    };
-
-    window.handleBucketKeyPress = (e) => {
-        if (e.key === 'Enter') addBucketItem();
-    };
-
-    window.deleteBucketItem = (key, btn) => {
-        const li = btn.closest('.bucket-item');
-        li.classList.add('deleting');
-
-        setTimeout(() => {
-            remove(child(bucketListRef, key));
-        }, 300);
-    };
-
-    onValue(bucketListRef, (snapshot) => {
-        const listDiv = document.getElementById("bucketList");
-        listDiv.innerHTML = "";
-
-        if (!snapshot.exists()) return;
-
-        snapshot.forEach((childNode) => {
-            const data = childNode.val();
-            const key = childNode.key;
-
-            const li = document.createElement('li');
-            li.className = 'bucket-item';
-
-            li.innerHTML = `
-                <span>${data.text}</span>
-                <button class="delete-item-btn" onclick="deleteBucketItem('${key}', this)">✕</button>
-            `;
-
-            listDiv.appendChild(li);
-        });
-
-        listDiv.scrollTop = listDiv.scrollHeight;
-    });
-
-    window.toggleColorMenu = (e) => {
-        if (e) e.stopPropagation();
-
-        const menu = document.getElementById('colorMenu');
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    };
-
-    window.changeBaseColor = (rgb) => {
-        document.documentElement.style.setProperty('--box-base-rgb', rgb);
-        localStorage.setItem('yapboxRGB', rgb);
-    };
-
-    window.changeAlpha = (val) => {
-        document.documentElement.style.setProperty('--box-alpha', val);
-        localStorage.setItem('yapboxAlpha', val);
-    };
-
-    const formatTime = (ts) => {
-        const date = new Date(ts);
-
-        return date.getHours().toString().padStart(2, '0') + ':' +
-               date.getMinutes().toString().padStart(2, '0');
-    };
-
-    const formatMessageLinks = (text) => {
-        const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-        return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
-    };
-
-    window.openLightbox = (src) => {
-        const lightbox = document.getElementById('lightbox');
-        const imgEl = document.getElementById('lightbox-img');
-
-        imgEl.src = src;
-        lightbox.style.display = 'flex';
-
-        requestAnimationFrame(() => {
-            lightbox.classList.add('active');
-            imgEl.classList.remove('opening');
-            void imgEl.offsetWidth;
-            imgEl.classList.add('opening');
-        });
-
-        currentImgIndex = galleryImages.indexOf(src);
-    };
-
-    window.navigateLightbox = (dir) => {
-        if (galleryImages.length === 0) return;
-
-        currentImgIndex = (currentImgIndex + dir + galleryImages.length) % galleryImages.length;
-
-        const imgEl = document.getElementById('lightbox-img');
-        imgEl.src = galleryImages[currentImgIndex];
-
-        imgEl.classList.remove('switching');
-        void imgEl.offsetWidth;
-        imgEl.classList.add('switching');
-    };
-
-    window.closeLightbox = () => {
-        const lightbox = document.getElementById('lightbox');
-
-        lightbox.classList.remove('active');
-        lightbox.classList.add('closing');
-
-        setTimeout(() => {
-            lightbox.style.display = 'none';
-            lightbox.classList.remove('closing');
-        }, 250);
-    };
-
-    window.startReply = (text, user) => {
-        replyingTo = {
-            text: text || "[Image]",
-            user: user
         };
 
-        const bar = document.getElementById('replyBar');
-        bar.style.display = 'block';
+        window.prevTrack = () => {
+            currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+            loadTrack(currentTrackIndex);
+            audio.play();
+            playBtn.innerText = '⏸';
+        };
 
-        bar.innerHTML = `
-            <strong>Replying to ${user}:</strong> ${text || "[Image]"}
-            <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>
-        `;
-    };
+        audio.ontimeupdate = () => {
+            if (isFinite(audio.duration) && audio.duration > 0) {
+                slider.value = (audio.currentTime / audio.duration) * 100;
+            }
+        };
 
-    window.cancelReply = () => {
-        replyingTo = null;
-        document.getElementById('replyBar').style.display = 'none';
-    };
+        window.seekAudio = () => {
+            if (isFinite(audio.duration) && audio.duration > 0) {
+                audio.currentTime = (slider.value / 100) * audio.duration;
+            }
+        };
 
-    window.pinMessage = (msgData) => {
-        set(pinnedRef, msgData);
-    };
+        window.changeVolume = () => {
+            audio.volume = volSlider.value;
+        };
 
-    window.unpinMessage = () => {
-        remove(pinnedRef);
-    };
+        loadTrack(0);
+        audio.volume = volSlider.value;
 
-    window.deleteMessage = (key, rowElement) => {
-        if (confirm("Delete this message?")) {
-            if (rowElement) {
-                rowElement.classList.add('deleting-msg');
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        window.renderCalendar = () => {
+            const monthYear = document.getElementById("monthYear");
+            const calendarDates = document.getElementById("calendarDates");
+
+            if (!monthYear || !calendarDates) return;
+
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            monthYear.innerText = `${monthNames[currentMonth]} ${currentYear}`;
+            calendarDates.innerHTML = "";
+
+            const today = new Date();
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const prevMonthTotalDays = new Date(currentYear, currentMonth, 0).getDate();
+
+            for (let i = firstDay; i > 0; i--) {
+                const dateEl = document.createElement("div");
+                dateEl.className = "calendar-date other-month";
+                dateEl.innerText = prevMonthTotalDays - i + 1;
+                calendarDates.appendChild(dateEl);
+            }
+
+            for (let i = 1; i <= totalDays; i++) {
+                const dateEl = document.createElement("div");
+                dateEl.className = "calendar-date current-month";
+
+                if (
+                    i === today.getDate() &&
+                    currentMonth === today.getMonth() &&
+                    currentYear === today.getFullYear()
+                ) {
+                    dateEl.classList.add("today");
+                }
+
+                dateEl.innerText = i;
+                calendarDates.appendChild(dateEl);
+            }
+
+            const remainingCells = 42 - (firstDay + totalDays);
+
+            for (let i = 1; i <= remainingCells; i++) {
+                const dateEl = document.createElement("div");
+                dateEl.className = "calendar-date other-month";
+                dateEl.innerText = i;
+                calendarDates.appendChild(dateEl);
+            }
+        };
+
+        window.changeMonth = (dir) => {
+            currentMonth += dir;
+
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+
+            window.renderCalendar();
+        };
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6FYNW6L3sUd2Adiyp6M0hG_b1IrNuOEY",
+            authDomain: "jayabeth-fdaad.firebaseapp.com",
+            projectId: "jayabeth-fdaad",
+            storageBucket: "jayabeth-fdaad.firebasestorage.app",
+            messagingSenderId: "716510918759",
+            appId: "1:716510918759:web:35340b83ad2a134cecbcc2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const messagesRef = ref(db, "chatroom");
+        const galleryRef = ref(db, "gallery");
+        const bucketListRef = ref(db, "bucketlist");
+        const pinnedRef = ref(db, "pinned");
+
+        let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
+        let otherUserLastSeen = 0;
+        let holdTimer = null;
+        let replyingTo = null;
+
+        const enforceMessageLimit = () => {
+            get(messagesRef).then((snapshot) => {
+                if (snapshot.size > 50) {
+                    const messages = [];
+
+                    snapshot.forEach((childNode) => {
+                        messages.push({
+                            key: childNode.key,
+                            timestamp: childNode.val().timestamp
+                        });
+                    });
+
+                    messages.sort((a, b) => a.timestamp - b.timestamp);
+                    remove(child(messagesRef, messages[0].key));
+                }
+            });
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const startDate = new Date("2026-04-12T00:00:00");
+            const today = new Date();
+            const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+
+            document.getElementById("days-count").innerText = diffDays;
+            window.renderCalendar();
+
+            if (localStorage.getItem('darkmode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeToggle').innerText = '☀️';
+            } else {
+                document.getElementById('themeToggle').innerText = '🌙';
+            }
+        });
+
+        const updateMyStatus = () => {
+            set(ref(db, `status/${currentUser}`), {
+                lastSeen: Date.now()
+            });
+        };
+
+        window.addEventListener('focus', updateMyStatus);
+        document.addEventListener('click', updateMyStatus);
+        setTimeout(updateMyStatus, 1000);
+
+        const listenToOtherUserStatus = () => {
+            const otherUser = currentUser === 'Shanky' ? 'Reece' : 'Shanky';
+
+            onValue(ref(db, `status/${otherUser}`), (snapshot) => {
+                if (snapshot.exists()) {
+                    otherUserLastSeen = snapshot.val().lastSeen;
+
+                    document.querySelectorAll('.tick').forEach(tickEl => {
+                        const ts = parseInt(tickEl.getAttribute('data-timestamp'));
+
+                        if (ts <= otherUserLastSeen) {
+                            tickEl.classList.remove('unread');
+                            tickEl.classList.add('read');
+                        }
+                    });
+                }
+            });
+        };
+
+        listenToOtherUserStatus();
+
+        const savedRGB = localStorage.getItem('yapboxRGB') || '190, 160, 230';
+        const savedAlpha = localStorage.getItem('yapboxAlpha') || '0.85';
+
+        document.documentElement.style.setProperty('--box-base-rgb', savedRGB);
+        document.documentElement.style.setProperty('--box-alpha', savedAlpha);
+        document.getElementById('opacitySlider').value = savedAlpha;
+
+        window.closeMessageDropdown = (menu) => {
+            if (!menu || menu.style.display === 'none') return;
+
+            menu.classList.remove('dropdown-open');
+            menu.classList.add('dropdown-closing');
+
+            setTimeout(() => {
+                menu.style.display = 'none';
+                menu.classList.remove('dropdown-closing');
+            }, 160);
+        };
+
+        window.closeAllMessageDropdowns = (exceptMenu = null) => {
+            document.querySelectorAll('.msg-dropdown-menu').forEach(menu => {
+                if (menu !== exceptMenu) {
+                    closeMessageDropdown(menu);
+                }
+            });
+        };
+
+        window.openMessageDropdown = (menu) => {
+            closeAllMessageDropdowns(menu);
+
+            menu.style.display = 'flex';
+            menu.classList.remove('dropdown-closing');
+
+            requestAnimationFrame(() => {
+                menu.classList.add('dropdown-open');
+            });
+        };
+
+        document.addEventListener('click', () => {
+            closeAllMessageDropdowns();
+        });
+
+        window.toggleClearBtn = () => {
+            const input = document.getElementById("messageInput");
+            document.getElementById("clearBtn").style.display = input.value.length > 0 ? "flex" : "none";
+        };
+
+        window.clearInput = () => {
+            const input = document.getElementById("messageInput");
+            input.value = "";
+            toggleClearBtn();
+            input.focus();
+        };
+
+        window.addBucketItem = () => {
+            const input = document.getElementById("bucketInput");
+            if (input.value.trim() === "") return;
+
+            push(bucketListRef, {
+                text: input.value,
+                timestamp: Date.now(),
+                creator: currentUser
+            });
+
+            input.value = "";
+        };
+
+        window.handleBucketKeyPress = (e) => {
+            if (e.key === 'Enter') addBucketItem();
+        };
+
+        window.deleteBucketItem = (key, btn) => {
+            const li = btn.closest('.bucket-item');
+            li.classList.add('deleting');
+
+            setTimeout(() => {
+                remove(child(bucketListRef, key));
+            }, 300);
+        };
+
+        onValue(bucketListRef, (snapshot) => {
+            const listDiv = document.getElementById("bucketList");
+            listDiv.innerHTML = "";
+
+            if (!snapshot.exists()) return;
+
+            snapshot.forEach((childNode) => {
+                const data = childNode.val();
+                const key = childNode.key;
+
+                const li = document.createElement('li');
+                li.className = 'bucket-item';
+
+                li.innerHTML = `
+                    <span>${data.text}</span>
+                    <button class="delete-item-btn" onclick="deleteBucketItem('${key}', this)">✕</button>
+                `;
+
+                listDiv.appendChild(li);
+            });
+
+            listDiv.scrollTop = listDiv.scrollHeight;
+        });
+
+        window.toggleColorMenu = (e) => {
+            if (e) e.stopPropagation();
+
+            const menu = document.getElementById('colorMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        };
+
+        window.changeBaseColor = (rgb) => {
+            document.documentElement.style.setProperty('--box-base-rgb', rgb);
+            localStorage.setItem('yapboxRGB', rgb);
+        };
+
+        window.changeAlpha = (val) => {
+            document.documentElement.style.setProperty('--box-alpha', val);
+            localStorage.setItem('yapboxAlpha', val);
+        };
+
+        const formatTime = (ts) => {
+            const date = new Date(ts);
+
+            return date.getHours().toString().padStart(2, '0') + ':' +
+                   date.getMinutes().toString().padStart(2, '0');
+        };
+
+        const formatMessageLinks = (text) => {
+            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+        };
+
+        window.openLightbox = (src) => {
+            const lightbox = document.getElementById('lightbox');
+            const imgEl = document.getElementById('lightbox-img');
+
+            imgEl.src = src;
+            lightbox.style.display = 'flex';
+
+            requestAnimationFrame(() => {
+                lightbox.classList.add('active');
+                imgEl.classList.remove('opening');
+                void imgEl.offsetWidth;
+                imgEl.classList.add('opening');
+            });
+
+            currentImgIndex = galleryImages.indexOf(src);
+        };
+
+        window.navigateLightbox = (dir) => {
+            if (galleryImages.length === 0) return;
+
+            currentImgIndex = (currentImgIndex + dir + galleryImages.length) % galleryImages.length;
+
+            const imgEl = document.getElementById('lightbox-img');
+            imgEl.src = galleryImages[currentImgIndex];
+
+            imgEl.classList.remove('switching');
+            void imgEl.offsetWidth;
+            imgEl.classList.add('switching');
+        };
+
+        window.closeLightbox = () => {
+            const lightbox = document.getElementById('lightbox');
+
+            lightbox.classList.remove('active');
+            lightbox.classList.add('closing');
+
+            setTimeout(() => {
+                lightbox.style.display = 'none';
+                lightbox.classList.remove('closing');
+            }, 250);
+        };
+
+        window.startReply = (text, user) => {
+            replyingTo = {
+                text: text || "[Image]",
+                user: user
+            };
+
+            const bar = document.getElementById('replyBar');
+            bar.style.display = 'block';
+
+            bar.innerHTML = `
+                <strong>Replying to ${user}:</strong> ${text || "[Image]"}
+                <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>
+            `;
+        };
+
+        window.cancelReply = () => {
+            replyingTo = null;
+            document.getElementById('replyBar').style.display = 'none';
+        };
+
+        window.pinMessage = (msgData) => {
+            set(pinnedRef, msgData);
+        };
+
+        window.unpinMessage = () => {
+            remove(pinnedRef);
+        };
+
+        window.deleteMessage = (key, rowElement) => {
+            if (confirm("Delete this message?")) {
+                if (rowElement) {
+                    rowElement.classList.add('deleting-msg');
+
+                    setTimeout(() => {
+                        remove(child(messagesRef, key));
+                    }, 300);
+                } else {
+                    remove(child(messagesRef, key));
+                }
+            }
+        };
+
+        onValue(pinnedRef, (snapshot) => {
+            const bar = document.getElementById('pinnedBar');
+            const content = document.getElementById('pinnedContent');
+
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+
+                content.innerHTML = `
+                    <strong>📌 Pinned</strong> - ${data.name}: ${data.text ? data.text : '[Image]'}
+                `;
+
+                bar.style.display = 'flex';
+            } else {
+                bar.style.display = 'none';
+            }
+        });
+
+        window.startHold = (event, imgData) => {
+            holdTimer = setTimeout(() => {
+                const target = event.target;
+
+                if (target.parentElement.querySelector('.save-overlay')) return;
+
+                const overlay = document.createElement('div');
+                overlay.className = 'save-overlay';
+                overlay.innerText = 'Save to Gallery';
+
+                overlay.onclick = (e) => {
+                    e.stopPropagation();
+
+                    push(galleryRef, {
+                        image: imgData,
+                        timestamp: Date.now()
+                    });
+
+                    overlay.innerText = 'Saved!';
+
+                    setTimeout(() => overlay.remove(), 1000);
+                };
+
+                target.parentElement.appendChild(overlay);
 
                 setTimeout(() => {
-                    remove(child(messagesRef, key));
-                }, 300);
-            } else {
-                remove(child(messagesRef, key));
-            }
-        }
-    };
-
-    onValue(pinnedRef, (snapshot) => {
-        const bar = document.getElementById('pinnedBar');
-        const content = document.getElementById('pinnedContent');
-
-        if (snapshot.exists()) {
-            const data = snapshot.val();
-
-            content.innerHTML = `
-                <strong>📌 Pinned</strong> - ${data.name}: ${data.text ? data.text : '[Image]'}
-            `;
-
-            bar.style.display = 'flex';
-        } else {
-            bar.style.display = 'none';
-        }
-    });
-
-    window.startHold = (event, imgData) => {
-        holdTimer = setTimeout(() => {
-            const target = event.target;
-
-            if (target.parentElement.querySelector('.save-overlay')) return;
-
-            const overlay = document.createElement('div');
-            overlay.className = 'save-overlay';
-            overlay.innerText = 'Save to Gallery';
-
-            overlay.onclick = (e) => {
-                e.stopPropagation();
-
-                push(galleryRef, {
-                    image: imgData,
-                    timestamp: Date.now()
-                });
-
-                overlay.innerText = 'Saved!';
-
-                setTimeout(() => overlay.remove(), 1000);
-            };
-
-            target.parentElement.appendChild(overlay);
-
-            setTimeout(() => {
-                if (overlay) overlay.remove();
-            }, 3000);
-        }, 1000);
-    };
-
-    window.endHold = () => clearTimeout(holdTimer);
-
-    window.handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-            const img = new Image();
-
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const scale = 400 / img.width;
-
-                canvas.width = 400;
-                canvas.height = img.height * scale;
-
-                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                push(messagesRef, {
-                    name: currentUser,
-                    image: canvas.toDataURL('image/jpeg', 0.5),
-                    timestamp: Date.now(),
-                    replyTo: replyingTo
-                });
-
-                cancelReply();
-                updateMyStatus();
-                enforceMessageLimit();
-            };
-
-            img.src = event.target.result;
+                    if (overlay) overlay.remove();
+                }, 3000);
+            }, 1000);
         };
 
-        reader.readAsDataURL(file);
-        e.target.value = '';
-    };
+        window.endHold = () => clearTimeout(holdTimer);
 
-    window.sendSticker = (stickerSrc) => {
-        push(messagesRef, {
-            name: currentUser,
-            image: stickerSrc,
-            timestamp: Date.now(),
-            replyTo: replyingTo
-        });
+        window.handleImageUpload = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        cancelReply();
-        updateMyStatus();
-        enforceMessageLimit();
+            const reader = new FileReader();
 
-        const menu = document.getElementById('stickerMenu');
-        if (menu) menu.style.display = 'none';
-    };
+            reader.onload = (event) => {
+                const img = new Image();
 
-    window.sendMessage = () => {
-        const input = document.getElementById("messageInput");
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const scale = 400 / img.width;
 
-        if (input.value.trim() === "") return;
+                    canvas.width = 400;
+                    canvas.height = img.height * scale;
 
-        push(messagesRef, {
-            name: currentUser,
-            text: input.value,
-            timestamp: Date.now(),
-            replyTo: replyingTo
-        });
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        input.value = "";
-        toggleClearBtn();
-        cancelReply();
-        updateMyStatus();
-        enforceMessageLimit();
-    };
-
-    window.changeUser = (radio) => {
-        localStorage.setItem('yapboxUser', radio.value);
-        location.reload();
-    };
-
-    window.handleKeyPress = (e) => {
-        if (e.key === 'Enter') sendMessage();
-    };
-
-    window.resetChat = () => {
-        if (confirm("Clear Chat?")) {
-            const msgs = document.getElementById('messages');
-
-            msgs.classList.add('wiping');
-
-            setTimeout(() => {
-                remove(messagesRef);
-                msgs.classList.remove('wiping');
-            }, 400);
-        }
-    };
-
-    window.deleteGalleryItem = (event, key) => {
-        event.stopPropagation();
-        remove(child(galleryRef, key));
-    };
-
-    onValue(messagesRef, (snapshot) => {
-        const messagesDiv = document.getElementById("messages");
-        messagesDiv.innerHTML = "";
-
-        if (!snapshot.exists()) return;
-
-        snapshot.forEach((childNode) => {
-            const data = childNode.val();
-            const key = childNode.key;
-            const isMine = data.name === currentUser;
-
-            const row = document.createElement('div');
-            row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
-
-            const wrapper = document.createElement('div');
-            wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
-
-            const bubble = document.createElement('div');
-            bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
-
-            bubble.onclick = (e) => {
-                if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) {
-                    startReply(data.text || "[Image]", data.name);
-                }
-            };
-
-            if (isMine) {
-                const dropdownContainer = document.createElement('div');
-                dropdownContainer.className = 'msg-dropdown-container';
-
-                const dropBtn = document.createElement('button');
-                dropBtn.className = 'msg-dropdown-btn';
-                dropBtn.innerHTML = '&#8964;';
-
-                const dropMenu = document.createElement('div');
-                dropMenu.className = 'msg-dropdown-menu';
-
-                const pinBtn = document.createElement('button');
-                pinBtn.innerText = '📌 Pin';
-
-                pinBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    pinMessage(data);
-                    dropMenu.style.display = 'none';
-                };
-
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'delete-msg-btn';
-                deleteBtn.innerText = '🗑️ Delete';
-
-                deleteBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    deleteMessage(key, row);
-                    dropMenu.style.display = 'none';
-                };
-
-                dropMenu.appendChild(pinBtn);
-                dropMenu.appendChild(deleteBtn);
-
-                dropBtn.onclick = (e) => {
-                    e.stopPropagation();
-
-                    const isOpen = dropMenu.style.display === 'flex';
-
-                    document.querySelectorAll('.msg-dropdown-menu').forEach(m => {
-                        m.style.display = 'none';
+                    push(messagesRef, {
+                        name: currentUser,
+                        image: canvas.toDataURL('image/jpeg', 0.5),
+                        timestamp: Date.now(),
+                        replyTo: replyingTo
                     });
 
-                    dropMenu.style.display = isOpen ? 'none' : 'flex';
+                    cancelReply();
+                    updateMyStatus();
+                    enforceMessageLimit();
                 };
 
-                dropdownContainer.appendChild(dropBtn);
-                dropdownContainer.appendChild(dropMenu);
-                bubble.appendChild(dropdownContainer);
+                img.src = event.target.result;
+            };
+
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        };
+
+        window.sendSticker = (stickerSrc) => {
+            push(messagesRef, {
+                name: currentUser,
+                image: stickerSrc,
+                timestamp: Date.now(),
+                replyTo: replyingTo
+            });
+
+            cancelReply();
+            updateMyStatus();
+            enforceMessageLimit();
+
+            const menu = document.getElementById('stickerMenu');
+            if (menu) menu.style.display = 'none';
+        };
+
+        window.sendMessage = () => {
+            const input = document.getElementById("messageInput");
+
+            if (input.value.trim() === "") return;
+
+            push(messagesRef, {
+                name: currentUser,
+                text: input.value,
+                timestamp: Date.now(),
+                replyTo: replyingTo
+            });
+
+            input.value = "";
+            toggleClearBtn();
+            cancelReply();
+            updateMyStatus();
+            enforceMessageLimit();
+        };
+
+        window.changeUser = (radio) => {
+            localStorage.setItem('yapboxUser', radio.value);
+            location.reload();
+        };
+
+        window.handleKeyPress = (e) => {
+            if (e.key === 'Enter') sendMessage();
+        };
+
+        window.resetChat = () => {
+            if (confirm("Clear Chat?")) {
+                const msgs = document.getElementById('messages');
+
+                msgs.classList.add('wiping');
+
+                setTimeout(() => {
+                    remove(messagesRef);
+                    msgs.classList.remove('wiping');
+                }, 400);
             }
+        };
 
-            if (data.replyTo) {
-                const quote = document.createElement('div');
-                quote.className = 'quote-box';
+        window.deleteGalleryItem = (event, key) => {
+            event.stopPropagation();
+            remove(child(galleryRef, key));
+        };
 
-                quote.innerText = `${data.replyTo.user}: ${
-                    data.replyTo.text.length > 20
-                        ? data.replyTo.text.substring(0, 20) + '...'
-                        : data.replyTo.text
-                }`;
+        onValue(messagesRef, (snapshot) => {
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML = "";
 
-                bubble.appendChild(quote);
-            }
+            if (!snapshot.exists()) return;
 
-            if (data.image) {
+            snapshot.forEach((childNode) => {
+                const data = childNode.val();
+                const key = childNode.key;
+                const isMine = data.name === currentUser;
+
+                const row = document.createElement('div');
+                row.className = `message-row ${isMine ? 'mine' : 'theirs'}`;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = `msg-wrapper ${isMine ? 'mine' : 'theirs'}`;
+
+                const bubble = document.createElement('div');
+                bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'}`;
+
+                bubble.onclick = (e) => {
+                    if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) {
+                        startReply(data.text || "[Image]", data.name);
+                    }
+                };
+
+                if (isMine) {
+                    const dropdownContainer = document.createElement('div');
+                    dropdownContainer.className = 'msg-dropdown-container';
+
+                    const dropBtn = document.createElement('button');
+                    dropBtn.className = 'msg-dropdown-btn';
+                    dropBtn.innerHTML = '&#8964;';
+
+                    const dropMenu = document.createElement('div');
+                    dropMenu.className = 'msg-dropdown-menu';
+
+                    const pinBtn = document.createElement('button');
+                    pinBtn.innerText = '📌 Pin';
+
+                    pinBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        pinMessage(data);
+                        closeMessageDropdown(dropMenu);
+                    };
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-msg-btn';
+                    deleteBtn.innerText = '🗑️ Delete';
+
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteMessage(key, row);
+                        closeMessageDropdown(dropMenu);
+                    };
+
+                    dropMenu.appendChild(pinBtn);
+                    dropMenu.appendChild(deleteBtn);
+
+                    dropBtn.onclick = (e) => {
+                        e.stopPropagation();
+
+                        const isOpen = dropMenu.classList.contains('dropdown-open');
+
+                        if (isOpen) {
+                            closeMessageDropdown(dropMenu);
+                        } else {
+                            openMessageDropdown(dropMenu);
+                        }
+                    };
+
+                    dropdownContainer.appendChild(dropBtn);
+                    dropdownContainer.appendChild(dropMenu);
+                    bubble.appendChild(dropdownContainer);
+                }
+
+                if (data.replyTo) {
+                    const quote = document.createElement('div');
+                    quote.className = 'quote-box';
+
+                    quote.innerText = `${data.replyTo.user}: ${
+                        data.replyTo.text.length > 20
+                            ? data.replyTo.text.substring(0, 20) + '...'
+                            : data.replyTo.text
+                    }`;
+
+                    bubble.appendChild(quote);
+                }
+
+                if (data.image) {
+                    const img = document.createElement('img');
+                    img.src = data.image;
+
+                    img.onmousedown = (e) => startHold(e, data.image);
+                    img.onmouseup = endHold;
+                    img.onmouseleave = endHold;
+                    img.ontouchstart = (e) => startHold(e, data.image);
+                    img.ontouchend = endHold;
+
+                    img.onclick = (e) => {
+                        e.stopPropagation();
+                        openLightbox(data.image);
+                    };
+
+                    bubble.appendChild(img);
+                } else {
+                    const textSpan = document.createElement('span');
+                    textSpan.innerHTML = formatMessageLinks(data.text);
+                    bubble.appendChild(textSpan);
+                }
+
+                const time = document.createElement('div');
+                time.className = 'timestamp';
+                time.innerText = formatTime(data.timestamp);
+
+                if (isMine) {
+                    const tickSpan = document.createElement('span');
+
+                    tickSpan.className = 'tick ' + (data.timestamp <= otherUserLastSeen ? 'read' : 'unread');
+                    tickSpan.setAttribute('data-timestamp', data.timestamp);
+                    tickSpan.innerText = '✓✓';
+
+                    time.appendChild(tickSpan);
+                }
+
+                wrapper.appendChild(bubble);
+                wrapper.appendChild(time);
+
+                row.appendChild(wrapper);
+                messagesDiv.appendChild(row);
+            });
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+
+        onValue(galleryRef, (snapshot) => {
+            const galleryDiv = document.getElementById("gallery");
+
+            galleryDiv.innerHTML = "";
+            galleryImages = [];
+
+            if (!snapshot.exists()) return;
+
+            snapshot.forEach((childNode) => {
+                const data = childNode.val();
+                const key = childNode.key;
+
+                galleryImages.push(data.image);
+
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+
                 const img = document.createElement('img');
                 img.src = data.image;
+                img.onclick = () => openLightbox(data.image);
 
-                img.onmousedown = (e) => startHold(e, data.image);
-                img.onmouseup = endHold;
-                img.onmouseleave = endHold;
-                img.ontouchstart = (e) => startHold(e, data.image);
-                img.ontouchend = endHold;
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-btn';
+                delBtn.innerText = '✕';
+                delBtn.onclick = (e) => deleteGalleryItem(e, key);
 
-                img.onclick = (e) => {
-                    e.stopPropagation();
-                    openLightbox(data.image);
-                };
+                item.appendChild(img);
+                item.appendChild(delBtn);
 
-                bubble.appendChild(img);
-            } else {
-                const textSpan = document.createElement('span');
-                textSpan.innerHTML = formatMessageLinks(data.text);
-                bubble.appendChild(textSpan);
-            }
-
-            const time = document.createElement('div');
-            time.className = 'timestamp';
-            time.innerText = formatTime(data.timestamp);
-
-            if (isMine) {
-                const tickSpan = document.createElement('span');
-
-                tickSpan.className = 'tick ' + (data.timestamp <= otherUserLastSeen ? 'read' : 'unread');
-                tickSpan.setAttribute('data-timestamp', data.timestamp);
-                tickSpan.innerText = '✓✓';
-
-                time.appendChild(tickSpan);
-            }
-
-            wrapper.appendChild(bubble);
-            wrapper.appendChild(time);
-
-            row.appendChild(wrapper);
-            messagesDiv.appendChild(row);
+                galleryDiv.appendChild(item);
+            });
         });
 
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    });
+        if (currentUser === 'Reece') {
+            document.getElementById('userReece').checked = true;
+        } else {
+            document.getElementById('userShanky').checked = true;
+        }
 
-    onValue(galleryRef, (snapshot) => {
-        const galleryDiv = document.getElementById("gallery");
+        const wrapper = document.getElementById('app-wrapper');
 
-        galleryDiv.innerHTML = "";
-        galleryImages = [];
+        window.addEventListener('mousemove', (e) => {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
 
-        if (!snapshot.exists()) return;
+            const x = (e.clientX - centerX) / 80;
+            const y = (e.clientY - centerY) / 80;
 
-        snapshot.forEach((childNode) => {
-            const data = childNode.val();
-            const key = childNode.key;
-
-            galleryImages.push(data.image);
-
-            const item = document.createElement('div');
-            item.className = 'gallery-item';
-
-            const img = document.createElement('img');
-            img.src = data.image;
-            img.onclick = () => openLightbox(data.image);
-
-            const delBtn = document.createElement('button');
-            delBtn.className = 'delete-btn';
-            delBtn.innerText = '✕';
-            delBtn.onclick = (e) => deleteGalleryItem(e, key);
-
-            item.appendChild(img);
-            item.appendChild(delBtn);
-
-            galleryDiv.appendChild(item);
+            wrapper.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+            wrapper.style.boxShadow = `${-x}px ${y + 20}px 50px rgba(0,0,0,0.48)`;
         });
-    });
-
-    if (currentUser === 'Reece') {
-        document.getElementById('userReece').checked = true;
-    } else {
-        document.getElementById('userShanky').checked = true;
-    }
-
-    const wrapper = document.getElementById('app-wrapper');
-
-    window.addEventListener('mousemove', (e) => {
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-
-        const x = (e.clientX - centerX) / 80;
-        const y = (e.clientY - centerY) / 80;
-
-        wrapper.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-        wrapper.style.boxShadow = `${-x}px ${y + 20}px 50px rgba(0,0,0,0.48)`;
-    });
-</script>
-
+    </script>
 </body>
 </html>

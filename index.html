@@ -124,7 +124,10 @@
         .custom-slider:hover::-webkit-slider-thumb, .custom-slider:active::-webkit-slider-thumb { transform: scale(1.6); }
         
         /* Calendar */
-        .calendar-box { width: 140px; padding: 12px 10px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        .calendar-box { width: 140px; padding: 12px 10px; display: flex; flex-direction: column; gap: 8px; align-items: center; transition: all 0.3s ease; cursor: pointer; }
+        .calendar-box.expanded { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.5); z-index: 9999; cursor: default; }
+        .calendar-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9990; backdrop-filter: blur(2px); }
+        
         .calendar-header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-weight: 600; font-size: 0.9em; color: #333; }
         .calendar-header button { background: none; border: none; cursor: pointer; color: #8a2be2; font-size: 12px; font-weight: bold; padding: 0 5px; transition: transform 0.2s; }
         .calendar-header button:hover { transform: scale(1.3); }
@@ -152,23 +155,20 @@
         .gallery-item:hover { transform: scale(1.03); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
         
-        /* Updated Delete Button */
         .delete-btn { 
             position: absolute; top: 5px; right: 5px; 
-            background: rgba(255, 0, 0, 0.8); /* 20% transparent */
+            background: rgba(255, 0, 0, 0.8); 
             color: white; border: none; border-radius: 50%; 
-            width: 12px; height: 12px; /* 40% smaller */
+            width: 12px; height: 12px;
             cursor: pointer; z-index: 2; font-size: 8px; transition: transform 0.2s; 
         }
         .delete-btn:hover { transform: scale(1.2); }
 
-        /* Lightbox Nav */
         .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.3); border: none; color: white; font-size: 30px; padding: 20px; cursor: pointer; border-radius: 50%; z-index: 10000; transition: background 0.2s; }
         .lightbox-nav:hover { background: rgba(255, 255, 255, 0.5); }
         .prev { left: 40px; }
         .next { right: 40px; }
 
-        /* Bucket List */
         .bucket-list { flex-grow: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; }
         .bucket-item { background: rgba(255, 255, 255, 0.4); padding: 10px 12px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; word-break: break-word; animation: fadeIn 0.3s ease; }
         .bucket-item.deleting { animation: fadeOut 0.3s forwards; }
@@ -177,13 +177,11 @@
         .delete-item-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
         .delete-item-btn:hover { opacity: 1; transform: scale(1.2); }
 
-        /* Deletions */
         @keyframes messageFadeOut { 0% { opacity: 1; transform: scale(1) translateY(0); } 100% { opacity: 0; transform: scale(0.8) translateY(10px); } }
         .message-row.deleting-msg { animation: messageFadeOut 0.3s forwards ease-in; pointer-events: none; }
         @keyframes chatWipe { to { opacity: 0; transform: translateY(20px); } }
         .messages.wiping { animation: chatWipe 0.4s forwards ease-in; }
 
-        /* Chat */
         .chat-container { width: 400px; height: 600px; display: flex; flex-direction: column; position: relative; }
         .btn-reset { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #333; font-size: 11px; cursor: pointer; text-decoration: underline; }
         .color-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; z-index: 10; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -259,6 +257,9 @@
 </head>
 
 <body>
+    <!-- Overlay for Expansion -->
+    <div id="calendarOverlay" class="calendar-overlay" onclick="closeCalendar()"></div>
+
     <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center;">
         <span class="close-lightbox" onclick="closeLightbox()" style="position:absolute; top:30px; right:40px; font-size:40px; color:white; cursor:pointer; font-weight:bold;">&times;</span>
         <button class="lightbox-nav prev" onclick="event.stopPropagation(); navigateLightbox(-1)">&#10094;</button>
@@ -276,25 +277,25 @@
                 </div>
 
                 <div class="music-box box-style">
-    <audio id="audioPlayer"></audio>
-    <div class="song-title" id="songTitle">Select a song</div>
-    <div style="display: flex; gap: 5px; align-items: center;">
-        <button onclick="prevTrack()" style="background:none; border:none; cursor:pointer; font-size:16px;">⏮</button>
-        <button id="playPauseBtn" onclick="togglePlay()">▶</button>
-        <button onclick="nextTrack()" style="background:none; border:none; cursor:pointer; font-size:16px;">⏭</button>
-    </div>
-    <input type="range" id="musicSlider" class="custom-slider" value="0" min="0" max="100" oninput="seekAudio()">
-    <div class="volume-control">
-        <span>🔊</span>
-        <input type="range" id="volumeSlider" class="custom-slider" value="1" min="0" max="1" step="0.01" oninput="changeVolume()">
-    </div>
-</div>
+                    <audio id="audioPlayer"></audio>
+                    <div class="song-title" id="songTitle">Select a song</div>
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                        <button onclick="prevTrack()" style="background:none; border:none; cursor:pointer; font-size:16px;">⏮</button>
+                        <button id="playPauseBtn" onclick="togglePlay()">▶</button>
+                        <button onclick="nextTrack()" style="background:none; border:none; cursor:pointer; font-size:16px;">⏭</button>
+                    </div>
+                    <input type="range" id="musicSlider" class="custom-slider" value="0" min="0" max="100" oninput="seekAudio()">
+                    <div class="volume-control">
+                        <span>🔊</span>
+                        <input type="range" id="volumeSlider" class="custom-slider" value="1" min="0" max="1" step="0.01" oninput="changeVolume()">
+                    </div>
+                </div>
 
-                <div class="calendar-box box-style">
+                <div class="calendar-box box-style" onclick="expandCalendar()">
                     <div class="calendar-header">
-                        <button id="prevMonth" onclick="changeMonth(-1)">&#9664;</button>
+                        <button id="prevMonth" onclick="event.stopPropagation(); changeMonth(-1)">&#9664;</button>
                         <span id="monthYear"></span>
-                        <button id="nextMonth" onclick="changeMonth(1)">&#9654;</button>
+                        <button id="nextMonth" onclick="event.stopPropagation(); changeMonth(1)">&#9654;</button>
                     </div>
                     <div class="calendar-days">
                         <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
@@ -378,6 +379,20 @@
         let galleryImages = [];
         let currentImgIndex = 0;
 
+        // --- Calendar Expansion Logic ---
+        window.expandCalendar = () => {
+            const cal = document.querySelector('.calendar-box');
+            const overlay = document.getElementById('calendarOverlay');
+            cal.classList.add('expanded');
+            overlay.style.display = 'block';
+        };
+        window.closeCalendar = () => {
+            const cal = document.querySelector('.calendar-box');
+            const overlay = document.getElementById('calendarOverlay');
+            cal.classList.remove('expanded');
+            overlay.style.display = 'none';
+        };
+
         // Dark Mode Toggle Logic
         window.toggleDarkMode = () => {
             const body = document.body;
@@ -407,7 +422,6 @@
         const volSlider = document.getElementById('volumeSlider');
         const songTitle = document.getElementById('songTitle');
 
-        // ADD YOUR SONGS HERE
         const playlist = [
             { title: "Song Name 1", file: "Song.mp3" },
             { title: "Song Name 2", file: "song2.mp3" },
@@ -457,7 +471,6 @@
         window.seekAudio = () => { if (isFinite(audio.duration) && audio.duration > 0) { audio.currentTime = (slider.value / 100) * audio.duration; } };
         window.changeVolume = () => { audio.volume = volSlider.value; };
         
-        // Initialize player
         loadTrack(0);
         audio.volume = volSlider.value;
 
@@ -470,7 +483,6 @@
             monthYear.innerText = `${monthNames[currentMonth]} ${currentYear}`;
             calendarDates.innerHTML = "";
             const today = new Date();
-            // Restrict back navigation
             if (currentYear === today.getFullYear() && currentMonth === today.getMonth()) prevBtn.style.visibility = 'hidden';
             else prevBtn.style.visibility = 'visible';
 
@@ -516,8 +528,6 @@
             const startDate = new Date("2026-04-12T00:00:00"); const today = new Date(); const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
             document.getElementById("days-count").innerText = diffDays;
             window.renderCalendar();
-            
-            // Check saved dark mode preference
             if (localStorage.getItem('darkmode') === 'enabled') {
                 document.body.classList.add('dark-mode');
                 document.getElementById('themeToggle').innerText = '☀️';

@@ -668,6 +668,18 @@
         }
 
 
+        .farm-night-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            border-radius: 22px;
+            background: rgba(7, 12, 34, 0);
+            mix-blend-mode: multiply;
+            transition: background 0.18s linear;
+        }
+
+
         .farm-hotbar {
             position: absolute;
             left: 50%;
@@ -2066,6 +2078,7 @@
             <button class="farm-overlay-close app-close-btn" onclick="event.stopPropagation(); closeApp('gameApp')">✕</button>
             <div class="farm-game-shell">
                 <div id="phaserGame"></div>
+                <div id="farmNightOverlay" class="farm-night-overlay"></div>
                 <div id="farmTimeUI" class="farm-time-ui">☀️ 06:00</div>
                 <div id="farmHotbar" class="farm-hotbar" onclick="event.stopPropagation()">
                     <button id="farmToolHand" class="farm-tool-slot active" onclick="setFarmTool('hand')" title="Hand tool">
@@ -2486,7 +2499,7 @@
         const FARM_STALE_PLAYER_MS = 15000;
         const FARM_STALE_PLAYER_CLEANUP_MS = 10000;
         const FARM_REMOTE_INTERPOLATION_MS = 120;
-        const FARM_DAY_LENGTH_MS = 5 * 60 * 1000;
+        const FARM_DAY_LENGTH_MS = 100 * 1000; // 24 in-game hours = 1m40s real time (3x faster than 5 minutes).
         const FARM_TIME_ORIGIN_MS = new Date('2026-04-27T00:00:00Z').getTime();
 
         const farmColors = {
@@ -2509,11 +2522,14 @@
         };
 
         const getFarmNightAlpha = (totalMinutes) => {
-            if (totalMinutes < 300) return 0.48;
-            if (totalMinutes < 420) return 0.48 - ((totalMinutes - 300) / 120) * 0.43;
-            if (totalMinutes < 1080) return 0.05;
-            if (totalMinutes < 1200) return 0.05 + ((totalMinutes - 1080) / 120) * 0.43;
-            return 0.48;
+            const maxNight = 0.68;
+            const dayAlpha = 0;
+
+            if (totalMinutes < 300) return maxNight;
+            if (totalMinutes < 420) return maxNight - ((totalMinutes - 300) / 120) * (maxNight - dayAlpha);
+            if (totalMinutes < 1080) return dayAlpha;
+            if (totalMinutes < 1200) return dayAlpha + ((totalMinutes - 1080) / 120) * (maxNight - dayAlpha);
+            return maxNight;
         };
 
         const formatFarmClock = ({ hour, minute, totalMinutes }) => {
@@ -2532,6 +2548,11 @@
         window.setFarmTool = (tool) => {
             currentFarmTool = tool === 'watering-can' ? 'watering-can' : 'hand';
             updateFarmToolHotbar();
+
+            if (farmSceneRef && typeof farmSceneRef.updateMyToolDisplay === 'function') {
+                farmSceneRef.updateMyToolDisplay();
+                farmSceneRef.syncMyPlayer(true);
+            }
         };
 
         document.addEventListener('keydown', (event) => {
@@ -2734,6 +2755,7 @@
                     }
 
                     if (!existingCrop) {
+                        // Empty soil only plants with the Hand tool. The watering can cannot place crops.
                         if (currentFarmTool !== 'hand') return;
 
                         set(cropRef, {
@@ -3185,8 +3207,26 @@
                     strokeThickness: 3
                 }).setOrigin(0.5);
 
-                container.add([shadow, legs, body, face, leftEye, rightEye, smile, hair, label]);
+                const wateringCan = this.add.container(15, -1);
+                wateringCan.add(this.add.rectangle(0, 4, 12, 8, 0x6fb0d6));
+                wateringCan.add(this.add.rectangle(-2, 0, 9, 5, 0x8bd4f5));
+                wateringCan.add(this.add.circle(7, 3, 4, 0x6fb0d6));
+                wateringCan.add(this.add.circle(7, 3, 2.2, color));
+                wateringCan.add(this.add.rectangle(11, 0, 8, 3, 0x8bd4f5));
+                wateringCan.add(this.add.circle(17, -1, 2, 0x8bd4f5));
+                wateringCan.add(this.add.rectangle(-1, -5, 5, 2, 0xd8f6ff));
+                wateringCan.setRotation(-0.16);
+                wateringCan.setVisible(false);
+
+                container.add([shadow, legs, body, face, leftEye, rightEye, smile, hair, wateringCan, label]);
                 container.setDepth(20);
+
+                container.wateringCan = wateringCan;
+                container.setTool = (tool) => {
+                    wateringCan.setVisible(tool === 'watering-can');
+                };
+
+                container.setTool(player.tool || (name === currentUser ? currentFarmTool : 'hand'));
 
                 const blink = () => {
                     if (!container.active) return;
@@ -3223,6 +3263,10 @@
                     }
 
                     const sprite = this.players[name];
+
+                    if (typeof sprite.setTool === 'function') {
+                        sprite.setTool(name === currentUser ? currentFarmTool : (player.tool || 'hand'));
+                    }
 
                     if (name === currentUser) {
                         sprite.x = player.x;
@@ -3262,7 +3306,7 @@
             updateDayNightCycle(force = false) {
                 const now = Date.now();
 
-                if (!force && now - this.lastDayNightUpdate < 250) return;
+                if (!force && now - this.lastDayNightUpdate < 100) return;
 
                 this.lastDayNightUpdate = now;
 
@@ -3275,8 +3319,17 @@
                     this.lastFarmClockText = clockText;
                 }
 
+                const nightAlpha = getFarmNightAlpha(farmTime.totalMinutes);
+                const nightEl = document.getElementById('farmNightOverlay');
+
+                if (nightEl) {
+                    nightEl.style.background = `rgba(7, 12, 34, ${nightAlpha})`;
+                }
+
+                // The DOM overlay above the Phaser canvas is the reliable visual darkness layer.
+                // Keep the Phaser overlay disabled so the scene is not darkened twice.
                 if (this.nightOverlay) {
-                    this.nightOverlay.setAlpha(getFarmNightAlpha(farmTime.totalMinutes));
+                    this.nightOverlay.setAlpha(0);
                 }
             }
 
@@ -3393,6 +3446,7 @@
                     x: Math.round(this.myPlayer.x),
                     y: Math.round(this.myPlayer.y),
                     color: this.myPlayer.color,
+                    tool: currentFarmTool,
                     lastSeen: Date.now()
                 });
             }

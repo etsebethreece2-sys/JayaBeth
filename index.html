@@ -578,51 +578,71 @@
             filter: brightness(1.12);
         }
 
-        .mini-app.game-app.active {
-            position: absolute;
-            inset: 0;
-            width: auto;
-            height: auto;
-            min-height: 0;
-            padding: 15px;
-            cursor: default;
-            z-index: 120;
-            display: block;
-        }
-
-        .game-app.active .app-icon-button {
+        .game-app .app-panel {
             display: none;
         }
 
-        .game-app .app-panel-header {
+        #app-wrapper.farm-mode {
+            width: var(--farm-overlay-width, min(1300px, calc(100vw - 40px)));
+            height: var(--farm-overlay-height, min(600px, calc(100vh - 40px)));
+        }
+
+        #app-wrapper.farm-mode .main-app-container {
+            opacity: 0;
+            transform: scale(0.965);
+            filter: blur(5px);
+            pointer-events: none;
+        }
+
+        #app-wrapper.farm-content-unrendered .main-app-container {
+            display: none;
+        }
+
+        .main-app-container {
+            transition:
+                opacity 0.34s ease,
+                transform 0.34s ease,
+                filter 0.34s ease;
+        }
+
+        .farm-expanded-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 160;
+            padding: 15px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: scale(0.972);
+            transition:
+                opacity 0.34s ease,
+                transform 0.34s ease,
+                visibility 0.34s ease;
+        }
+
+        #app-wrapper.farm-mode .farm-expanded-overlay {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        .farm-overlay-close {
             position: absolute;
             top: 14px;
             right: 14px;
-            z-index: 5;
-            justify-content: flex-end;
-            padding: 0;
-            margin: 0;
-            border-bottom: none;
-        }
-
-        .game-app .app-close-btn {
-            width: 34px;
-            height: 34px;
-            font-size: 16px;
-            background: rgba(255,255,255,0.82);
-            box-shadow: 0 5px 14px rgba(0,0,0,0.22);
-        }
-
-        .game-app.active .app-panel {
-            height: 100%;
-            max-height: none;
+            z-index: 8;
+            width: 38px;
+            height: 38px;
+            font-size: 17px;
+            background: rgba(255,255,255,0.85);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
         }
 
         .farm-game-shell {
             width: 100%;
             height: 100%;
             display: flex;
-            flex-direction: column;
             align-items: stretch;
             justify-content: stretch;
         }
@@ -1827,16 +1847,6 @@
 
                 <div class="mini-app box-style game-app" id="gameApp" onclick="toggleApp('gameApp')">
                     <button class="app-icon-button"><span class="app-icon">🌾</span></button>
-
-                    <div class="app-panel">
-                        <div class="app-panel-header">
-                            <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('gameApp')">✕</button>
-                        </div>
-
-                        <div class="farm-game-shell" onclick="event.stopPropagation()">
-                            <div id="phaserGame"></div>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="mini-app box-style calendar-app" id="calendarApp" onclick="toggleApp('calendarApp')">
@@ -1967,6 +1977,13 @@
                 </div>
             </div>
         </div>
+
+        <div id="farmOverlay" class="farm-expanded-overlay box-style" onclick="event.stopPropagation()">
+            <button class="farm-overlay-close app-close-btn" onclick="event.stopPropagation(); closeApp('gameApp')">✕</button>
+            <div class="farm-game-shell">
+                <div id="phaserGame"></div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
@@ -1979,6 +1996,15 @@
         let currentImgIndex = 0;
 
         window.toggleApp = (id) => {
+            if (id === 'gameApp') {
+                if (farmGameIsOpen) {
+                    window.closeFarmGame();
+                } else {
+                    window.openFarmGame();
+                }
+                return;
+            }
+
             const app = document.getElementById(id);
             const isOpen = app.classList.contains('active');
 
@@ -1990,27 +2016,16 @@
                 }
             });
 
-            const shouldOpen = !isOpen;
-            app.classList.toggle('active', shouldOpen);
-
-            if (id === 'gameApp') {
-                if (shouldOpen) {
-                    setTimeout(() => {
-                        window.startFarmGame();
-                        window.setFarmGameActive(true);
-                    }, 80);
-                } else {
-                    window.setFarmGameActive(false);
-                }
-            }
+            app.classList.toggle('active', !isOpen);
         };
 
         window.closeApp = (id) => {
-            document.getElementById(id).classList.remove('active');
-
             if (id === 'gameApp') {
-                window.setFarmGameActive(false);
+                window.closeFarmGame();
+                return;
             }
+
+            document.getElementById(id).classList.remove('active');
         };
 
         window.toggleDarkMode = () => {
@@ -2380,6 +2395,63 @@
             Reece: 0xff69b4
         };
 
+        let farmUiTransitionTimer = null;
+
+        const prepareFarmOverlaySize = () => {
+            const wrapper = document.getElementById('app-wrapper');
+            const mainUi = document.querySelector('.main-app-container');
+
+            if (!wrapper || !mainUi) return;
+
+            const rect = mainUi.getBoundingClientRect();
+            wrapper.style.setProperty('--farm-overlay-width', `${Math.round(rect.width)}px`);
+            wrapper.style.setProperty('--farm-overlay-height', `${Math.round(rect.height)}px`);
+        };
+
+        window.openFarmGame = () => {
+            const wrapper = document.getElementById('app-wrapper');
+            const gameIcon = document.getElementById('gameApp');
+
+            if (!wrapper) return;
+
+            prepareFarmOverlaySize();
+            clearTimeout(farmUiTransitionTimer);
+
+            gameIcon?.classList.add('active');
+            wrapper.classList.remove('farm-content-unrendered');
+            wrapper.classList.add('farm-mode');
+
+            setTimeout(() => {
+                window.startFarmGame();
+                window.setFarmGameActive(true);
+
+                if (phaserGame && phaserGame.scale) {
+                    phaserGame.scale.refresh();
+                }
+            }, 80);
+
+            farmUiTransitionTimer = setTimeout(() => {
+                wrapper.classList.add('farm-content-unrendered');
+            }, 360);
+        };
+
+        window.closeFarmGame = () => {
+            const wrapper = document.getElementById('app-wrapper');
+            const gameIcon = document.getElementById('gameApp');
+
+            clearTimeout(farmUiTransitionTimer);
+            window.setFarmGameActive(false);
+
+            if (!wrapper) return;
+
+            wrapper.classList.remove('farm-content-unrendered');
+
+            requestAnimationFrame(() => {
+                wrapper.classList.remove('farm-mode');
+                gameIcon?.classList.remove('active');
+            });
+        };
+
         const updateFarmStatus = () => {};
 
         window.setFarmGameActive = (isActive) => {
@@ -2604,15 +2676,7 @@
                 g.fillStyle(0x6fb35e, 1);
                 g.fillRect(0, 250, w, 50);
 
-                g.fillStyle(0x9c744f, 1);
-                g.fillRoundedRect(24, 28, 76, 44, 6);
-                g.fillStyle(0xe7b46a, 1);
-                g.fillTriangle(16, 30, 62, 6, 108, 30);
-                g.fillStyle(0x5b3423, 1);
-                g.fillRect(54, 48, 16, 24);
-                g.fillStyle(0xffe7a6, 1);
-                g.fillRect(34, 42, 12, 12);
-                g.fillRect(76, 42, 12, 12);
+                this.drawCabin(g, 20, 12);
 
                 g.fillStyle(0x4ca8dd, 1);
                 g.fillRoundedRect(430, 32, 74, 44, 16);
@@ -2639,14 +2703,79 @@
                         g.strokeRoundedRect(x + 3, y + 3, this.tileSize - 6, this.tileSize - 6, 3);
                     }
                 }
+            }
 
-                this.add.text(w / 2, 282, 'Click soil: plant/water • Mature crops collect on click • Shift/right-click removes', {
-                    fontFamily: 'Fredoka, sans-serif',
-                    fontSize: '10px',
-                    color: '#ffffff',
-                    stroke: '#4a3554',
-                    strokeThickness: 3
-                }).setOrigin(0.5);
+            drawCabin(g, x, y) {
+                // Layered log-cabin styling: chunky roof, log walls, shadows, porch, windows, and chimney.
+                g.fillStyle(0x3b2118, 0.25);
+                g.fillEllipse(x + 58, y + 88, 104, 18);
+
+                g.fillStyle(0x583019, 1);
+                g.fillRect(x + 70, y + 2, 13, 31);
+                g.fillStyle(0x2f1a12, 1);
+                g.fillRect(x + 68, y, 17, 5);
+                g.fillStyle(0x6f3b1f, 1);
+                g.fillRect(x + 72, y + 5, 8, 9);
+
+                g.fillStyle(0x5a2f1f, 1);
+                g.fillTriangle(x + 6, y + 34, x + 58, y + 4, x + 112, y + 34);
+                g.fillStyle(0x7a4329, 1);
+                g.fillTriangle(x + 12, y + 34, x + 58, y + 10, x + 106, y + 34);
+                g.fillStyle(0x3f241a, 1);
+                g.fillRect(x + 8, y + 32, 104, 7);
+
+                g.lineStyle(1, 0x9b6040, 0.5);
+                for (let sx = x + 22; sx < x + 98; sx += 14) {
+                    g.lineBetween(sx, y + 28, sx + 10, y + 22);
+                }
+
+                g.fillStyle(0x7b4b2d, 1);
+                g.fillRoundedRect(x + 18, y + 38, 82, 47, 5);
+                g.fillStyle(0x9b6541, 1);
+                g.fillRoundedRect(x + 22, y + 41, 74, 39, 4);
+
+                for (let ly = y + 43; ly <= y + 76; ly += 8) {
+                    g.fillStyle(0x6c3f25, 1);
+                    g.fillRoundedRect(x + 18, ly, 82, 5, 3);
+                    g.fillStyle(0xb47a4f, 0.62);
+                    g.fillRoundedRect(x + 22, ly, 70, 2, 2);
+                    g.fillStyle(0x4a2919, 0.55);
+                    g.fillCircle(x + 24, ly + 2, 2.2);
+                    g.fillCircle(x + 94, ly + 2, 2.2);
+                }
+
+                g.fillStyle(0x4a2719, 1);
+                g.fillRoundedRect(x + 51, y + 57, 18, 28, 4);
+                g.fillStyle(0x6b3b24, 1);
+                g.fillRoundedRect(x + 54, y + 60, 12, 25, 3);
+                g.fillStyle(0xffd56b, 0.85);
+                g.fillCircle(x + 65, y + 71, 1.6);
+
+                const drawWindow = (wx, wy) => {
+                    g.fillStyle(0x4b2c1e, 1);
+                    g.fillRoundedRect(wx - 2, wy - 2, 17, 17, 3);
+                    g.fillStyle(0xffdf8a, 1);
+                    g.fillRoundedRect(wx, wy, 13, 13, 2);
+                    g.lineStyle(1, 0x7d4a2f, 0.85);
+                    g.lineBetween(wx + 6.5, wy, wx + 6.5, wy + 13);
+                    g.lineBetween(wx, wy + 6.5, wx + 13, wy + 6.5);
+                    g.fillStyle(0xffffff, 0.28);
+                    g.fillTriangle(wx + 2, wy + 2, wx + 8, wy + 2, wx + 2, wy + 8);
+                };
+
+                drawWindow(x + 29, y + 55);
+                drawWindow(x + 75, y + 55);
+
+                g.fillStyle(0x4d2a1b, 1);
+                g.fillRect(x + 38, y + 84, 44, 7);
+                g.fillStyle(0x8b5a38, 1);
+                g.fillRect(x + 32, y + 89, 56, 5);
+                g.fillStyle(0x5f3924, 1);
+                g.fillRect(x + 37, y + 94, 8, 4);
+                g.fillRect(x + 75, y + 94, 8, 4);
+
+                g.lineStyle(2, 0x2c1811, 0.45);
+                g.strokeRoundedRect(x + 18, y + 38, 82, 47, 5);
             }
 
             drawCow(x, y) {

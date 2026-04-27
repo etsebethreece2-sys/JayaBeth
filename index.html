@@ -728,6 +728,28 @@
             opacity: 0.75;
         }
 
+
+        .farm-time-ui {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            z-index: 7;
+            min-width: 112px;
+            padding: 8px 13px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.78);
+            border: 2px solid rgba(74, 53, 84, 0.42);
+            color: #4a3554;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            text-align: center;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.16);
+            backdrop-filter: blur(10px);
+            pointer-events: none;
+        }
+
         .side-container {
             width: 260px;
             height: 600px;
@@ -2044,6 +2066,7 @@
             <button class="farm-overlay-close app-close-btn" onclick="event.stopPropagation(); closeApp('gameApp')">✕</button>
             <div class="farm-game-shell">
                 <div id="phaserGame"></div>
+                <div id="farmTimeUI" class="farm-time-ui">☀️ 06:00</div>
                 <div id="farmHotbar" class="farm-hotbar" onclick="event.stopPropagation()">
                     <button id="farmToolHand" class="farm-tool-slot active" onclick="setFarmTool('hand')" title="Hand tool">
                         <span class="farm-tool-icon">🖐️</span>
@@ -2463,6 +2486,8 @@
         const FARM_STALE_PLAYER_MS = 15000;
         const FARM_STALE_PLAYER_CLEANUP_MS = 10000;
         const FARM_REMOTE_INTERPOLATION_MS = 120;
+        const FARM_DAY_LENGTH_MS = 5 * 60 * 1000;
+        const FARM_TIME_ORIGIN_MS = new Date('2026-04-27T00:00:00Z').getTime();
 
         const farmColors = {
             Shanky: 0x8a2be2,
@@ -2471,6 +2496,30 @@
 
         let farmUiTransitionTimer = null;
         let currentFarmTool = 'hand';
+
+        const getFarmTimeData = () => {
+            const elapsedSinceOrigin = Date.now() - FARM_TIME_ORIGIN_MS;
+            const safeElapsed = ((elapsedSinceOrigin % FARM_DAY_LENGTH_MS) + FARM_DAY_LENGTH_MS) % FARM_DAY_LENGTH_MS;
+            const totalMinutes = Math.floor((safeElapsed / FARM_DAY_LENGTH_MS) * 1440);
+            const hour = Math.floor(totalMinutes / 60);
+            const minute = totalMinutes % 60;
+            const day = Math.floor(Math.max(0, elapsedSinceOrigin) / FARM_DAY_LENGTH_MS) + 1;
+
+            return { day, hour, minute, totalMinutes };
+        };
+
+        const getFarmNightAlpha = (totalMinutes) => {
+            if (totalMinutes < 300) return 0.48;
+            if (totalMinutes < 420) return 0.48 - ((totalMinutes - 300) / 120) * 0.43;
+            if (totalMinutes < 1080) return 0.05;
+            if (totalMinutes < 1200) return 0.05 + ((totalMinutes - 1080) / 120) * 0.43;
+            return 0.48;
+        };
+
+        const formatFarmClock = ({ hour, minute, totalMinutes }) => {
+            const icon = totalMinutes >= 360 && totalMinutes < 1080 ? '☀️' : totalMinutes >= 1080 && totalMinutes < 1200 ? '🌇' : '🌙';
+            return `${icon} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+        };
 
         const updateFarmToolHotbar = () => {
             const handBtn = document.getElementById('farmToolHand');
@@ -2624,6 +2673,9 @@
                 this.onDisconnectReady = false;
                 this.acceptInput = false;
                 this.cow = null;
+                this.nightOverlay = null;
+                this.lastFarmClockText = '';
+                this.lastDayNightUpdate = 0;
                 this.tileSize = 26;
                 this.gridCols = 12;
                 this.gridRows = 6;
@@ -2635,6 +2687,10 @@
                 farmSceneRef = this;
 
                 this.drawMap();
+                this.nightOverlay = this.add.rectangle(0, 0, FARM_INTERNAL_WIDTH, FARM_INTERNAL_HEIGHT, 0x0b1633, 0)
+                    .setOrigin(0)
+                    .setDepth(38);
+                this.updateDayNightCycle(true);
                 this.input.mouse.disableContextMenu();
 
                 // Use non-capturing keyboard input so WASD/arrow keys return to the chat normally after closing the mini-game.
@@ -2678,6 +2734,8 @@
                     }
 
                     if (!existingCrop) {
+                        if (currentFarmTool !== 'hand') return;
+
                         set(cropRef, {
                             tileX: tile.x,
                             tileY: tile.y,
@@ -3201,6 +3259,27 @@
                 });
             }
 
+            updateDayNightCycle(force = false) {
+                const now = Date.now();
+
+                if (!force && now - this.lastDayNightUpdate < 250) return;
+
+                this.lastDayNightUpdate = now;
+
+                const farmTime = getFarmTimeData();
+                const clockText = formatFarmClock(farmTime);
+                const clockEl = document.getElementById('farmTimeUI');
+
+                if (clockEl && clockText !== this.lastFarmClockText) {
+                    clockEl.innerText = clockText;
+                    this.lastFarmClockText = clockText;
+                }
+
+                if (this.nightOverlay) {
+                    this.nightOverlay.setAlpha(getFarmNightAlpha(farmTime.totalMinutes));
+                }
+            }
+
             releaseKeyboardCapture() {
                 if (!this.input || !this.input.keyboard || !window.Phaser) return;
 
@@ -3277,6 +3356,7 @@
                 }
 
                 if (isActive) {
+                    this.updateDayNightCycle(true);
                     this.syncMyPlayer(true);
                 } else {
                     remove(child(gamePlayersRef, currentUser));
@@ -3324,6 +3404,7 @@
 
             update(time, delta) {
                 this.interpolateRemotePlayers(delta);
+                this.updateDayNightCycle(false);
 
                 if (!this.acceptInput || !this.myPlayer || this.isTypingInInput()) return;
 

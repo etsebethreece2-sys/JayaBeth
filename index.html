@@ -142,7 +142,8 @@
         }
 
         .mini-app.calendar-app.active {
-            min-height: 300px;
+            width: 280px;
+            min-height: 500px;
         }
 
         .app-icon-button {
@@ -196,7 +197,7 @@
         }
 
         .mini-app.active .app-panel {
-            max-height: 380px;
+            max-height: 620px;
             opacity: 1;
             transform: translateY(0) scale(1);
             pointer-events: auto;
@@ -410,15 +411,17 @@
         }
 
         .calendar-date {
+            position: relative;
             font-size: 11px;
-            height: 22px;
-            width: 22px;
-            line-height: 22px;
+            height: 24px;
+            width: 24px;
+            line-height: 24px;
             margin: 0 auto;
             border-radius: 50%;
-            cursor: default;
+            cursor: pointer;
             color: #333;
-            transition: background 0.2s, transform 0.2s;
+            border: 1px solid transparent;
+            transition: background 0.2s, transform 0.2s, border-color 0.2s;
         }
 
         .calendar-date.current-month {
@@ -440,6 +443,139 @@
         .calendar-date:hover {
             background: rgba(138, 43, 226, 0.2);
             transform: scale(1.1);
+        }
+
+        .calendar-date.selected {
+            border-color: #4a3554;
+            background: rgba(255, 255, 255, 0.62);
+            font-weight: 700;
+        }
+
+        .calendar-date.has-events::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: 2px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #ff4d9d;
+            transform: translateX(-50%);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.8);
+        }
+
+        .calendar-date.today.has-events::after {
+            background: #ffffff;
+        }
+
+        .calendar-event-panel {
+            width: 100%;
+            margin-top: 6px;
+            padding-top: 8px;
+            border-top: 2px solid rgba(255,255,255,0.45);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .selected-date-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+        }
+
+        .calendar-event-list {
+            width: 100%;
+            max-height: 115px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-right: 4px;
+            box-sizing: border-box;
+        }
+
+        .calendar-event-empty {
+            font-size: 11px;
+            color: #555;
+            text-align: center;
+            background: rgba(255,255,255,0.35);
+            border-radius: 12px;
+            padding: 8px;
+        }
+
+        .calendar-event-item {
+            background: rgba(255,255,255,0.48);
+            border-radius: 13px;
+            padding: 7px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 12px;
+            color: #333;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .calendar-event-text {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .calendar-event-delete {
+            width: 21px;
+            height: 21px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 77, 77, 0.86);
+            color: white;
+            cursor: pointer;
+            font-weight: 700;
+            line-height: 1;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .calendar-event-delete:hover {
+            transform: scale(1.14);
+            filter: brightness(1.08);
+        }
+
+        .calendar-event-form {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .calendar-event-form input {
+            flex: 1;
+            min-width: 0;
+            border: none;
+            border-radius: 999px;
+            padding: 9px 10px;
+            outline: none;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 12px;
+            box-sizing: border-box;
+        }
+
+        .calendar-event-form button {
+            border: none;
+            border-radius: 999px;
+            padding: 9px 10px;
+            background: linear-gradient(135deg, #b19cd9, #8a2be2);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 12px;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .calendar-event-form button:hover {
+            transform: scale(1.06);
+            filter: brightness(1.12);
         }
 
         .side-container {
@@ -1498,7 +1634,8 @@
         body.dark-mode .song-title,
         body.dark-mode .date-text,
         body.dark-mode .calendar-header,
-        body.dark-mode .app-panel-header {
+        body.dark-mode .app-panel-header,
+        body.dark-mode .selected-date-title {
             color: #ffffff;
         }
 
@@ -1529,7 +1666,9 @@
             background: #444;
         }
 
-        body.dark-mode .bucket-item {
+        body.dark-mode .bucket-item,
+        body.dark-mode .calendar-event-item,
+        body.dark-mode .calendar-event-empty {
             background: rgba(0, 0, 0, 0.3);
             color: #ddd;
         }
@@ -1639,6 +1778,16 @@
                             </div>
 
                             <div class="calendar-dates" id="calendarDates"></div>
+
+                            <div class="calendar-event-panel" onclick="event.stopPropagation()">
+                                <div id="selectedDateTitle" class="selected-date-title">Select a day</div>
+                                <div id="calendarEventList" class="calendar-event-list"></div>
+
+                                <div class="calendar-event-form">
+                                    <input type="text" id="calendarEventInput" placeholder="Add event..." onkeypress="handleCalendarEventKeyPress(event)">
+                                    <button onclick="addCalendarEvent()">Add</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1717,7 +1866,7 @@
                     <button onclick="toggleStickerMenu()" title="Stickers">😊</button>
 
                     <div class="input-wrapper">
-                        <input type="text" id="messageInput" placeholder="Message..." oninput="handleTyping(); toggleClearBtn()" onkeypress="handleKeyPress(event)">
+                        <input type="text" id="messageInput" placeholder="Message or paste image..." oninput="handleTyping(); toggleClearBtn()" onkeypress="handleKeyPress(event)">
                         <div id="clearBtn" class="clear-btn" onclick="clearInput()" title="Clear text">✕</div>
                     </div>
 
@@ -1880,6 +2029,62 @@
 
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
+        let calendarEvents = {};
+        let selectedCalendarDate = null;
+
+        const toDateKey = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        };
+
+        const dateFromKey = (dateKey) => {
+            const [year, month, day] = dateKey.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        };
+
+        const formatCalendarDate = (dateKey) => {
+            return dateFromKey(dateKey).toLocaleDateString(undefined, {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        };
+
+        selectedCalendarDate = toDateKey(new Date());
+
+        const getCalendarEventCount = (dateKey) => {
+            return Object.keys(calendarEvents[dateKey] || {}).length;
+        };
+
+        const decorateCalendarDate = (dateEl, dateKey, dayNumber, isCurrentMonth) => {
+            const todayKey = toDateKey(new Date());
+            const eventCount = getCalendarEventCount(dateKey);
+
+            dateEl.className = `calendar-date ${isCurrentMonth ? 'current-month' : 'other-month'}`;
+            dateEl.innerText = dayNumber;
+            dateEl.title = eventCount > 0 ? `${eventCount} event${eventCount === 1 ? '' : 's'}` : 'No events';
+
+            if (dateKey === todayKey) {
+                dateEl.classList.add('today');
+            }
+
+            if (dateKey === selectedCalendarDate) {
+                dateEl.classList.add('selected');
+            }
+
+            if (eventCount > 0) {
+                dateEl.classList.add('has-events');
+            }
+
+            dateEl.onclick = (event) => {
+                event.stopPropagation();
+                window.selectCalendarDate(dateKey);
+            };
+        };
 
         window.renderCalendar = () => {
             const monthYear = document.getElementById("monthYear");
@@ -1892,31 +2097,24 @@
             monthYear.innerText = `${monthNames[currentMonth]} ${currentYear}`;
             calendarDates.innerHTML = "";
 
-            const today = new Date();
             const firstDay = new Date(currentYear, currentMonth, 1).getDay();
             const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
             const prevMonthTotalDays = new Date(currentYear, currentMonth, 0).getDate();
 
             for (let i = firstDay; i > 0; i--) {
+                const dayNumber = prevMonthTotalDays - i + 1;
                 const dateEl = document.createElement("div");
-                dateEl.className = "calendar-date other-month";
-                dateEl.innerText = prevMonthTotalDays - i + 1;
+                const dateKey = toDateKey(new Date(currentYear, currentMonth - 1, dayNumber));
+
+                decorateCalendarDate(dateEl, dateKey, dayNumber, false);
                 calendarDates.appendChild(dateEl);
             }
 
             for (let i = 1; i <= totalDays; i++) {
                 const dateEl = document.createElement("div");
-                dateEl.className = "calendar-date current-month";
+                const dateKey = toDateKey(new Date(currentYear, currentMonth, i));
 
-                if (
-                    i === today.getDate() &&
-                    currentMonth === today.getMonth() &&
-                    currentYear === today.getFullYear()
-                ) {
-                    dateEl.classList.add("today");
-                }
-
-                dateEl.innerText = i;
+                decorateCalendarDate(dateEl, dateKey, i, true);
                 calendarDates.appendChild(dateEl);
             }
 
@@ -1924,10 +2122,71 @@
 
             for (let i = 1; i <= remainingCells; i++) {
                 const dateEl = document.createElement("div");
-                dateEl.className = "calendar-date other-month";
-                dateEl.innerText = i;
+                const dateKey = toDateKey(new Date(currentYear, currentMonth + 1, i));
+
+                decorateCalendarDate(dateEl, dateKey, i, false);
                 calendarDates.appendChild(dateEl);
             }
+        };
+
+        window.renderCalendarEvents = () => {
+            const title = document.getElementById('selectedDateTitle');
+            const list = document.getElementById('calendarEventList');
+            const input = document.getElementById('calendarEventInput');
+
+            if (!title || !list || !selectedCalendarDate) return;
+
+            title.innerText = formatCalendarDate(selectedCalendarDate);
+            list.innerHTML = '';
+
+            if (input) {
+                input.placeholder = `Add event for ${formatCalendarDate(selectedCalendarDate).replace(/,? \d{4}$/, '')}...`;
+            }
+
+            const eventsForDay = Object.entries(calendarEvents[selectedCalendarDate] || {})
+                .map(([key, value]) => ({ key, ...value }))
+                .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+            if (eventsForDay.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-event-empty';
+                empty.innerText = 'No events yet. Add one below 💜';
+                list.appendChild(empty);
+                return;
+            }
+
+            eventsForDay.forEach((item) => {
+                const row = document.createElement('div');
+                row.className = 'calendar-event-item';
+
+                const text = document.createElement('span');
+                text.className = 'calendar-event-text';
+                text.innerText = item.text || 'Untitled event';
+
+                const del = document.createElement('button');
+                del.className = 'calendar-event-delete';
+                del.innerText = '✕';
+                del.title = 'Delete event';
+                del.onclick = (event) => {
+                    event.stopPropagation();
+                    window.deleteCalendarEvent(selectedCalendarDate, item.key);
+                };
+
+                row.appendChild(text);
+                row.appendChild(del);
+                list.appendChild(row);
+            });
+        };
+
+        window.selectCalendarDate = (dateKey) => {
+            selectedCalendarDate = dateKey;
+
+            const selectedDate = dateFromKey(dateKey);
+            currentMonth = selectedDate.getMonth();
+            currentYear = selectedDate.getFullYear();
+
+            window.renderCalendar();
+            window.renderCalendarEvents();
         };
 
         window.changeMonth = (dir) => {
@@ -1942,6 +2201,34 @@
             }
 
             window.renderCalendar();
+        };
+
+        window.addCalendarEvent = () => {
+            const input = document.getElementById('calendarEventInput');
+            const text = input ? input.value.trim() : '';
+
+            if (!text || !selectedCalendarDate) return;
+
+            push(child(calendarEventsRef, selectedCalendarDate), {
+                text,
+                creator: currentUser,
+                timestamp: Date.now()
+            });
+
+            input.value = '';
+            input.focus();
+        };
+
+        window.deleteCalendarEvent = (dateKey, eventKey) => {
+            if (!dateKey || !eventKey) return;
+            remove(child(calendarEventsRef, `${dateKey}/${eventKey}`));
+        };
+
+        window.handleCalendarEventKeyPress = (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                window.addCalendarEvent();
+            }
         };
 
         const firebaseConfig = {
@@ -1960,6 +2247,7 @@
         const galleryRef = ref(db, "gallery");
         const bucketListRef = ref(db, "bucketlist");
         const pinnedRef = ref(db, "pinned");
+        const calendarEventsRef = ref(db, "calendarEvents");
 
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let otherUserLastSeen = 0;
@@ -2012,6 +2300,7 @@
 
             document.getElementById("days-count").innerText = diffDays;
             window.renderCalendar();
+            window.renderCalendarEvents();
 
             if (localStorage.getItem('darkmode') === 'enabled') {
                 document.body.classList.add('dark-mode');
@@ -2226,6 +2515,12 @@
             listDiv.scrollTop = listDiv.scrollHeight;
         });
 
+        onValue(calendarEventsRef, (snapshot) => {
+            calendarEvents = snapshot.exists() ? snapshot.val() : {};
+            window.renderCalendar();
+            window.renderCalendarEvents();
+        });
+
         window.toggleColorMenu = (e) => {
             if (e) e.stopPropagation();
 
@@ -2408,9 +2703,8 @@
 
         window.endHold = () => clearTimeout(holdTimer);
 
-        window.handleImageUpload = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+        const sendImageFileToChat = (file) => {
+            if (!file || !file.type || !file.type.startsWith('image/')) return;
 
             const reader = new FileReader();
 
@@ -2419,18 +2713,25 @@
 
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const scale = 400 / img.width;
+                    const maxWidth = 400;
+                    const scale = Math.min(1, maxWidth / img.width);
 
-                    canvas.width = 400;
-                    canvas.height = img.height * scale;
+                    canvas.width = Math.max(1, Math.round(img.width * scale));
+                    canvas.height = Math.max(1, Math.round(img.height * scale));
 
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
 
+                    set(typingRef(currentUser), {
+                        isTyping: false,
+                        timestamp: Date.now()
+                    });
+
                     push(messagesRef, {
                         name: currentUser,
-                        image: canvas.toDataURL('image/jpeg', 0.5),
+                        image: canvas.toDataURL('image/jpeg', 0.65),
                         timestamp: Date.now(),
-                        replyTo: replyingTo
+                        replyTo: replyingTo,
+                        animationId: `${Date.now()}-${Math.random()}`
                     });
 
                     cancelReply();
@@ -2442,8 +2743,28 @@
             };
 
             reader.readAsDataURL(file);
+        };
+
+        window.handleImageUpload = (e) => {
+            const file = e.target.files[0];
+            sendImageFileToChat(file);
             e.target.value = '';
         };
+
+        window.handlePasteImage = (event) => {
+            const items = event.clipboardData ? Array.from(event.clipboardData.items || []) : [];
+            const imageItem = items.find(item => item.type && item.type.startsWith('image/'));
+
+            if (!imageItem) return;
+
+            const file = imageItem.getAsFile();
+            if (!file) return;
+
+            event.preventDefault();
+            sendImageFileToChat(file);
+        };
+
+        document.addEventListener('paste', window.handlePasteImage);
 
         window.sendSticker = (stickerSrc) => {
             set(typingRef(currentUser), {

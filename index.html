@@ -2370,7 +2370,14 @@
         window.setFarmGameActive = (isActive) => {
             farmGameIsOpen = isActive;
 
-            if (!phaserGame || !farmSceneRef || typeof farmSceneRef.setActiveState !== 'function') return;
+            if (!phaserGame || !farmSceneRef || typeof farmSceneRef.setActiveState !== 'function') {
+                if (!isActive) {
+                    const input = document.getElementById('messageInput');
+                    if (input) requestAnimationFrame(() => input.focus());
+                }
+
+                return;
+            }
 
             if (isActive) {
                 phaserGame.scene.resume('FarmScene');
@@ -2441,14 +2448,22 @@
                 this.drawMap();
                 this.input.mouse.disableContextMenu();
 
+                // Use non-capturing keyboard input so WASD/arrow keys return to the chat normally after closing the mini-game.
                 this.keys = this.input.keyboard.addKeys({
                     up: 'W',
                     down: 'S',
                     left: 'A',
                     right: 'D'
-                });
+                }, false);
 
-                this.cursors = this.input.keyboard.createCursorKeys();
+                this.cursors = this.input.keyboard.addKeys({
+                    up: 'UP',
+                    down: 'DOWN',
+                    left: 'LEFT',
+                    right: 'RIGHT'
+                }, false);
+
+                this.releaseKeyboardCapture();
 
                 this.myPlayer = {
                     x: currentUser === 'Shanky' ? 128 : 272,
@@ -2557,6 +2572,8 @@
                 g.fillStyle(0x9de2ff, 0.55);
                 g.fillEllipse(334, 48, 44, 10);
 
+                this.drawCow(270, 54);
+
                 g.fillStyle(0xb37b4b, 1);
                 g.fillRoundedRect(this.gridX - 8, this.gridY - 8, this.gridCols * this.tileSize + 16, this.gridRows * this.tileSize + 16, 10);
 
@@ -2585,6 +2602,42 @@
                     stroke: '#4a3554',
                     strokeThickness: 3
                 }).setOrigin(0.5);
+            }
+
+            drawCow(x, y) {
+                const cow = this.add.container(x, y);
+                cow.setDepth(6);
+
+                const shadow = this.add.ellipse(3, 15, 42, 9, 0x000000, 0.18);
+                cow.add(shadow);
+                cow.add(this.add.rectangle(0, 2, 34, 18, 0xf7f0df));
+                cow.add(this.add.circle(-8, -1, 5, 0x3b2a22));
+                cow.add(this.add.circle(6, 5, 6, 0x3b2a22));
+                cow.add(this.add.rectangle(-11, 15, 5, 13, 0x3b2a22));
+                cow.add(this.add.rectangle(9, 15, 5, 13, 0x3b2a22));
+                cow.add(this.add.rectangle(-11, 21, 6, 3, 0xf7f0df));
+                cow.add(this.add.rectangle(9, 21, 6, 3, 0xf7f0df));
+
+                cow.add(this.add.circle(21, -2, 10, 0xf7f0df));
+                cow.add(this.add.circle(28, 1, 6, 0xf2c9bc));
+                cow.add(this.add.circle(16, -7, 4, 0x3b2a22));
+                cow.add(this.add.circle(26, -7, 4, 0x3b2a22));
+                cow.add(this.add.rectangle(18, -3, 2, 3, 0x1e1512));
+                cow.add(this.add.rectangle(24, -3, 2, 3, 0x1e1512));
+                cow.add(this.add.circle(26, 2, 1.5, 0x7b4a45));
+                cow.add(this.add.circle(31, 2, 1.5, 0x7b4a45));
+
+                cow.add(this.add.rectangle(-20, -1, 10, 2, 0x3b2a22));
+                cow.add(this.add.circle(-25, 1, 3, 0x3b2a22));
+
+                this.tweens.add({
+                    targets: cow,
+                    y: y - 1,
+                    duration: 1400,
+                    yoyo: true,
+                    repeat: -1,
+                    ease: 'Sine.easeInOut'
+                });
             }
 
             pointerToTile(x, y) {
@@ -2788,17 +2841,86 @@
                 });
             }
 
+            releaseKeyboardCapture() {
+                if (!this.input || !this.input.keyboard || !window.Phaser) return;
+
+                const keyCodes = window.Phaser.Input.Keyboard.KeyCodes;
+                const movementCodes = [
+                    keyCodes.W,
+                    keyCodes.A,
+                    keyCodes.S,
+                    keyCodes.D,
+                    keyCodes.UP,
+                    keyCodes.DOWN,
+                    keyCodes.LEFT,
+                    keyCodes.RIGHT
+                ];
+
+                movementCodes.forEach((code) => {
+                    if (typeof this.input.keyboard.removeCapture === 'function') {
+                        this.input.keyboard.removeCapture(code);
+                    }
+                });
+
+                if (typeof this.input.keyboard.clearCaptures === 'function') {
+                    this.input.keyboard.clearCaptures();
+                }
+            }
+
+            resetMovementKeys() {
+                const keyGroups = [this.keys, this.cursors];
+
+                keyGroups.forEach((group) => {
+                    if (!group) return;
+
+                    Object.values(group).forEach((key) => {
+                        if (key && typeof key.reset === 'function') {
+                            key.reset();
+                        } else if (key) {
+                            key.isDown = false;
+                            key.isUp = true;
+                            key.timeDown = 0;
+                        }
+                    });
+                });
+
+                if (this.input && this.input.keyboard && typeof this.input.keyboard.resetKeys === 'function') {
+                    this.input.keyboard.resetKeys();
+                }
+
+                this.releaseKeyboardCapture();
+            }
+
+            focusChatAfterClose() {
+                const input = document.getElementById('messageInput');
+
+                if (!input) return;
+
+                requestAnimationFrame(() => {
+                    input.focus();
+                });
+            }
+
             setActiveState(isActive) {
                 this.acceptInput = isActive;
 
                 if (this.input && this.input.keyboard) {
+                    if (!isActive) {
+                        this.resetMovementKeys();
+                    }
+
                     this.input.keyboard.enabled = isActive;
+
+                    if (isActive) {
+                        this.releaseKeyboardCapture();
+                    }
                 }
 
                 if (isActive) {
                     this.syncMyPlayer(true);
                 } else {
                     remove(child(gamePlayersRef, currentUser));
+                    this.focusChatAfterClose();
                 }
             }
 

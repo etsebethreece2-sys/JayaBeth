@@ -103,11 +103,11 @@
             align-items: flex-start;
             width: 82px;
             flex-shrink: 0;
-            position: relative;
-            z-index: 30;
+            position: static;
         }
 
         .mini-app {
+            position: relative;
             width: 72px;
             min-height: 72px;
             height: 72px;
@@ -579,28 +579,58 @@
         }
 
         .mini-app.game-app.active {
-            width: 630px;
-            min-height: 650px;
+            position: absolute;
+            inset: 0;
+            width: auto;
+            height: auto;
+            min-height: 0;
+            padding: 15px;
+            cursor: default;
+            z-index: 120;
+            display: block;
+        }
+
+        .game-app.active .app-icon-button {
+            display: none;
         }
 
         .game-app .app-panel-header {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 5;
             justify-content: flex-end;
-            padding-bottom: 6px;
-            margin-bottom: 8px;
+            padding: 0;
+            margin: 0;
+            border-bottom: none;
+        }
+
+        .game-app .app-close-btn {
+            width: 34px;
+            height: 34px;
+            font-size: 16px;
+            background: rgba(255,255,255,0.82);
+            box-shadow: 0 5px 14px rgba(0,0,0,0.22);
+        }
+
+        .game-app.active .app-panel {
+            height: 100%;
+            max-height: none;
         }
 
         .farm-game-shell {
             width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 8px;
+            align-items: stretch;
+            justify-content: stretch;
         }
 
         #phaserGame {
-            width: 600px;
-            height: 490px;
-            border-radius: 18px;
+            width: 100%;
+            height: 100%;
+            border-radius: 22px;
             overflow: hidden;
             border: 2px solid #4a3554;
             background: #6dbb5a;
@@ -614,17 +644,6 @@
             height: 100% !important;
             display: block;
             image-rendering: pixelated;
-        }
-
-        .farm-game-tip {
-            font-size: 10.5px;
-            line-height: 1.25;
-            color: #333;
-            text-align: center;
-            background: rgba(255,255,255,0.38);
-            border-radius: 14px;
-            padding: 7px 9px;
-            box-sizing: border-box;
         }
 
         .side-container {
@@ -1717,8 +1736,7 @@
 
         body.dark-mode .bucket-item,
         body.dark-mode .calendar-event-item,
-        body.dark-mode .calendar-event-empty,
-        body.dark-mode .farm-game-tip {
+        body.dark-mode .calendar-event-empty {
             background: rgba(0, 0, 0, 0.3);
             color: #ddd;
         }
@@ -1817,9 +1835,6 @@
 
                         <div class="farm-game-shell" onclick="event.stopPropagation()">
                             <div id="phaserGame"></div>
-                            <div class="farm-game-tip">
-                                Move with WASD or arrow keys. Click soil to plant or water. Shift-click/right-click removes crops.
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -2352,7 +2367,7 @@
         let farmGameIsOpen = false;
         let farmCropsData = {};
 
-        const FARM_INTERNAL_WIDTH = 400;
+        const FARM_INTERNAL_WIDTH = 530;
         const FARM_INTERNAL_HEIGHT = 300;
         const FARM_PLAYER_SYNC_MS = 100;
         const FARM_PLAYER_SYNC_DISTANCE = 2;
@@ -2436,10 +2451,10 @@
                 this.onDisconnectReady = false;
                 this.acceptInput = false;
                 this.tileSize = 26;
-                this.gridCols = 10;
+                this.gridCols = 12;
                 this.gridRows = 6;
-                this.gridX = 70;
-                this.gridY = 78;
+                this.gridX = 132;
+                this.gridY = 82;
             }
 
             create() {
@@ -2466,8 +2481,8 @@
                 this.releaseKeyboardCapture();
 
                 this.myPlayer = {
-                    x: currentUser === 'Shanky' ? 128 : 272,
-                    y: 220,
+                    x: currentUser === 'Shanky' ? 172 : 358,
+                    y: 224,
                     color: farmColors[currentUser] || 0xffffff
                 };
 
@@ -2543,19 +2558,51 @@
 
             drawMap() {
                 const g = this.add.graphics();
+                const w = FARM_INTERNAL_WIDTH;
+                const h = FARM_INTERNAL_HEIGHT;
 
-                g.fillStyle(0x86c96f, 1);
-                g.fillRect(0, 0, 400, 300);
+                g.fillStyle(0x82c96e, 1);
+                g.fillRect(0, 0, w, h);
 
-                g.fillStyle(0x9bd37e, 1);
-                for (let x = 0; x < 400; x += 32) {
-                    for (let y = 0; y < 300; y += 32) {
-                        if ((x + y) % 64 === 0) g.fillRect(x, y, 32, 32);
+                // Soft patchwork grass base.
+                for (let x = 0; x < w; x += 26) {
+                    for (let y = 0; y < h; y += 26) {
+                        const shade = (x * 7 + y * 11) % 4;
+                        const color = shade === 0 ? 0x8fd275 : shade === 1 ? 0x78bd64 : shade === 2 ? 0x96d87f : 0x82c96e;
+                        g.fillStyle(color, shade === 3 ? 0.28 : 0.42);
+                        g.fillRect(x, y, 26, 26);
                     }
                 }
 
-                g.fillStyle(0x7ab765, 1);
-                g.fillRect(0, 250, 400, 50);
+                // Little grass blades, flowers, and stones around the map.
+                for (let i = 0; i < 180; i++) {
+                    const x = (i * 47) % w;
+                    const y = (i * 83) % h;
+                    const onField = x > this.gridX - 18 && x < this.gridX + this.gridCols * this.tileSize + 18 && y > this.gridY - 18 && y < this.gridY + this.gridRows * this.tileSize + 18;
+                    const nearHouse = x < 118 && y < 88;
+                    const nearWater = x > 412 && x < 510 && y < 92;
+
+                    if (onField || nearHouse || nearWater) continue;
+
+                    if (i % 17 === 0) {
+                        g.fillStyle(0xf7d6ff, 0.8);
+                        g.fillCircle(x, y, 1.4);
+                        g.fillStyle(0xfff7a8, 0.75);
+                        g.fillCircle(x + 2, y + 1, 1.1);
+                    } else if (i % 13 === 0) {
+                        g.fillStyle(0xb6c5a8, 0.45);
+                        g.fillEllipse(x, y, 4, 2);
+                    } else {
+                        g.lineStyle(1, i % 2 === 0 ? 0x4f9a45 : 0x6eb75c, 0.55);
+                        g.beginPath();
+                        g.moveTo(x, y + 2);
+                        g.lineTo(x + ((i % 3) - 1), y - 3);
+                        g.strokePath();
+                    }
+                }
+
+                g.fillStyle(0x6fb35e, 1);
+                g.fillRect(0, 250, w, 50);
 
                 g.fillStyle(0x9c744f, 1);
                 g.fillRoundedRect(24, 28, 76, 44, 6);
@@ -2567,12 +2614,16 @@
                 g.fillRect(34, 42, 12, 12);
                 g.fillRect(76, 42, 12, 12);
 
-                g.fillStyle(0x67bce8, 1);
-                g.fillRoundedRect(304, 34, 62, 38, 14);
-                g.fillStyle(0x9de2ff, 0.55);
-                g.fillEllipse(334, 48, 44, 10);
+                g.fillStyle(0x4ca8dd, 1);
+                g.fillRoundedRect(430, 32, 74, 44, 16);
+                g.fillStyle(0x79cef0, 0.9);
+                g.fillRoundedRect(436, 38, 62, 32, 13);
+                g.fillStyle(0xc8f4ff, 0.45);
+                g.fillEllipse(467, 48, 48, 10);
+                g.fillStyle(0x2f8dbf, 0.35);
+                g.fillEllipse(456, 62, 34, 7);
 
-                this.drawCow(270, 54);
+                this.drawCow(382, 54);
 
                 g.fillStyle(0xb37b4b, 1);
                 g.fillRoundedRect(this.gridX - 8, this.gridY - 8, this.gridCols * this.tileSize + 16, this.gridRows * this.tileSize + 16, 10);
@@ -2584,18 +2635,12 @@
 
                         g.fillStyle((row + col) % 2 === 0 ? 0xc98b55 : 0xba7847, 1);
                         g.fillRoundedRect(x + 1, y + 1, this.tileSize - 2, this.tileSize - 2, 4);
+                        g.lineStyle(1, 0x8e5836, 0.22);
+                        g.strokeRoundedRect(x + 3, y + 3, this.tileSize - 6, this.tileSize - 6, 3);
                     }
                 }
 
-                this.add.text(200, 18, 'Shared Little Farm', {
-                    fontFamily: 'Fredoka, sans-serif',
-                    fontSize: '17px',
-                    color: '#ffffff',
-                    stroke: '#4a3554',
-                    strokeThickness: 4
-                }).setOrigin(0.5);
-
-                this.add.text(200, 282, 'Click soil: plant/water • Shift/right-click: remove', {
+                this.add.text(w / 2, 282, 'Click soil: plant/water • Mature crops collect on click • Shift/right-click removes', {
                     fontFamily: 'Fredoka, sans-serif',
                     fontSize: '10px',
                     color: '#ffffff',
@@ -2672,7 +2717,8 @@
                     if (typeof crop.tileX !== 'number' || typeof crop.tileY !== 'number') return;
 
                     const stage = this.getCropStage(crop);
-                    const visualKey = `${stage}_${crop.watered ? 1 : 0}`;
+                    const cropScale = this.getCropScale(key);
+                    const visualKey = `${stage}_${crop.watered ? 1 : 0}_${cropScale.toFixed(2)}`;
 
                     if (this.cropObjects[key] && this.cropVisualStates[key] === visualKey) return;
 
@@ -2685,6 +2731,7 @@
                     const centerY = this.gridY + crop.tileY * this.tileSize + this.tileSize / 2;
                     const container = this.add.container(centerX, centerY);
                     container.setDepth(10);
+                    container.setScale(cropScale);
 
                     const shadow = this.add.ellipse(0, 8, 18, 7, 0x5d3a20, 0.25);
                     container.add(shadow);
@@ -2716,6 +2763,18 @@
                     this.cropObjects[key] = container;
                     this.cropVisualStates[key] = visualKey;
                 });
+            }
+
+            getCropScale(key) {
+                let hash = 0;
+
+                for (let i = 0; i < key.length; i++) {
+                    hash = ((hash << 5) - hash) + key.charCodeAt(i);
+                    hash |= 0;
+                }
+
+                const normalized = Math.abs(hash % 100) / 100;
+                return 0.9 + normalized * 0.22;
             }
 
             randomBetween(min, max) {
@@ -2990,8 +3049,8 @@
                     moved = true;
                 }
 
-                this.myPlayer.x = window.Phaser.Math.Clamp(this.myPlayer.x, 18, 382);
-                this.myPlayer.y = window.Phaser.Math.Clamp(this.myPlayer.y, 55, 272);
+                this.myPlayer.x = window.Phaser.Math.Clamp(this.myPlayer.x, 18, FARM_INTERNAL_WIDTH - 18);
+                this.myPlayer.y = window.Phaser.Math.Clamp(this.myPlayer.y, 55, FARM_INTERNAL_HEIGHT - 28);
 
                 if (this.players[currentUser]) {
                     this.players[currentUser].x = this.myPlayer.x;

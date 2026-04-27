@@ -1807,6 +1807,23 @@
                     </div>
                 </div>
 
+                <div class="mini-app box-style game-app" id="gameApp" onclick="toggleApp('gameApp')">
+                    <button class="app-icon-button"><span class="app-icon">🌾</span></button>
+
+                    <div class="app-panel">
+                        <div class="app-panel-header">
+                            <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('gameApp')">✕</button>
+                        </div>
+
+                        <div class="farm-game-shell" onclick="event.stopPropagation()">
+                            <div id="phaserGame"></div>
+                            <div class="farm-game-tip">
+                                Move with WASD or arrow keys. Click soil to plant or water. Shift-click/right-click removes crops.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mini-app box-style calendar-app" id="calendarApp" onclick="toggleApp('calendarApp')">
                     <button class="app-icon-button"><span class="app-icon">📅</span></button>
 
@@ -1838,23 +1855,6 @@
                                     <input type="text" id="calendarEventInput" placeholder="Add event..." onkeypress="handleCalendarEventKeyPress(event)">
                                     <button onclick="addCalendarEvent()">Add</button>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mini-app box-style game-app" id="gameApp" onclick="toggleApp('gameApp')">
-                    <button class="app-icon-button"><span class="app-icon">🌾</span></button>
-
-                    <div class="app-panel">
-                        <div class="app-panel-header">
-                            <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('gameApp')">✕</button>
-                        </div>
-
-                        <div class="farm-game-shell" onclick="event.stopPropagation()">
-                            <div id="phaserGame"></div>
-                            <div class="farm-game-tip">
-                                Move with WASD or arrow keys. Click soil to plant or water. Shift-click/right-click removes crops.
                             </div>
                         </div>
                     </div>
@@ -2352,6 +2352,14 @@
         let farmGameIsOpen = false;
         let farmCropsData = {};
 
+        const FARM_INTERNAL_WIDTH = 400;
+        const FARM_INTERNAL_HEIGHT = 300;
+        const FARM_PLAYER_SYNC_MS = 100;
+        const FARM_PLAYER_SYNC_DISTANCE = 2;
+        const FARM_STALE_PLAYER_MS = 15000;
+        const FARM_STALE_PLAYER_CLEANUP_MS = 10000;
+        const FARM_REMOTE_INTERPOLATION_MS = 120;
+
         const farmColors = {
             Shanky: 0x8a2be2,
             Reece: 0xff69b4
@@ -2362,8 +2370,14 @@
         window.setFarmGameActive = (isActive) => {
             farmGameIsOpen = isActive;
 
-            if (farmSceneRef && typeof farmSceneRef.setActiveState === 'function') {
-                farmSceneRef.setActiveState(isActive);
+            if (!phaserGame || !farmSceneRef || typeof farmSceneRef.setActiveState !== 'function') return;
+
+            if (isActive) {
+                phaserGame.scene.resume('FarmScene');
+                farmSceneRef.setActiveState(true);
+            } else {
+                farmSceneRef.setActiveState(false);
+                phaserGame.scene.pause('FarmScene');
             }
         };
 
@@ -2381,8 +2395,8 @@
             const config = {
                 type: window.Phaser.AUTO,
                 parent: 'phaserGame',
-                width: 400,
-                height: 300,
+                width: FARM_INTERNAL_WIDTH,
+                height: FARM_INTERNAL_HEIGHT,
                 backgroundColor: '#6dbb5a',
                 pixelArt: true,
                 antialias: false,
@@ -2408,7 +2422,11 @@
                 this.players = {};
                 this.remotePlayerData = {};
                 this.cropObjects = {};
+                this.cropVisualStates = {};
                 this.lastPlayerSync = 0;
+                this.lastSyncedX = null;
+                this.lastSyncedY = null;
+                this.onDisconnectReady = false;
                 this.acceptInput = false;
                 this.tileSize = 26;
                 this.gridCols = 10;
@@ -2587,16 +2605,33 @@
             }
 
             redrawCrops() {
-                Object.values(this.cropObjects).forEach(obj => obj.destroy());
-                this.cropObjects = {};
+                const activeKeys = new Set(Object.keys(farmCropsData || {}));
+
+                Object.keys(this.cropObjects).forEach((key) => {
+                    if (!activeKeys.has(key)) {
+                        this.cropObjects[key].destroy();
+                        delete this.cropObjects[key];
+                        delete this.cropVisualStates[key];
+                    }
+                });
 
                 Object.entries(farmCropsData || {}).forEach(([key, crop]) => {
                     if (typeof crop.tileX !== 'number' || typeof crop.tileY !== 'number') return;
 
                     const stage = this.getCropStage(crop);
+                    const visualKey = `${stage}_${crop.watered ? 1 : 0}`;
+
+                    if (this.cropObjects[key] && this.cropVisualStates[key] === visualKey) return;
+
+                    if (this.cropObjects[key]) {
+                        this.cropObjects[key].destroy();
+                        delete this.cropObjects[key];
+                    }
+
                     const centerX = this.gridX + crop.tileX * this.tileSize + this.tileSize / 2;
                     const centerY = this.gridY + crop.tileY * this.tileSize + this.tileSize / 2;
                     const container = this.add.container(centerX, centerY);
+                    container.setDepth(10);
 
                     const shadow = this.add.ellipse(0, 8, 18, 7, 0x5d3a20, 0.25);
                     container.add(shadow);
@@ -2626,6 +2661,7 @@
                     }
 
                     this.cropObjects[key] = container;
+                    this.cropVisualStates[key] = visualKey;
                 });
             }
 
@@ -2636,7 +2672,7 @@
             burstCropParticles(x, y) {
                 const colors = [0xffcf5c, 0xff9f43, 0x76d46c, 0xffffff];
 
-                for (let i = 0; i < 18; i++) {
+                for (let i = 0; i < 12; i++) {
                     const particle = this.add.circle(x, y, this.randomBetween(1.6, 3.2), colors[i % colors.length], 0.95);
                     particle.setDepth(45);
 
@@ -2651,7 +2687,7 @@
                         y: targetY,
                         alpha: 0,
                         scale: 0.25,
-                        duration: this.randomBetween(420, 760),
+                        duration: this.randomBetween(360, 620),
                         ease: 'Cubic.easeOut',
                         onComplete: () => particle.destroy()
                     });
@@ -2721,14 +2757,8 @@
                         sprite.x = player.x;
                         sprite.y = player.y;
                     } else {
-                        this.tweens.killTweensOf(sprite);
-                        this.tweens.add({
-                            targets: sprite,
-                            x: player.x,
-                            y: player.y,
-                            duration: 90,
-                            ease: 'Linear'
-                        });
+                        sprite.targetX = player.x;
+                        sprite.targetY = player.y;
                     }
                 });
 
@@ -2742,9 +2772,20 @@
                         delete this.players[name];
                     }
                 });
+            }
 
-                const count = Object.keys(visiblePlayers).length;
-                updateFarmStatus();
+            interpolateRemotePlayers(delta) {
+                Object.entries(this.players).forEach(([name, sprite]) => {
+                    if (name === currentUser) return;
+                    if (typeof sprite.targetX !== 'number' || typeof sprite.targetY !== 'number') return;
+
+                    const amount = Math.min(1, delta / FARM_REMOTE_INTERPOLATION_MS);
+                    sprite.x += (sprite.targetX - sprite.x) * amount;
+                    sprite.y += (sprite.targetY - sprite.y) * amount;
+
+                    if (Math.abs(sprite.targetX - sprite.x) < 0.15) sprite.x = sprite.targetX;
+                    if (Math.abs(sprite.targetY - sprite.y) < 0.15) sprite.y = sprite.targetY;
+                });
             }
 
             setActiveState(isActive) {
@@ -2758,7 +2799,6 @@
                     this.syncMyPlayer(true);
                 } else {
                     remove(child(gamePlayersRef, currentUser));
-                    updateFarmStatus();
                 }
             }
 
@@ -2766,22 +2806,33 @@
                 if (!this.myPlayer) return;
 
                 const now = Date.now();
+                const movedEnough =
+                    this.lastSyncedX === null ||
+                    this.lastSyncedY === null ||
+                    Math.abs(this.myPlayer.x - this.lastSyncedX) > FARM_PLAYER_SYNC_DISTANCE ||
+                    Math.abs(this.myPlayer.y - this.lastSyncedY) > FARM_PLAYER_SYNC_DISTANCE;
 
-                if (!force && now - this.lastPlayerSync < 80) return;
+                if (!force && !movedEnough) return;
+                if (!force && now - this.lastPlayerSync < FARM_PLAYER_SYNC_MS) return;
 
                 this.lastPlayerSync = now;
+                this.lastSyncedX = this.myPlayer.x;
+                this.lastSyncedY = this.myPlayer.y;
 
                 const myRef = child(gamePlayersRef, currentUser);
 
+                if (!this.onDisconnectReady) {
+                    onDisconnect(myRef).remove();
+                    this.onDisconnectReady = true;
+                }
+
                 set(myRef, {
                     name: currentUser,
-                    x: Math.round(this.myPlayer.x * 10) / 10,
-                    y: Math.round(this.myPlayer.y * 10) / 10,
+                    x: Math.round(this.myPlayer.x),
+                    y: Math.round(this.myPlayer.y),
                     color: this.myPlayer.color,
                     lastSeen: Date.now()
                 });
-
-                onDisconnect(myRef).remove();
             }
 
             isTypingInInput() {
@@ -2790,6 +2841,8 @@
             }
 
             update(time, delta) {
+                this.interpolateRemotePlayers(delta);
+
                 if (!this.acceptInput || !this.myPlayer || this.isTypingInInput()) return;
 
                 const speed = Math.min(3.2, delta * 0.115);
@@ -2828,6 +2881,32 @@
                 }
             }
         }
+
+        const cleanupStaleFarmPlayers = () => {
+            get(gamePlayersRef).then((snapshot) => {
+                if (!snapshot.exists()) return;
+
+                snapshot.forEach((childNode) => {
+                    const player = childNode.val() || {};
+
+                    if (Date.now() - (player.lastSeen || 0) > FARM_STALE_PLAYER_MS) {
+                        remove(child(gamePlayersRef, childNode.key));
+                    }
+                });
+            });
+        };
+
+        setInterval(cleanupStaleFarmPlayers, FARM_STALE_PLAYER_CLEANUP_MS);
+
+        document.addEventListener('visibilitychange', () => {
+            if (!farmSceneRef || !farmGameIsOpen) return;
+
+            if (document.hidden) {
+                remove(child(gamePlayersRef, currentUser));
+            } else {
+                farmSceneRef.syncMyPlayer(true);
+            }
+        });
 
         window.addEventListener('beforeunload', () => {
             remove(child(gamePlayersRef, currentUser));

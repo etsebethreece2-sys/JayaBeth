@@ -640,6 +640,7 @@
         }
 
         .farm-game-shell {
+            position: relative;
             width: 100%;
             height: 100%;
             display: flex;
@@ -664,6 +665,67 @@
             height: 100% !important;
             display: block;
             image-rendering: pixelated;
+        }
+
+
+        .farm-hotbar {
+            position: absolute;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 7;
+            pointer-events: auto;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(58, 40, 28, 0.42);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+        }
+
+        .farm-tool-slot {
+            min-width: 84px;
+            height: 56px;
+            padding: 7px 12px;
+            border: 2px solid rgba(74, 53, 84, 0.55);
+            border-radius: 18px;
+            background: rgba(255,255,255,0.78);
+            color: #4a3554;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .farm-tool-slot:hover {
+            transform: translateY(-2px) scale(1.03);
+            background: rgba(255,255,255,0.92);
+        }
+
+        .farm-tool-slot.active {
+            background: linear-gradient(135deg, #fff6c9, #ffe28d);
+            border-color: #4a3554;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.16);
+            transform: translateY(-2px);
+        }
+
+        .farm-tool-slot .farm-tool-icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .farm-tool-slot .farm-tool-key {
+            font-size: 10px;
+            opacity: 0.75;
         }
 
         .side-container {
@@ -1982,6 +2044,18 @@
             <button class="farm-overlay-close app-close-btn" onclick="event.stopPropagation(); closeApp('gameApp')">✕</button>
             <div class="farm-game-shell">
                 <div id="phaserGame"></div>
+                <div id="farmHotbar" class="farm-hotbar" onclick="event.stopPropagation()">
+                    <button id="farmToolHand" class="farm-tool-slot active" onclick="setFarmTool('hand')" title="Hand tool">
+                        <span class="farm-tool-icon">🖐️</span>
+                        <span>Hand</span>
+                        <span class="farm-tool-key">1</span>
+                    </button>
+                    <button id="farmToolCan" class="farm-tool-slot" onclick="setFarmTool('watering-can')" title="Watering can">
+                        <span class="farm-tool-icon">🪣</span>
+                        <span>Water</span>
+                        <span class="farm-tool-key">2</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -2396,6 +2470,32 @@
         };
 
         let farmUiTransitionTimer = null;
+        let currentFarmTool = 'hand';
+
+        const updateFarmToolHotbar = () => {
+            const handBtn = document.getElementById('farmToolHand');
+            const canBtn = document.getElementById('farmToolCan');
+
+            handBtn?.classList.toggle('active', currentFarmTool === 'hand');
+            canBtn?.classList.toggle('active', currentFarmTool === 'watering-can');
+        };
+
+        window.setFarmTool = (tool) => {
+            currentFarmTool = tool === 'watering-can' ? 'watering-can' : 'hand';
+            updateFarmToolHotbar();
+        };
+
+        document.addEventListener('keydown', (event) => {
+            if (!farmGameIsOpen) return;
+            const tag = document.activeElement ? document.activeElement.tagName : '';
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+            if (event.key === '1') {
+                window.setFarmTool('hand');
+            } else if (event.key === '2') {
+                window.setFarmTool('watering-can');
+            }
+        });
 
         const prepareFarmOverlaySize = () => {
             const wrapper = document.getElementById('app-wrapper');
@@ -2416,6 +2516,7 @@
 
             prepareFarmOverlaySize();
             clearTimeout(farmUiTransitionTimer);
+            updateFarmToolHotbar();
 
             gameIcon?.classList.add('active');
             wrapper.classList.remove('farm-content-unrendered');
@@ -2522,6 +2623,7 @@
                 this.lastSyncedY = null;
                 this.onDisconnectReady = false;
                 this.acceptInput = false;
+                this.cow = null;
                 this.tileSize = 26;
                 this.gridCols = 12;
                 this.gridRows = 6;
@@ -2589,7 +2691,7 @@
 
                         this.burstCropParticles(centerX, centerY);
                         remove(cropRef);
-                    } else {
+                    } else if (currentFarmTool === 'watering-can' && !existingCrop.watered) {
                         set(cropRef, {
                             ...existingCrop,
                             tileX: tile.x,
@@ -2625,6 +2727,7 @@
                     }
                 });
 
+                updateFarmToolHotbar();
                 this.setActiveState(farmGameIsOpen);
             }
 
@@ -2673,8 +2776,33 @@
                     }
                 }
 
-                g.fillStyle(0x6fb35e, 1);
+                g.fillStyle(0x74be61, 1);
                 g.fillRect(0, 250, w, 50);
+
+                for (let x = 0; x < w; x += 18) {
+                    for (let y = 252; y < h; y += 14) {
+                        const variant = ((x * 3) + (y * 5)) % 5;
+                        if (variant === 0) {
+                            g.fillStyle(0x95d47b, 0.32);
+                            g.fillEllipse(x + 8, y + 4, 14, 6);
+                        } else if (variant === 1) {
+                            g.fillStyle(0xb8c8a7, 0.42);
+                            g.fillEllipse(x + 6, y + 6, 5, 3);
+                        } else if (variant === 2) {
+                            g.fillStyle(0xf8d7ff, 0.72);
+                            g.fillCircle(x + 7, y + 5, 1.1);
+                            g.fillStyle(0xfff1a0, 0.72);
+                            g.fillCircle(x + 10, y + 7, 0.9);
+                        } else {
+                            g.lineStyle(1, variant === 3 ? 0x5aa54f : 0x4d9645, 0.62);
+                            g.beginPath();
+                            g.moveTo(x + 6, y + 8);
+                            g.lineTo(x + 5, y + 2);
+                            g.lineTo(x + 8, y + 4);
+                            g.strokePath();
+                        }
+                    }
+                }
 
                 this.drawCabin(g, 20, 12);
 
@@ -2783,7 +2911,16 @@
                 cow.setDepth(6);
 
                 const shadow = this.add.ellipse(3, 15, 42, 9, 0x000000, 0.18);
+                const tag = this.add.text(3, -28, 'Buttermilk', {
+                    fontSize: '10px',
+                    color: '#ffffff',
+                    stroke: '#4a3554',
+                    strokeThickness: 3,
+                    fontStyle: '700'
+                }).setOrigin(0.5);
+
                 cow.add(shadow);
+                cow.add(tag);
                 cow.add(this.add.rectangle(0, 2, 34, 18, 0xf7f0df));
                 cow.add(this.add.circle(-8, -1, 5, 0x3b2a22));
                 cow.add(this.add.circle(6, 5, 6, 0x3b2a22));
@@ -2804,6 +2941,13 @@
                 cow.add(this.add.rectangle(-20, -1, 10, 2, 0x3b2a22));
                 cow.add(this.add.circle(-25, 1, 3, 0x3b2a22));
 
+                const hitArea = this.add.zone(3, 2, 64, 52).setOrigin(0.5).setInteractive({ useHandCursor: true });
+                hitArea.on('pointerdown', (pointer) => {
+                    if (pointer && pointer.event) pointer.event.stopPropagation();
+                    this.showCowHearts(x + 10, y - 16);
+                });
+                cow.add(hitArea);
+
                 this.tweens.add({
                     targets: cow,
                     y: y - 1,
@@ -2812,6 +2956,34 @@
                     repeat: -1,
                     ease: 'Sine.easeInOut'
                 });
+
+                this.cow = cow;
+            }
+
+            showCowHearts(x, y) {
+                const colors = [0xff89bf, 0xff5fa2, 0xffb3d4];
+
+                for (let i = 0; i < 6; i++) {
+                    const heart = this.add.text(x + this.randomBetween(-12, 12), y + this.randomBetween(-2, 10), '❤', {
+                        fontSize: '12px',
+                        color: '#ff7bb5',
+                        stroke: '#ffffff',
+                        strokeThickness: 2
+                    });
+                    heart.setDepth(40);
+                    heart.setTint(colors[i % colors.length]);
+
+                    this.tweens.add({
+                        targets: heart,
+                        x: heart.x + this.randomBetween(-14, 14),
+                        y: heart.y - this.randomBetween(18, 34),
+                        alpha: 0,
+                        scale: 0.7,
+                        duration: this.randomBetween(500, 780),
+                        ease: 'Cubic.easeOut',
+                        onComplete: () => heart.destroy()
+                    });
+                }
             }
 
             pointerToTile(x, y) {

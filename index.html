@@ -197,7 +197,7 @@
         }
 
         .mini-app.active .app-panel {
-            max-height: 620px;
+            max-height: 780px;
             opacity: 1;
             transform: translateY(0) scale(1);
             pointer-events: auto;
@@ -576,6 +576,55 @@
         .calendar-event-form button:hover {
             transform: scale(1.06);
             filter: brightness(1.12);
+        }
+
+        .mini-app.game-app.active {
+            width: 630px;
+            min-height: 650px;
+        }
+
+        .game-app .app-panel-header {
+            justify-content: flex-end;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .farm-game-shell {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #phaserGame {
+            width: 600px;
+            height: 490px;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 2px solid #4a3554;
+            background: #6dbb5a;
+            box-shadow:
+                inset 0 0 0 2px rgba(255,255,255,0.35),
+                0 8px 18px rgba(74, 53, 84, 0.25);
+        }
+
+        #phaserGame canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        .farm-game-tip {
+            font-size: 10.5px;
+            line-height: 1.25;
+            color: #333;
+            text-align: center;
+            background: rgba(255,255,255,0.38);
+            border-radius: 14px;
+            padding: 7px 9px;
+            box-sizing: border-box;
         }
 
         .side-container {
@@ -1668,7 +1717,8 @@
 
         body.dark-mode .bucket-item,
         body.dark-mode .calendar-event-item,
-        body.dark-mode .calendar-event-empty {
+        body.dark-mode .calendar-event-empty,
+        body.dark-mode .farm-game-tip {
             background: rgba(0, 0, 0, 0.3);
             color: #ddd;
         }
@@ -1779,6 +1829,7 @@
 
                             <div class="calendar-dates" id="calendarDates"></div>
 
+
                             <div class="calendar-event-panel" onclick="event.stopPropagation()">
                                 <div id="selectedDateTitle" class="selected-date-title">Select a day</div>
                                 <div id="calendarEventList" class="calendar-event-list"></div>
@@ -1787,6 +1838,23 @@
                                     <input type="text" id="calendarEventInput" placeholder="Add event..." onkeypress="handleCalendarEventKeyPress(event)">
                                     <button onclick="addCalendarEvent()">Add</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mini-app box-style game-app" id="gameApp" onclick="toggleApp('gameApp')">
+                    <button class="app-icon-button"><span class="app-icon">🌾</span></button>
+
+                    <div class="app-panel">
+                        <div class="app-panel-header">
+                            <button class="app-close-btn" onclick="event.stopPropagation(); closeApp('gameApp')">✕</button>
+                        </div>
+
+                        <div class="farm-game-shell" onclick="event.stopPropagation()">
+                            <div id="phaserGame"></div>
+                            <div class="farm-game-tip">
+                                Move with WASD or arrow keys. Click soil to plant or water. Shift-click/right-click removes crops.
                             </div>
                         </div>
                     </div>
@@ -1886,9 +1954,11 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove, child, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove, child, set, get, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         let galleryImages = [];
         let currentImgIndex = 0;
@@ -1900,16 +1970,32 @@
             if (id === 'calendarApp' && isOpen) return;
 
             document.querySelectorAll('.mini-app').forEach(a => {
-                if (a.id !== id && a.id !== 'calendarApp') {
+                if (a.id !== id && a.id !== 'calendarApp' && a.id !== 'gameApp') {
                     a.classList.remove('active');
                 }
             });
 
-            app.classList.toggle('active', !isOpen);
+            const shouldOpen = !isOpen;
+            app.classList.toggle('active', shouldOpen);
+
+            if (id === 'gameApp') {
+                if (shouldOpen) {
+                    setTimeout(() => {
+                        window.startFarmGame();
+                        window.setFarmGameActive(true);
+                    }, 80);
+                } else {
+                    window.setFarmGameActive(false);
+                }
+            }
         };
 
         window.closeApp = (id) => {
             document.getElementById(id).classList.remove('active');
+
+            if (id === 'gameApp') {
+                window.setFarmGameActive(false);
+            }
         };
 
         window.toggleDarkMode = () => {
@@ -2248,6 +2334,8 @@
         const bucketListRef = ref(db, "bucketlist");
         const pinnedRef = ref(db, "pinned");
         const calendarEventsRef = ref(db, "calendarEvents");
+        const gamePlayersRef = ref(db, "farmGame/players");
+        const gameCropsRef = ref(db, "farmGame/crops");
 
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let otherUserLastSeen = 0;
@@ -2258,6 +2346,493 @@
         let renderedMessageKeys = new Set();
         let firstMessageRenderDone = false;
         let knownMessageKeys = new Set();
+
+        let phaserGame = null;
+        let farmSceneRef = null;
+        let farmGameIsOpen = false;
+        let farmCropsData = {};
+
+        const farmColors = {
+            Shanky: 0x8a2be2,
+            Reece: 0xff69b4
+        };
+
+        const updateFarmStatus = () => {};
+
+        window.setFarmGameActive = (isActive) => {
+            farmGameIsOpen = isActive;
+
+            if (farmSceneRef && typeof farmSceneRef.setActiveState === 'function') {
+                farmSceneRef.setActiveState(isActive);
+            }
+        };
+
+        window.startFarmGame = () => {
+            if (phaserGame) {
+                window.setFarmGameActive(true);
+                return;
+            }
+
+            if (!window.Phaser) {
+                console.warn('Phaser is still loading. Try opening the game again.');
+                return;
+            }
+
+            const config = {
+                type: window.Phaser.AUTO,
+                parent: 'phaserGame',
+                width: 400,
+                height: 300,
+                backgroundColor: '#6dbb5a',
+                pixelArt: true,
+                antialias: false,
+                roundPixels: true,
+                fps: {
+                    target: 60,
+                    forceSetTimeOut: false
+                },
+                scale: {
+                    mode: window.Phaser.Scale.FIT,
+                    autoCenter: window.Phaser.Scale.CENTER_BOTH
+                },
+                scene: [FarmScene]
+            };
+
+            phaserGame = new window.Phaser.Game(config);
+        };
+
+        class FarmScene extends window.Phaser.Scene {
+            constructor() {
+                super('FarmScene');
+
+                this.players = {};
+                this.remotePlayerData = {};
+                this.cropObjects = {};
+                this.lastPlayerSync = 0;
+                this.acceptInput = false;
+                this.tileSize = 26;
+                this.gridCols = 10;
+                this.gridRows = 6;
+                this.gridX = 70;
+                this.gridY = 78;
+            }
+
+            create() {
+                farmSceneRef = this;
+
+                this.drawMap();
+                this.input.mouse.disableContextMenu();
+
+                this.keys = this.input.keyboard.addKeys({
+                    up: 'W',
+                    down: 'S',
+                    left: 'A',
+                    right: 'D'
+                });
+
+                this.cursors = this.input.keyboard.createCursorKeys();
+
+                this.myPlayer = {
+                    x: currentUser === 'Shanky' ? 128 : 272,
+                    y: 220,
+                    color: farmColors[currentUser] || 0xffffff
+                };
+
+                this.input.on('pointerdown', (pointer) => {
+                    if (!this.acceptInput) return;
+                    if (pointer.event) pointer.event.stopPropagation();
+
+                    const tile = this.pointerToTile(pointer.x, pointer.y);
+                    if (!tile) return;
+
+                    const cropKey = `${tile.x}_${tile.y}`;
+                    const cropRef = child(gameCropsRef, cropKey);
+                    const existingCrop = farmCropsData[cropKey];
+                    const wantsDelete = pointer.rightButtonDown() || Boolean(pointer.event && pointer.event.shiftKey);
+
+                    if (wantsDelete) {
+                        if (existingCrop) remove(cropRef);
+                        return;
+                    }
+
+                    if (!existingCrop) {
+                        set(cropRef, {
+                            tileX: tile.x,
+                            tileY: tile.y,
+                            plantedBy: currentUser,
+                            plantedAt: Date.now(),
+                            watered: false
+                        });
+                    } else if (this.getCropStage(existingCrop) >= 3) {
+                        const centerX = this.gridX + tile.x * this.tileSize + this.tileSize / 2;
+                        const centerY = this.gridY + tile.y * this.tileSize + this.tileSize / 2;
+
+                        this.burstCropParticles(centerX, centerY);
+                        remove(cropRef);
+                    } else {
+                        set(cropRef, {
+                            ...existingCrop,
+                            tileX: tile.x,
+                            tileY: tile.y,
+                            watered: true,
+                            wateredBy: currentUser,
+                            wateredAt: Date.now()
+                        });
+                    }
+                });
+
+                onValue(gamePlayersRef, (snapshot) => {
+                    this.remotePlayerData = snapshot.exists() ? snapshot.val() : {};
+                    this.syncPlayerSprites();
+                });
+
+                onValue(gameCropsRef, (snapshot) => {
+                    farmCropsData = snapshot.exists() ? snapshot.val() : {};
+                    this.redrawCrops();
+                });
+
+                this.time.addEvent({
+                    delay: 1000,
+                    loop: true,
+                    callback: () => this.redrawCrops()
+                });
+
+                this.time.addEvent({
+                    delay: 5000,
+                    loop: true,
+                    callback: () => {
+                        if (this.acceptInput) this.syncMyPlayer(true);
+                    }
+                });
+
+                this.setActiveState(farmGameIsOpen);
+            }
+
+            drawMap() {
+                const g = this.add.graphics();
+
+                g.fillStyle(0x86c96f, 1);
+                g.fillRect(0, 0, 400, 300);
+
+                g.fillStyle(0x9bd37e, 1);
+                for (let x = 0; x < 400; x += 32) {
+                    for (let y = 0; y < 300; y += 32) {
+                        if ((x + y) % 64 === 0) g.fillRect(x, y, 32, 32);
+                    }
+                }
+
+                g.fillStyle(0x7ab765, 1);
+                g.fillRect(0, 250, 400, 50);
+
+                g.fillStyle(0x9c744f, 1);
+                g.fillRoundedRect(24, 28, 76, 44, 6);
+                g.fillStyle(0xe7b46a, 1);
+                g.fillTriangle(16, 30, 62, 6, 108, 30);
+                g.fillStyle(0x5b3423, 1);
+                g.fillRect(54, 48, 16, 24);
+                g.fillStyle(0xffe7a6, 1);
+                g.fillRect(34, 42, 12, 12);
+                g.fillRect(76, 42, 12, 12);
+
+                g.fillStyle(0x67bce8, 1);
+                g.fillRoundedRect(304, 34, 62, 38, 14);
+                g.fillStyle(0x9de2ff, 0.55);
+                g.fillEllipse(334, 48, 44, 10);
+
+                g.fillStyle(0xb37b4b, 1);
+                g.fillRoundedRect(this.gridX - 8, this.gridY - 8, this.gridCols * this.tileSize + 16, this.gridRows * this.tileSize + 16, 10);
+
+                for (let row = 0; row < this.gridRows; row++) {
+                    for (let col = 0; col < this.gridCols; col++) {
+                        const x = this.gridX + col * this.tileSize;
+                        const y = this.gridY + row * this.tileSize;
+
+                        g.fillStyle((row + col) % 2 === 0 ? 0xc98b55 : 0xba7847, 1);
+                        g.fillRoundedRect(x + 1, y + 1, this.tileSize - 2, this.tileSize - 2, 4);
+                    }
+                }
+
+                this.add.text(200, 18, 'Shared Little Farm', {
+                    fontFamily: 'Fredoka, sans-serif',
+                    fontSize: '17px',
+                    color: '#ffffff',
+                    stroke: '#4a3554',
+                    strokeThickness: 4
+                }).setOrigin(0.5);
+
+                this.add.text(200, 282, 'Click soil: plant/water • Shift/right-click: remove', {
+                    fontFamily: 'Fredoka, sans-serif',
+                    fontSize: '10px',
+                    color: '#ffffff',
+                    stroke: '#4a3554',
+                    strokeThickness: 3
+                }).setOrigin(0.5);
+            }
+
+            pointerToTile(x, y) {
+                const col = Math.floor((x - this.gridX) / this.tileSize);
+                const row = Math.floor((y - this.gridY) / this.tileSize);
+
+                if (col < 0 || row < 0 || col >= this.gridCols || row >= this.gridRows) return null;
+
+                return { x: col, y: row };
+            }
+
+            getCropStage(crop) {
+                const plantedAt = crop.plantedAt || Date.now();
+                const growthMs = crop.watered ? 14000 : 24000;
+                const stage = Math.floor((Date.now() - plantedAt) / growthMs);
+
+                return Math.max(0, Math.min(3, stage));
+            }
+
+            redrawCrops() {
+                Object.values(this.cropObjects).forEach(obj => obj.destroy());
+                this.cropObjects = {};
+
+                Object.entries(farmCropsData || {}).forEach(([key, crop]) => {
+                    if (typeof crop.tileX !== 'number' || typeof crop.tileY !== 'number') return;
+
+                    const stage = this.getCropStage(crop);
+                    const centerX = this.gridX + crop.tileX * this.tileSize + this.tileSize / 2;
+                    const centerY = this.gridY + crop.tileY * this.tileSize + this.tileSize / 2;
+                    const container = this.add.container(centerX, centerY);
+
+                    const shadow = this.add.ellipse(0, 8, 18, 7, 0x5d3a20, 0.25);
+                    container.add(shadow);
+
+                    if (stage === 0) {
+                        container.add(this.add.circle(0, 2, 4, crop.watered ? 0x3f8f4f : 0x6b4a2f));
+                    } else if (stage === 1) {
+                        container.add(this.add.rectangle(-3, 1, 4, 12, 0x3e9c4a));
+                        container.add(this.add.rectangle(3, 2, 4, 10, 0x4bae55));
+                        container.add(this.add.circle(-5, -2, 4, 0x67c96b));
+                        container.add(this.add.circle(5, -1, 4, 0x67c96b));
+                    } else if (stage === 2) {
+                        container.add(this.add.rectangle(0, 1, 5, 18, 0x2f8f3d));
+                        container.add(this.add.circle(-7, -5, 6, 0x66c45f));
+                        container.add(this.add.circle(7, -4, 6, 0x66c45f));
+                        container.add(this.add.circle(0, -10, 5, 0x76d46c));
+                    } else {
+                        container.add(this.add.rectangle(0, 2, 5, 19, 0x2f8f3d));
+                        container.add(this.add.circle(-8, -5, 6, 0x58b953));
+                        container.add(this.add.circle(8, -5, 6, 0x58b953));
+                        container.add(this.add.circle(0, -11, 6, 0x62c75a));
+                        container.add(this.add.circle(0, -8, 4, 0xffcf5c));
+                    }
+
+                    if (crop.watered) {
+                        container.add(this.add.circle(9, 8, 2, 0x7cd8ff, 0.9));
+                    }
+
+                    this.cropObjects[key] = container;
+                });
+            }
+
+            randomBetween(min, max) {
+                return min + Math.random() * (max - min);
+            }
+
+            burstCropParticles(x, y) {
+                const colors = [0xffcf5c, 0xff9f43, 0x76d46c, 0xffffff];
+
+                for (let i = 0; i < 18; i++) {
+                    const particle = this.add.circle(x, y, this.randomBetween(1.6, 3.2), colors[i % colors.length], 0.95);
+                    particle.setDepth(45);
+
+                    const angle = this.randomBetween(0, Math.PI * 2);
+                    const distance = this.randomBetween(20, 58);
+                    const targetX = x + Math.cos(angle) * distance;
+                    const targetY = y + Math.sin(angle) * distance - this.randomBetween(4, 22);
+
+                    this.tweens.add({
+                        targets: particle,
+                        x: targetX,
+                        y: targetY,
+                        alpha: 0,
+                        scale: 0.25,
+                        duration: this.randomBetween(420, 760),
+                        ease: 'Cubic.easeOut',
+                        onComplete: () => particle.destroy()
+                    });
+                }
+            }
+
+            createPlayerSprite(name, player) {
+                const color = player.color || farmColors[name] || 0xffffff;
+                const container = this.add.container(player.x || 200, player.y || 220);
+
+                const shadow = this.add.ellipse(0, 12, 20, 7, 0x000000, 0.25);
+                const legs = this.add.rectangle(0, 10, 13, 12, 0x39271e);
+                const body = this.add.rectangle(0, 0, 18, 20, color);
+                const face = this.add.rectangle(0, -15, 16, 14, 0xffd7aa);
+                const leftEye = this.add.rectangle(-4, -16, 2, 3, 0x2b1b15);
+                const rightEye = this.add.rectangle(4, -16, 2, 3, 0x2b1b15);
+                const smile = this.add.rectangle(0, -11, 6, 1, 0x9c5a45, 0.75);
+                const hair = this.add.rectangle(0, -23, 18, 8, name === 'Shanky' ? 0x2b1b15 : 0x6b3f25);
+                const label = this.add.text(0, -38, name, {
+                    fontFamily: 'Fredoka, sans-serif',
+                    fontSize: '10px',
+                    color: '#ffffff',
+                    stroke: '#000000',
+                    strokeThickness: 3
+                }).setOrigin(0.5);
+
+                container.add([shadow, legs, body, face, leftEye, rightEye, smile, hair, label]);
+                container.setDepth(20);
+
+                const blink = () => {
+                    if (!container.active) return;
+
+                    leftEye.setScale(1, 0.25);
+                    rightEye.setScale(1, 0.25);
+
+                    this.time.delayedCall(120, () => {
+                        if (!container.active) return;
+                        leftEye.setScale(1, 1);
+                        rightEye.setScale(1, 1);
+                    });
+                };
+
+                container.blinkTimer = this.time.addEvent({
+                    delay: 1800 + Math.floor(Math.random() * 2400),
+                    loop: true,
+                    callback: blink
+                });
+
+                return container;
+            }
+
+            syncPlayerSprites() {
+                const now = Date.now();
+                const visiblePlayers = {};
+
+                Object.entries(this.remotePlayerData || {}).forEach(([name, player]) => {
+                    if (!player || now - (player.lastSeen || 0) > 45000) return;
+                    visiblePlayers[name] = player;
+
+                    if (!this.players[name]) {
+                        this.players[name] = this.createPlayerSprite(name, player);
+                    }
+
+                    const sprite = this.players[name];
+
+                    if (name === currentUser) {
+                        sprite.x = player.x;
+                        sprite.y = player.y;
+                    } else {
+                        this.tweens.killTweensOf(sprite);
+                        this.tweens.add({
+                            targets: sprite,
+                            x: player.x,
+                            y: player.y,
+                            duration: 90,
+                            ease: 'Linear'
+                        });
+                    }
+                });
+
+                Object.keys(this.players).forEach((name) => {
+                    if (!visiblePlayers[name]) {
+                        if (this.players[name].blinkTimer) {
+                            this.players[name].blinkTimer.remove(false);
+                        }
+
+                        this.players[name].destroy();
+                        delete this.players[name];
+                    }
+                });
+
+                const count = Object.keys(visiblePlayers).length;
+                updateFarmStatus();
+            }
+
+            setActiveState(isActive) {
+                this.acceptInput = isActive;
+
+                if (this.input && this.input.keyboard) {
+                    this.input.keyboard.enabled = isActive;
+                }
+
+                if (isActive) {
+                    this.syncMyPlayer(true);
+                } else {
+                    remove(child(gamePlayersRef, currentUser));
+                    updateFarmStatus();
+                }
+            }
+
+            syncMyPlayer(force = false) {
+                if (!this.myPlayer) return;
+
+                const now = Date.now();
+
+                if (!force && now - this.lastPlayerSync < 80) return;
+
+                this.lastPlayerSync = now;
+
+                const myRef = child(gamePlayersRef, currentUser);
+
+                set(myRef, {
+                    name: currentUser,
+                    x: Math.round(this.myPlayer.x * 10) / 10,
+                    y: Math.round(this.myPlayer.y * 10) / 10,
+                    color: this.myPlayer.color,
+                    lastSeen: Date.now()
+                });
+
+                onDisconnect(myRef).remove();
+            }
+
+            isTypingInInput() {
+                const tag = document.activeElement ? document.activeElement.tagName : '';
+                return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+            }
+
+            update(time, delta) {
+                if (!this.acceptInput || !this.myPlayer || this.isTypingInInput()) return;
+
+                const speed = Math.min(3.2, delta * 0.115);
+                let moved = false;
+
+                if (this.keys.left.isDown || this.cursors.left.isDown) {
+                    this.myPlayer.x -= speed;
+                    moved = true;
+                }
+
+                if (this.keys.right.isDown || this.cursors.right.isDown) {
+                    this.myPlayer.x += speed;
+                    moved = true;
+                }
+
+                if (this.keys.up.isDown || this.cursors.up.isDown) {
+                    this.myPlayer.y -= speed;
+                    moved = true;
+                }
+
+                if (this.keys.down.isDown || this.cursors.down.isDown) {
+                    this.myPlayer.y += speed;
+                    moved = true;
+                }
+
+                this.myPlayer.x = window.Phaser.Math.Clamp(this.myPlayer.x, 18, 382);
+                this.myPlayer.y = window.Phaser.Math.Clamp(this.myPlayer.y, 55, 272);
+
+                if (this.players[currentUser]) {
+                    this.players[currentUser].x = this.myPlayer.x;
+                    this.players[currentUser].y = this.myPlayer.y;
+                }
+
+                if (moved) {
+                    this.syncMyPlayer(false);
+                }
+            }
+        }
+
+        window.addEventListener('beforeunload', () => {
+            remove(child(gamePlayersRef, currentUser));
+        });
+
 
         const typingRef = (name) => ref(db, `typing/${name}`);
 

@@ -1728,6 +1728,26 @@
             margin-top: 5px;
         }
 
+        .bubble video {
+            max-width: 240px;
+            max-height: 260px;
+            display: block;
+            border-radius: 12px;
+            cursor: default;
+            margin-top: 5px;
+            background: #000;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.22);
+        }
+
+        .video-file-name {
+            max-width: 240px;
+            margin-top: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            opacity: 0.82;
+            word-break: break-word;
+        }
+
         .bubble.sticker-bubble img {
             max-width: 100px;
             width: 100px;
@@ -2147,13 +2167,13 @@
                 <div id="replyBar" class="reply-bar"></div>
 
                 <div class="chat-inputs">
-                    <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                    <input type="file" id="fileInput" accept="image/*,video/*" style="display:none;" onchange="handleMediaUpload(event)">
 
-                    <button onclick="document.getElementById('fileInput').click()" title="Upload Image">📷</button>
+                    <button onclick="document.getElementById('fileInput').click()" title="Upload Image or Video">📎</button>
                     <button onclick="toggleStickerMenu()" title="Stickers">😊</button>
 
                     <div class="input-wrapper">
-                        <input type="text" id="messageInput" placeholder="Message or paste image..." oninput="handleTyping(); toggleClearBtn()" onkeypress="handleKeyPress(event)">
+                        <input type="text" id="messageInput" placeholder="Message or paste image/video..." oninput="handleTyping(); toggleClearBtn()" onkeypress="handleKeyPress(event)">
                         <div id="clearBtn" class="clear-btn" onclick="clearInput()" title="Clear text">✕</div>
                     </div>
 
@@ -4010,6 +4030,26 @@
             return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
         };
 
+        const getMessagePreviewText = (data = {}) => {
+            if (data.text) return data.text;
+            if (data.video) return data.fileName ? `[Video: ${data.fileName}]` : '[Video]';
+            if (data.isSticker) return '[Sticker]';
+            if (data.image) return '[Image]';
+            return '[Message]';
+        };
+
+        const shortenPreviewText = (text, length = 20) => {
+            const safeText = text || '[Message]';
+            return safeText.length > length ? safeText.substring(0, length) + '...' : safeText;
+        };
+
+        const stopTypingForCurrentUser = () => {
+            set(typingRef(currentUser), {
+                isTyping: false,
+                timestamp: Date.now()
+            });
+        };
+
         const updateImageCounter = () => {
             const counter = document.getElementById('imageCounter');
             const deleteBtn = document.getElementById('lightboxDeleteBtn');
@@ -4088,8 +4128,10 @@
         };
 
         window.startReply = (text, user) => {
+            const replyText = text || "[Media]";
+
             replyingTo = {
-                text: text || "[Image]",
+                text: replyText,
                 user: user
             };
 
@@ -4097,7 +4139,7 @@
             bar.style.display = 'block';
 
             bar.innerHTML = `
-                <strong>Replying to ${user}:</strong> ${text || "[Image]"}
+                <strong>Replying to ${user}:</strong> ${replyText}
                 <span onclick="cancelReply()" style="cursor:pointer; float:right;">✕</span>
             `;
         };
@@ -4137,7 +4179,7 @@
                 const data = snapshot.val();
 
                 content.innerHTML = `
-                    <strong>📌 Pinned</strong> - ${data.name}: ${data.text ? data.text : '[Image]'}
+                    <strong>📌 Pinned</strong> - ${data.name}: ${getMessagePreviewText(data)}
                 `;
 
                 bar.style.display = 'flex';
@@ -4179,6 +4221,26 @@
 
         window.endHold = () => clearTimeout(holdTimer);
 
+        const MAX_VIDEO_UPLOAD_BYTES = 25 * 1024 * 1024; // 25 MB. Videos are stored as data URLs in Realtime Database, so keep clips short.
+
+        const pushMediaMessage = (mediaData) => {
+            stopTypingForCurrentUser();
+
+            push(messagesRef, {
+                name: currentUser,
+                timestamp: Date.now(),
+                replyTo: replyingTo,
+                animationId: `${Date.now()}-${Math.random()}`,
+                ...mediaData
+            }).catch((error) => {
+                alert(`Could not send media: ${error.message}`);
+            });
+
+            cancelReply();
+            updateMyStatus();
+            enforceMessageLimit();
+        };
+
         const sendImageFileToChat = (file) => {
             if (!file || !file.type || !file.type.startsWith('image/')) return;
 
@@ -4197,56 +4259,103 @@
 
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                    set(typingRef(currentUser), {
-                        isTyping: false,
-                        timestamp: Date.now()
-                    });
-
-                    push(messagesRef, {
-                        name: currentUser,
+                    pushMediaMessage({
                         image: canvas.toDataURL('image/jpeg', 0.65),
-                        timestamp: Date.now(),
-                        replyTo: replyingTo,
-                        animationId: `${Date.now()}-${Math.random()}`
+                        mediaType: 'image',
+                        fileName: file.name || ''
                     });
-
-                    cancelReply();
-                    updateMyStatus();
-                    enforceMessageLimit();
                 };
 
+                img.onerror = () => alert('Could not load that image. Please try another file.');
                 img.src = event.target.result;
             };
 
+            reader.onerror = () => alert('Could not read that image file.');
             reader.readAsDataURL(file);
         };
 
-        window.handleImageUpload = (e) => {
+        const sendVideoFileToChat = (file) => {
+            if (!file || !file.type || !file.type.startsWith('video/')) return;
+
+            if (file.size > MAX_VIDEO_UPLOAD_BYTES) {
+                alert('That video is too large for this chat. Please choose a clip under 25 MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                pushMediaMessage({
+                    video: event.target.result,
+                    mediaType: 'video',
+                    mimeType: file.type,
+                    fileName: file.name || 'video'
+                });
+            };
+
+            reader.onerror = () => alert('Could not read that video file.');
+            reader.readAsDataURL(file);
+        };
+
+        const sendMediaFileToChat = (file) => {
+            if (!file || !file.type) return;
+
+            if (file.type.startsWith('image/')) {
+                sendImageFileToChat(file);
+                return;
+            }
+
+            if (file.type.startsWith('video/')) {
+                sendVideoFileToChat(file);
+                return;
+            }
+
+            alert('Please choose an image or video file.');
+        };
+
+        window.handleMediaUpload = (e) => {
             const file = e.target.files[0];
-            sendImageFileToChat(file);
+            sendMediaFileToChat(file);
             e.target.value = '';
         };
 
+        window.handleImageUpload = window.handleMediaUpload;
+
         window.handlePasteImage = (event) => {
             const items = event.clipboardData ? Array.from(event.clipboardData.items || []) : [];
-            const imageItem = items.find(item => item.type && item.type.startsWith('image/'));
+            const mediaItem = items.find(item => item.type && (item.type.startsWith('image/') || item.type.startsWith('video/')));
 
-            if (!imageItem) return;
+            if (!mediaItem) return;
 
-            const file = imageItem.getAsFile();
+            const file = mediaItem.getAsFile();
             if (!file) return;
 
             event.preventDefault();
-            sendImageFileToChat(file);
+            sendMediaFileToChat(file);
         };
 
         document.addEventListener('paste', window.handlePasteImage);
 
-        window.sendSticker = (stickerSrc) => {
-            set(typingRef(currentUser), {
-                isTyping: false,
-                timestamp: Date.now()
+        const chatContainerForDrop = document.querySelector('.chat-container');
+
+        if (chatContainerForDrop) {
+            chatContainerForDrop.addEventListener('dragover', (event) => {
+                const hasFiles = event.dataTransfer && Array.from(event.dataTransfer.types || []).includes('Files');
+                if (!hasFiles) return;
+                event.preventDefault();
             });
+
+            chatContainerForDrop.addEventListener('drop', (event) => {
+                const file = event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files[0] : null;
+                if (!file || !file.type || !(file.type.startsWith('image/') || file.type.startsWith('video/'))) return;
+
+                event.preventDefault();
+                sendMediaFileToChat(file);
+            });
+        }
+
+        window.sendSticker = (stickerSrc) => {
+            stopTypingForCurrentUser();
 
             push(messagesRef, {
                 name: currentUser,
@@ -4268,10 +4377,7 @@
 
             if (input.value.trim() === "") return;
 
-            set(typingRef(currentUser), {
-                isTyping: false,
-                timestamp: Date.now()
-            });
+            stopTypingForCurrentUser();
 
             push(messagesRef, {
                 name: currentUser,
@@ -4353,8 +4459,10 @@
                 bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'} ${isSticker ? 'sticker-bubble' : ''}`;
 
                 bubble.onclick = (e) => {
-                    if (e.target.tagName !== 'IMG' && !e.target.closest('.msg-dropdown-container')) {
-                        startReply(data.text || "[Image]", data.name);
+                    const interactiveMedia = ['IMG', 'VIDEO', 'A', 'BUTTON'].includes(e.target.tagName);
+
+                    if (!interactiveMedia && !e.target.closest('.msg-dropdown-container')) {
+                        startReply(getMessagePreviewText(data), data.name);
                     }
                 };
 
@@ -4412,11 +4520,7 @@
                     const quote = document.createElement('div');
                     quote.className = 'quote-box';
 
-                    quote.innerText = `${data.replyTo.user}: ${
-                        data.replyTo.text.length > 20
-                            ? data.replyTo.text.substring(0, 20) + '...'
-                            : data.replyTo.text
-                    }`;
+                    quote.innerText = `${data.replyTo.user}: ${shortenPreviewText(data.replyTo.text)}`;
 
                     bubble.appendChild(quote);
                 }
@@ -4441,9 +4545,28 @@
                     }
 
                     bubble.appendChild(img);
+                } else if (data.video) {
+                    const video = document.createElement('video');
+                    video.src = data.video;
+                    video.controls = true;
+                    video.playsInline = true;
+                    video.preload = 'metadata';
+
+                    video.onclick = (e) => e.stopPropagation();
+                    video.onmousedown = (e) => e.stopPropagation();
+                    video.ontouchstart = (e) => e.stopPropagation();
+
+                    bubble.appendChild(video);
+
+                    if (data.fileName) {
+                        const fileName = document.createElement('div');
+                        fileName.className = 'video-file-name';
+                        fileName.innerText = data.fileName;
+                        bubble.appendChild(fileName);
+                    }
                 } else {
                     const textSpan = document.createElement('span');
-                    textSpan.innerHTML = formatMessageLinks(data.text);
+                    textSpan.innerHTML = formatMessageLinks(data.text || '');
                     bubble.appendChild(textSpan);
                 }
 

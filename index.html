@@ -1748,6 +1748,78 @@
             word-break: break-word;
         }
 
+        .file-attachment-card {
+            width: min(250px, 100%);
+            margin-top: 4px;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.22);
+            border: 1px solid rgba(255,255,255,0.35);
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
+        }
+
+        .bubble-theirs .file-attachment-card {
+            background: rgba(138, 43, 226, 0.08);
+            border-color: rgba(138, 43, 226, 0.18);
+        }
+
+        .file-attachment-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.85);
+            color: #8a2be2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 22px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+        }
+
+        .file-attachment-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-attachment-name {
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .file-attachment-meta {
+            margin-top: 3px;
+            font-size: 11px;
+            opacity: 0.78;
+        }
+
+        .file-download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 8px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.92);
+            color: #4a3554 !important;
+            font-size: 12px;
+            font-weight: 800;
+            text-decoration: none !important;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.16);
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .file-download-btn:hover {
+            transform: scale(1.05);
+            filter: brightness(1.05);
+        }
+
         .bubble.sticker-bubble img {
             max-width: 100px;
             width: 100px;
@@ -1977,6 +2049,17 @@
             border: 1px solid #555;
         }
 
+        body.dark-mode .bubble-theirs .file-attachment-card {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.14);
+        }
+
+        body.dark-mode .file-attachment-icon,
+        body.dark-mode .file-download-btn {
+            background: rgba(255,255,255,0.9);
+            color: #4a3554 !important;
+        }
+
         body.dark-mode .typing-indicator {
             color: #333;
         }
@@ -2167,9 +2250,9 @@
                 <div id="replyBar" class="reply-bar"></div>
 
                 <div class="chat-inputs">
-                    <input type="file" id="fileInput" accept="image/*,video/*" style="display:none;" onchange="handleMediaUpload(event)">
+                    <input type="file" id="fileInput" style="display:none;" onchange="handleMediaUpload(event)">
 
-                    <button onclick="document.getElementById('fileInput').click()" title="Upload Image or Video">📎</button>
+                    <button onclick="document.getElementById('fileInput').click()" title="Upload image, video, ZIP, PDF, or any file">📎</button>
                     <button onclick="toggleStickerMenu()" title="Stickers">😊</button>
 
                     <div class="input-wrapper">
@@ -4032,6 +4115,7 @@
 
         const getMessagePreviewText = (data = {}) => {
             if (data.text) return data.text;
+            if (data.fileData) return data.fileName ? `[File: ${data.fileName}]` : '[File]';
             if (data.video) return data.fileName ? `[Video: ${data.fileName}]` : '[Video]';
             if (data.isSticker) return '[Sticker]';
             if (data.image) return '[Image]';
@@ -4222,6 +4306,36 @@
         window.endHold = () => clearTimeout(holdTimer);
 
         const MAX_VIDEO_UPLOAD_BYTES = 25 * 1024 * 1024; // 25 MB. Videos are stored as data URLs in Realtime Database, so keep clips short.
+        const MAX_FILE_UPLOAD_BYTES = 25 * 1024 * 1024; // 25 MB. ZIPs and other files are also stored as data URLs so the other person can download them.
+
+        const formatFileSize = (bytes = 0) => {
+            if (!Number.isFinite(bytes) || bytes <= 0) return 'Unknown size';
+
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let size = bytes;
+            let unitIndex = 0;
+
+            while (size >= 1024 && unitIndex < units.length - 1) {
+                size = size / 1024;
+                unitIndex++;
+            }
+
+            const rounded = unitIndex === 0 ? Math.round(size) : size.toFixed(size >= 10 ? 1 : 2);
+            return `${rounded} ${units[unitIndex]}`;
+        };
+
+        const getFileEmoji = (fileName = '', mimeType = '') => {
+            const lowerName = fileName.toLowerCase();
+            const lowerMime = mimeType.toLowerCase();
+
+            if (lowerName.endsWith('.zip') || lowerName.endsWith('.rar') || lowerName.endsWith('.7z') || lowerMime.includes('zip') || lowerMime.includes('compressed')) return '🗜️';
+            if (lowerName.endsWith('.pdf') || lowerMime.includes('pdf')) return '📕';
+            if (lowerName.endsWith('.doc') || lowerName.endsWith('.docx') || lowerMime.includes('word')) return '📘';
+            if (lowerName.endsWith('.xls') || lowerName.endsWith('.xlsx') || lowerMime.includes('spreadsheet') || lowerMime.includes('excel')) return '📗';
+            if (lowerName.endsWith('.ppt') || lowerName.endsWith('.pptx') || lowerMime.includes('presentation') || lowerMime.includes('powerpoint')) return '📙';
+            if (lowerName.endsWith('.mp3') || lowerName.endsWith('.wav') || lowerName.endsWith('.m4a') || lowerMime.startsWith('audio/')) return '🎧';
+            return '📦';
+        };
 
         const pushMediaMessage = (mediaData) => {
             stopTypingForCurrentUser();
@@ -4297,20 +4411,44 @@
             reader.readAsDataURL(file);
         };
 
-        const sendMediaFileToChat = (file) => {
-            if (!file || !file.type) return;
+        const sendGenericFileToChat = (file) => {
+            if (!file) return;
 
-            if (file.type.startsWith('image/')) {
+            if (file.size > MAX_FILE_UPLOAD_BYTES) {
+                alert('That file is too large for this chat. Please choose a file under 25 MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                pushMediaMessage({
+                    fileData: event.target.result,
+                    mediaType: 'file',
+                    mimeType: file.type || 'application/octet-stream',
+                    fileName: file.name || 'download',
+                    fileSize: file.size || 0
+                });
+            };
+
+            reader.onerror = () => alert('Could not read that file.');
+            reader.readAsDataURL(file);
+        };
+
+        const sendMediaFileToChat = (file) => {
+            if (!file) return;
+
+            if (file.type && file.type.startsWith('image/')) {
                 sendImageFileToChat(file);
                 return;
             }
 
-            if (file.type.startsWith('video/')) {
+            if (file.type && file.type.startsWith('video/')) {
                 sendVideoFileToChat(file);
                 return;
             }
 
-            alert('Please choose an image or video file.');
+            sendGenericFileToChat(file);
         };
 
         window.handleMediaUpload = (e) => {
@@ -4323,7 +4461,7 @@
 
         window.handlePasteImage = (event) => {
             const items = event.clipboardData ? Array.from(event.clipboardData.items || []) : [];
-            const mediaItem = items.find(item => item.type && (item.type.startsWith('image/') || item.type.startsWith('video/')));
+            const mediaItem = items.find(item => item.kind === 'file');
 
             if (!mediaItem) return;
 
@@ -4347,7 +4485,7 @@
 
             chatContainerForDrop.addEventListener('drop', (event) => {
                 const file = event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files[0] : null;
-                if (!file || !file.type || !(file.type.startsWith('image/') || file.type.startsWith('video/'))) return;
+                if (!file) return;
 
                 event.preventDefault();
                 sendMediaFileToChat(file);
@@ -4459,7 +4597,7 @@
                 bubble.className = `bubble ${isMine ? 'bubble-mine' : 'bubble-theirs'} ${isSticker ? 'sticker-bubble' : ''}`;
 
                 bubble.onclick = (e) => {
-                    const interactiveMedia = ['IMG', 'VIDEO', 'A', 'BUTTON'].includes(e.target.tagName);
+                    const interactiveMedia = ['IMG', 'VIDEO', 'A', 'BUTTON'].includes(e.target.tagName) || e.target.closest('.file-attachment-card');
 
                     if (!interactiveMedia && !e.target.closest('.msg-dropdown-container')) {
                         startReply(getMessagePreviewText(data), data.name);
@@ -4564,6 +4702,40 @@
                         fileName.innerText = data.fileName;
                         bubble.appendChild(fileName);
                     }
+                } else if (data.fileData) {
+                    const fileCard = document.createElement('div');
+                    fileCard.className = 'file-attachment-card';
+                    fileCard.onclick = (e) => e.stopPropagation();
+
+                    const fileIcon = document.createElement('div');
+                    fileIcon.className = 'file-attachment-icon';
+                    fileIcon.innerText = getFileEmoji(data.fileName, data.mimeType);
+
+                    const fileInfo = document.createElement('div');
+                    fileInfo.className = 'file-attachment-info';
+
+                    const fileName = document.createElement('div');
+                    fileName.className = 'file-attachment-name';
+                    fileName.innerText = data.fileName || 'download';
+
+                    const fileMeta = document.createElement('div');
+                    fileMeta.className = 'file-attachment-meta';
+                    fileMeta.innerText = formatFileSize(data.fileSize || 0);
+
+                    const downloadLink = document.createElement('a');
+                    downloadLink.className = 'file-download-btn';
+                    downloadLink.href = data.fileData;
+                    downloadLink.download = data.fileName || 'download';
+                    downloadLink.innerText = '⬇ Save file';
+                    downloadLink.onclick = (e) => e.stopPropagation();
+
+                    fileInfo.appendChild(fileName);
+                    fileInfo.appendChild(fileMeta);
+                    fileInfo.appendChild(downloadLink);
+
+                    fileCard.appendChild(fileIcon);
+                    fileCard.appendChild(fileInfo);
+                    bubble.appendChild(fileCard);
                 } else {
                     const textSpan = document.createElement('span');
                     textSpan.innerHTML = formatMessageLinks(data.text || '');

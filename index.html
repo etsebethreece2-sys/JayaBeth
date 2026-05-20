@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JayaBeth - The Yap Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -33,14 +35,17 @@
         body {
             font-family: 'Fredoka', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: clamp(10px, 1.7vh, 20px);
             min-height: 100vh;
+            box-sizing: border-box;
             background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), #fff9fa url('lilacavo.jpg');
             background-size: 650px;
             animation: moveBackground 144s linear infinite;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 12px;
             perspective: 1000px;
             overflow: hidden;
         }
@@ -71,6 +76,7 @@
 
         #app-wrapper {
             position: relative;
+            order: 1;
             z-index: 1;
             transition: transform 0.1s ease-out, box-shadow 0.3s ease;
             transform-style: preserve-3d;
@@ -80,9 +86,9 @@
 
         .main-app-container {
             display: flex;
-            gap: 20px;
+            gap: clamp(18px, 1.8vw, 24px);
             align-items: flex-start;
-            max-width: 1300px;
+            max-width: min(1560px, calc(100vw - 24px));
         }
 
         .box-style {
@@ -99,18 +105,18 @@
         .left-column {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 18px;
             align-items: flex-start;
-            width: 82px;
+            width: 98px;
             flex-shrink: 0;
             position: static;
         }
 
         .mini-app {
             position: relative;
-            width: 72px;
-            min-height: 72px;
-            height: 72px;
+            width: 86px;
+            min-height: 86px;
+            height: 86px;
             padding: 0;
             overflow: hidden;
             display: flex;
@@ -133,23 +139,23 @@
         }
 
         .mini-app.active {
-            width: 230px;
+            width: 276px;
             height: auto;
-            min-height: 170px;
-            padding: 15px;
+            min-height: 204px;
+            padding: 18px;
             cursor: default;
             z-index: 40;
         }
 
         .mini-app.calendar-app.active {
-            width: 280px;
-            min-height: 500px;
+            width: 336px;
+            min-height: min(600px, calc(100vh - 120px));
         }
 
         .app-icon-button {
             width: 100%;
-            height: 72px;
-            flex: 0 0 72px;
+            height: 86px;
+            flex: 0 0 86px;
             background: none;
             border: none;
             cursor: pointer;
@@ -171,17 +177,17 @@
         }
 
         .mini-app.active .app-icon-button {
-            width: 50px;
-            height: 50px;
-            flex-basis: 50px;
+            width: 60px;
+            height: 60px;
+            flex-basis: 60px;
             border-radius: 18px;
             background: rgba(255,255,255,0.4);
             margin-bottom: 8px;
         }
 
         .app-icon {
-            width: 54px;
-            height: 54px;
+            width: 65px;
+            height: 65px;
             border-radius: 18px;
             display: flex;
             align-items: center;
@@ -834,8 +840,8 @@
         }
 
         .side-container {
-            width: 260px;
-            height: 600px;
+            width: clamp(260px, 23vw, 312px);
+            height: min(720px, calc(100vh - 92px));
             display: flex;
             flex-direction: column;
         }
@@ -1287,8 +1293,8 @@
         }
 
         .chat-container {
-            width: 400px;
-            height: 600px;
+            width: clamp(400px, 35vw, 480px);
+            height: min(720px, calc(100vh - 92px));
             display: flex;
             flex-direction: column;
             position: relative;
@@ -2172,12 +2178,12 @@
 
         .app-panel {
             position: absolute;
-            left: 88px;
+            left: 104px;
             top: -4px;
-            width: 230px !important;
+            width: 276px !important;
             max-height: none !important;
             height: auto;
-            padding: 15px;
+            padding: 18px;
             box-sizing: border-box;
             z-index: 120;
             border-radius: 28px;
@@ -2230,12 +2236,12 @@
         }
 
         #calendarApp .app-panel {
-            top: -261px;
-            width: 280px !important;
+            top: -313px;
+            width: 336px !important;
         }
 
         #calendarApp .app-panel::before {
-            top: 292px;
+            top: 350px;
         }
 
         .online-indicator {
@@ -2424,14 +2430,13 @@
         }
 
         .paint-toolbar {
-            position: fixed;
-            left: 50%;
-            bottom: 18px;
-            transform: translateX(-50%);
+            position: relative;
+            order: 2;
             z-index: 8;
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-shrink: 0;
             padding: 8px 10px;
             border-radius: 999px;
             background: rgba(255,255,255,0.9);
@@ -2798,8 +2803,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, child, set, get, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -2953,7 +2956,6 @@
             audio.volume = volSlider.value;
         };
 
-        loadTrack(0);
         audio.volume = volSlider.value;
 
         let currentMonth = new Date().getMonth();
@@ -3246,6 +3248,8 @@
         let backgroundStrokes = [];
         let currentDrawingStroke = null;
         let paintModeEnabled = false;
+        let drawingRenderRaf = null;
+        const DRAWING_MAX_DEVICE_PIXEL_RATIO = 1.5;
 
         const drawingCanvas = document.getElementById('backgroundDrawCanvas');
         const drawingCtx = drawingCanvas ? drawingCanvas.getContext('2d') : null;
@@ -3256,7 +3260,7 @@
         const resizeDrawingCanvas = () => {
             if (!drawingCanvas || !drawingCtx) return;
 
-            const ratio = window.devicePixelRatio || 1;
+            const ratio = Math.min(window.devicePixelRatio || 1, DRAWING_MAX_DEVICE_PIXEL_RATIO);
             drawingCanvas.width = Math.max(1, Math.round(window.innerWidth * ratio));
             drawingCanvas.height = Math.max(1, Math.round(window.innerHeight * ratio));
             drawingCanvas.style.width = `${window.innerWidth}px`;
@@ -3293,10 +3297,14 @@
 
         function renderSharedDrawing() {
             if (!drawingCtx || !drawingCanvas) return;
+            if (drawingRenderRaf) return;
 
-            drawingCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-            backgroundStrokes.forEach(drawStroke);
-            if (currentDrawingStroke) drawStroke(currentDrawingStroke);
+            drawingRenderRaf = requestAnimationFrame(() => {
+                drawingRenderRaf = null;
+                drawingCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                backgroundStrokes.forEach(drawStroke);
+                if (currentDrawingStroke) drawStroke(currentDrawingStroke);
+            });
         }
 
         const isPointInsideMainCard = (event) => {
@@ -3311,6 +3319,15 @@
             x: Math.min(1, Math.max(0, event.clientX / window.innerWidth)),
             y: Math.min(1, Math.max(0, event.clientY / window.innerHeight))
         });
+
+        const shouldAddDrawingPoint = (stroke, point) => {
+            const last = stroke.points[stroke.points.length - 1];
+            if (!last) return true;
+
+            const dx = point.x - last.x;
+            const dy = point.y - last.y;
+            return Math.hypot(dx, dy) > 0.0025;
+        };
 
         window.togglePaintMode = () => {
             paintModeEnabled = !paintModeEnabled;
@@ -3344,8 +3361,12 @@
 
                 event.preventDefault();
                 if (!isPointInsideMainCard(event)) {
-                    currentDrawingStroke.points.push(eventToDrawingPoint(event));
-                    renderSharedDrawing();
+                    const point = eventToDrawingPoint(event);
+
+                    if (shouldAddDrawingPoint(currentDrawingStroke, point)) {
+                        currentDrawingStroke.points.push(point);
+                        renderSharedDrawing();
+                    }
                 }
             });
 
@@ -3399,6 +3420,23 @@
 
         let farmUiTransitionTimer = null;
         let currentFarmTool = 'hand';
+        let phaserLoadPromise = null;
+
+        const ensurePhaserLoaded = () => {
+            if (window.Phaser) return Promise.resolve();
+            if (phaserLoadPromise) return phaserLoadPromise;
+
+            phaserLoadPromise = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js';
+                script.async = true;
+                script.onload = resolve;
+                script.onerror = () => reject(new Error('Could not load Phaser.'));
+                document.head.appendChild(script);
+            });
+
+            return phaserLoadPromise;
+        };
 
         const getFarmTimeData = () => {
             const elapsedSinceOrigin = Date.now() - FARM_TIME_ORIGIN_MS;
@@ -3484,8 +3522,9 @@
             wrapper.style.transform = 'none';
             wrapper.style.boxShadow = '0 20px 50px rgba(0,0,0,0.48)';
 
-            setTimeout(() => {
-                window.startFarmGame();
+            setTimeout(async () => {
+                await window.startFarmGame();
+                if (!wrapper.classList.contains('farm-mode')) return;
                 window.setFarmGameActive(true);
 
                 if (phaserGame && phaserGame.scale) {
@@ -3538,16 +3577,20 @@
             }
         };
 
-        window.startFarmGame = () => {
+        window.startFarmGame = async () => {
             if (phaserGame) {
                 window.setFarmGameActive(true);
                 return;
             }
 
-            if (!window.Phaser) {
-                console.warn('Phaser is still loading. Try opening the game again.');
+            try {
+                await ensurePhaserLoaded();
+            } catch (error) {
+                console.warn(error.message);
                 return;
             }
+
+            if (phaserGame) return;
 
             const config = {
                 type: window.Phaser.AUTO,
@@ -3566,13 +3609,13 @@
                     mode: window.Phaser.Scale.FIT,
                     autoCenter: window.Phaser.Scale.CENTER_BOTH
                 },
-                scene: [FarmScene]
+                scene: [createFarmSceneClass()]
             };
 
             phaserGame = new window.Phaser.Game(config);
         };
 
-        class FarmScene extends window.Phaser.Scene {
+        const createFarmSceneClass = () => class FarmScene extends window.Phaser.Scene {
             constructor() {
                 super('FarmScene');
 
@@ -4432,7 +4475,7 @@
                     this.syncMyPlayer(false);
                 }
             }
-        }
+        };
 
         const cleanupStaleFarmPlayers = () => {
             get(gamePlayersRef).then((snapshot) => {
@@ -5551,6 +5594,8 @@
 
                 if (data.image) {
                     const img = document.createElement('img');
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
                     img.src = data.image;
 
                     if (!isSticker) {
@@ -5681,6 +5726,8 @@
                 item.className = 'gallery-item';
 
                 const img = document.createElement('img');
+                img.loading = 'lazy';
+                img.decoding = 'async';
                 img.src = data.image;
                 img.onclick = () => openLightbox(data.image);
 

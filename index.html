@@ -2064,25 +2064,6 @@
             color: #333;
         }
 
-
-        /* Switch to the birthday background from 19 May 2026 onward.
-           Add the image to the repo with this exact filename, or change the URL below. */
-        body.birthday-background {
-            background: linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.20)), #fff9fa url('birthday-bg.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            animation: none;
-        }
-
-        body.dark-mode.birthday-background {
-            background: linear-gradient(rgba(0,0,0,0.48), rgba(0,0,0,0.48)), #121212 url('birthday-bg.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            animation: none;
-        }
-
         #themeToggle {
             position: absolute;
             top: 15px;
@@ -2201,7 +2182,7 @@
             z-index: 120;
             border-radius: 28px;
             border: 3px solid #4a3554;
-            background-color: rgba(var(--box-base-rgb), var(--box-alpha));
+            background-color: rgb(var(--box-base-rgb));
             background-image:
                 linear-gradient(rgba(255,255,255,0.18), rgba(255,255,255,0.04)),
                 radial-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 1px);
@@ -2230,7 +2211,7 @@
             width: 18px;
             height: 18px;
             z-index: -1;
-            background-color: rgba(var(--box-base-rgb), var(--box-alpha));
+            background-color: rgb(var(--box-base-rgb));
             border-left: 3px solid #4a3554;
             border-bottom: 3px solid #4a3554;
             border-bottom-left-radius: 4px;
@@ -2421,6 +2402,141 @@
             will-change: transform, opacity, filter;
         }
 
+
+        /* --- Selfie camera + shared background paint layer --- */
+        #backgroundDrawCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            touch-action: none;
+        }
+
+        body.paint-mode #backgroundDrawCanvas {
+            pointer-events: auto;
+            cursor: crosshair;
+        }
+
+        #app-wrapper {
+            z-index: 2;
+        }
+
+        .paint-toolbar {
+            position: fixed;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            z-index: 8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.9);
+            border: 2px solid rgba(74, 53, 84, 0.55);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .paint-toolbar button,
+        .selfie-modal-card button {
+            border: none;
+            border-radius: 999px;
+            padding: 9px 12px;
+            background: linear-gradient(135deg, #b19cd9, #8a2be2);
+            color: white;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .paint-toolbar button:hover,
+        .selfie-modal-card button:hover {
+            transform: scale(1.06);
+            filter: brightness(1.1);
+        }
+
+        .paint-toolbar button.active {
+            background: linear-gradient(135deg, #fff6c9, #ffe28d);
+            color: #4a3554;
+            box-shadow: inset 0 0 0 2px rgba(74, 53, 84, 0.35);
+        }
+
+        .paint-toolbar input[type="color"] {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border: 2px solid rgba(74, 53, 84, 0.45);
+            border-radius: 50%;
+            background: transparent;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .paint-toolbar input[type="range"] {
+            width: 80px;
+        }
+
+        .selfie-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 10020;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.68);
+            backdrop-filter: blur(10px);
+        }
+
+        .selfie-modal.open {
+            display: flex;
+        }
+
+        .selfie-modal-card {
+            width: min(420px, calc(100vw - 34px));
+            padding: 16px;
+            border-radius: 28px;
+            border: 3px solid #4a3554;
+            background: rgb(var(--box-base-rgb));
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            text-align: center;
+        }
+
+        .selfie-modal-card video {
+            width: 100%;
+            max-height: 62vh;
+            object-fit: cover;
+            border-radius: 22px;
+            background: #111;
+            transform: scaleX(-1);
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.28);
+        }
+
+        .selfie-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .selfie-status {
+            margin-top: 10px;
+            color: #4a3554;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Open mini-app panels stay solid even when the main card transparency slider changes. */
+        .app-panel,
+        .app-panel::before {
+            background-color: rgb(var(--box-base-rgb)) !important;
+        }
+
         @media (prefers-reduced-motion: reduce) {
             .mini-app,
             .app-panel,
@@ -2428,7 +2544,8 @@
             .message-flight,
             .online-indicator,
             .online-dot,
-            body::after {
+            body::after,
+            #backgroundDrawCanvas {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
@@ -2439,6 +2556,26 @@
 </head>
 
 <body>
+
+    <canvas id="backgroundDrawCanvas" aria-label="Shared background drawing layer"></canvas>
+
+    <div id="paintToolbar" class="paint-toolbar" onclick="event.stopPropagation()">
+        <button id="paintToggleBtn" onclick="togglePaintMode()" title="Draw on the background around the card">🎨 Draw</button>
+        <input id="paintColor" type="color" value="#8a2be2" title="Paint color">
+        <input id="paintSize" type="range" min="2" max="22" value="7" title="Paint size">
+        <button onclick="clearSharedDrawing()" title="Clear shared background drawing">Clear</button>
+    </div>
+
+    <div id="selfieModal" class="selfie-modal" onclick="closeSelfieCamera()">
+        <div class="selfie-modal-card" onclick="event.stopPropagation()">
+            <video id="selfieVideo" autoplay playsinline muted></video>
+            <div class="selfie-actions">
+                <button onclick="captureSelfie()">📸 Send selfie</button>
+                <button onclick="closeSelfieCamera()">Cancel</button>
+            </div>
+            <div id="selfieStatus" class="selfie-status">Camera preview</div>
+        </div>
+    </div>
     <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
         <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
         <button id="lightboxDeleteBtn" class="lightbox-delete-btn" onclick="event.stopPropagation(); deleteCurrentLightboxImage()">🗑️ Delete</button>
@@ -2611,8 +2748,10 @@
 
                 <div class="chat-inputs">
                     <input type="file" id="fileInput" style="display:none;" onchange="handleMediaUpload(event)">
+                    <input type="file" id="selfieInput" accept="image/*" capture="user" style="display:none;" onchange="handleSelfieUpload(event)">
 
                     <button onclick="document.getElementById('fileInput').click()" title="Upload image, video, ZIP, PDF, or any file">📎</button>
+                    <button onclick="openSelfieCamera()" title="Take and send a selfie">📸</button>
                     <button onclick="toggleStickerMenu()" title="Stickers">😊</button>
 
                     <div class="input-wrapper">
@@ -2664,17 +2803,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, child, set, get, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-
-
-        const BIRTHDAY_BACKGROUND_START = new Date(2026, 4, 19); // 19 May 2026 (months are 0-indexed)
-
-        const applyBirthdayBackground = () => {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            document.body.classList.toggle('birthday-background', today >= BIRTHDAY_BACKGROUND_START);
-        };
-
-        applyBirthdayBackground();
 
         let galleryImages = [];
         let galleryImageKeys = [];
@@ -3092,6 +3220,7 @@
         const calendarEventsRef = ref(db, "calendarEvents");
         const gamePlayersRef = ref(db, "farmGame/players");
         const gameCropsRef = ref(db, "farmGame/crops");
+        const backgroundDrawingRef = ref(db, "backgroundDrawing/strokes");
 
         let currentUser = localStorage.getItem('yapboxUser') || 'Shanky';
         let otherUserLastSeen = 0;
@@ -3113,6 +3242,148 @@
 
         const FARM_INTERNAL_WIDTH = 530;
         const FARM_INTERNAL_HEIGHT = 300;
+
+        let backgroundStrokes = [];
+        let currentDrawingStroke = null;
+        let paintModeEnabled = false;
+
+        const drawingCanvas = document.getElementById('backgroundDrawCanvas');
+        const drawingCtx = drawingCanvas ? drawingCanvas.getContext('2d') : null;
+
+        const getPaintColor = () => document.getElementById('paintColor')?.value || '#8a2be2';
+        const getPaintSize = () => Number(document.getElementById('paintSize')?.value || 7);
+
+        const resizeDrawingCanvas = () => {
+            if (!drawingCanvas || !drawingCtx) return;
+
+            const ratio = window.devicePixelRatio || 1;
+            drawingCanvas.width = Math.max(1, Math.round(window.innerWidth * ratio));
+            drawingCanvas.height = Math.max(1, Math.round(window.innerHeight * ratio));
+            drawingCanvas.style.width = `${window.innerWidth}px`;
+            drawingCanvas.style.height = `${window.innerHeight}px`;
+            drawingCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+            renderSharedDrawing();
+        };
+
+        const drawStroke = (stroke) => {
+            if (!drawingCtx || !stroke || !Array.isArray(stroke.points) || stroke.points.length < 2) return;
+
+            drawingCtx.save();
+            drawingCtx.lineCap = 'round';
+            drawingCtx.lineJoin = 'round';
+            drawingCtx.strokeStyle = stroke.color || '#8a2be2';
+            drawingCtx.lineWidth = Number(stroke.size || 7);
+            drawingCtx.globalAlpha = 0.92;
+            drawingCtx.beginPath();
+
+            stroke.points.forEach((point, index) => {
+                const x = Number(point.x || 0) * window.innerWidth;
+                const y = Number(point.y || 0) * window.innerHeight;
+
+                if (index === 0) {
+                    drawingCtx.moveTo(x, y);
+                } else {
+                    drawingCtx.lineTo(x, y);
+                }
+            });
+
+            drawingCtx.stroke();
+            drawingCtx.restore();
+        };
+
+        function renderSharedDrawing() {
+            if (!drawingCtx || !drawingCanvas) return;
+
+            drawingCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            backgroundStrokes.forEach(drawStroke);
+            if (currentDrawingStroke) drawStroke(currentDrawingStroke);
+        }
+
+        const isPointInsideMainCard = (event) => {
+            const appCard = document.getElementById('app-wrapper');
+            if (!appCard) return false;
+
+            const rect = appCard.getBoundingClientRect();
+            return event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+        };
+
+        const eventToDrawingPoint = (event) => ({
+            x: Math.min(1, Math.max(0, event.clientX / window.innerWidth)),
+            y: Math.min(1, Math.max(0, event.clientY / window.innerHeight))
+        });
+
+        window.togglePaintMode = () => {
+            paintModeEnabled = !paintModeEnabled;
+            document.body.classList.toggle('paint-mode', paintModeEnabled);
+            document.getElementById('paintToggleBtn')?.classList.toggle('active', paintModeEnabled);
+        };
+
+        window.clearSharedDrawing = () => {
+            if (!confirm('Clear the shared background drawing for both of you?')) return;
+            remove(backgroundDrawingRef);
+        };
+
+        if (drawingCanvas) {
+            drawingCanvas.addEventListener('pointerdown', (event) => {
+                if (!paintModeEnabled || isPointInsideMainCard(event)) return;
+
+                event.preventDefault();
+                drawingCanvas.setPointerCapture?.(event.pointerId);
+                currentDrawingStroke = {
+                    color: getPaintColor(),
+                    size: getPaintSize(),
+                    user: currentUser,
+                    timestamp: Date.now(),
+                    points: [eventToDrawingPoint(event)]
+                };
+                renderSharedDrawing();
+            });
+
+            drawingCanvas.addEventListener('pointermove', (event) => {
+                if (!currentDrawingStroke) return;
+
+                event.preventDefault();
+                if (!isPointInsideMainCard(event)) {
+                    currentDrawingStroke.points.push(eventToDrawingPoint(event));
+                    renderSharedDrawing();
+                }
+            });
+
+            const finishDrawingStroke = (event) => {
+                if (!currentDrawingStroke) return;
+
+                event.preventDefault();
+                const strokeToSave = currentDrawingStroke;
+                currentDrawingStroke = null;
+
+                if (strokeToSave.points.length > 1) {
+                    push(backgroundDrawingRef, strokeToSave).catch((error) => {
+                        alert(`Could not share drawing: ${error.message}`);
+                    });
+                } else {
+                    renderSharedDrawing();
+                }
+            };
+
+            drawingCanvas.addEventListener('pointerup', finishDrawingStroke);
+            drawingCanvas.addEventListener('pointercancel', finishDrawingStroke);
+        }
+
+        window.addEventListener('resize', resizeDrawingCanvas);
+        resizeDrawingCanvas();
+
+        onValue(backgroundDrawingRef, (snapshot) => {
+            backgroundStrokes = [];
+
+            if (snapshot.exists()) {
+                snapshot.forEach((childNode) => {
+                    backgroundStrokes.push(childNode.val());
+                });
+            }
+
+            renderSharedDrawing();
+        });
+
         const FARM_PLAYER_SYNC_MS = 100;
         const FARM_PLAYER_SYNC_DISTANCE = 2;
         const FARM_STALE_PLAYER_MS = 15000;
@@ -4871,33 +5142,27 @@
             enforceMessageLimit();
         };
 
+        const MAX_IMAGE_UPLOAD_BYTES = 25 * 1024 * 1024; // Images are sent as original Data URLs; no resizing or JPEG recompression.
+
         const sendImageFileToChat = (file) => {
             if (!file || !file.type || !file.type.startsWith('image/')) return;
+
+            if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
+                alert('That image is too large for this chat. Please choose an original image under 25 MB.');
+                return;
+            }
 
             const reader = new FileReader();
 
             reader.onload = (event) => {
-                const img = new Image();
-
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const maxWidth = 400;
-                    const scale = Math.min(1, maxWidth / img.width);
-
-                    canvas.width = Math.max(1, Math.round(img.width * scale));
-                    canvas.height = Math.max(1, Math.round(img.height * scale));
-
-                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                    pushMediaMessage({
-                        image: canvas.toDataURL('image/jpeg', 0.65),
-                        mediaType: 'image',
-                        fileName: file.name || ''
-                    });
-                };
-
-                img.onerror = () => alert('Could not load that image. Please try another file.');
-                img.src = event.target.result;
+                pushMediaMessage({
+                    image: event.target.result,
+                    mediaType: 'image',
+                    mimeType: file.type,
+                    fileName: file.name || 'image',
+                    fileSize: file.size || 0,
+                    originalQuality: true
+                });
             };
 
             reader.onerror = () => alert('Could not read that image file.');
@@ -4972,6 +5237,93 @@
             sendMediaFileToChat(file);
             e.target.value = '';
         };
+
+        let selfieStream = null;
+
+        const stopSelfieStream = () => {
+            if (!selfieStream) return;
+            selfieStream.getTracks().forEach(track => track.stop());
+            selfieStream = null;
+        };
+
+        const setSelfieStatus = (message) => {
+            const status = document.getElementById('selfieStatus');
+            if (status) status.innerText = message;
+        };
+
+        window.openSelfieCamera = async () => {
+            const modal = document.getElementById('selfieModal');
+            const video = document.getElementById('selfieVideo');
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                document.getElementById('selfieInput')?.click();
+                return;
+            }
+
+            try {
+                setSelfieStatus('Opening camera...');
+                modal.classList.add('open');
+
+                selfieStream = await navigator.mediaDevices.getUserMedia({
+                    audio: false,
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 4096 },
+                        height: { ideal: 4096 }
+                    }
+                });
+
+                video.srcObject = selfieStream;
+                await video.play();
+                setSelfieStatus('Ready when you are 💜');
+            } catch (error) {
+                closeSelfieCamera();
+                document.getElementById('selfieInput')?.click();
+            }
+        };
+
+        window.closeSelfieCamera = () => {
+            stopSelfieStream();
+            const modal = document.getElementById('selfieModal');
+            const video = document.getElementById('selfieVideo');
+            if (video) video.srcObject = null;
+            if (modal) modal.classList.remove('open');
+        };
+
+        window.captureSelfie = () => {
+            const video = document.getElementById('selfieVideo');
+
+            if (!video || !video.videoWidth || !video.videoHeight) {
+                alert('Camera is not ready yet.');
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const ctx = canvas.getContext('2d');
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            pushMediaMessage({
+                image: canvas.toDataURL('image/png'),
+                mediaType: 'image',
+                mimeType: 'image/png',
+                fileName: `selfie-${new Date().toISOString().replace(/[:.]/g, '-')}.png`,
+                originalQuality: true
+            });
+
+            closeSelfieCamera();
+        };
+
+        window.handleSelfieUpload = (e) => {
+            const file = e.target.files[0];
+            sendImageFileToChat(file);
+            e.target.value = '';
+        };
+
 
         window.handleImageUpload = window.handleMediaUpload;
 
